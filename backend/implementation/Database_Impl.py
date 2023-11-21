@@ -3,7 +3,7 @@ from backend.entity.User import User
 from backend.entity.Post import Post
 
 # Pfad aus Sicht von app.py bedenken
-DB_PATH = './database/social_media.db'
+DB_PATH = '../database/social_media.db'
 
 
 def create_tables():
