@@ -1,0 +1,1 @@
+1. Um die Rquirement.txt automatisch aus der conda enviroment erstellen zu lassenbenötigt man folgenden Befehl: conda list -e > requirements.txt
