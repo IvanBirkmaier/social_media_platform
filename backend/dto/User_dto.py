@@ -1,3 +1,6 @@
+import sys
+sys.path.append('C:\\Users\\Ivan\\Desktop\\social-media-platform\\backend\\')
+
 from backend.entity.User import User
 
 
