@@ -1,10 +1,10 @@
 import unittest
 import sqlite3
 import os
-from backend.implementation.Database_Impl import add_user, add_post, get_latest_post, create_tables
-import backend.implementation.Database_Impl as database
-from backend.entity.User import User
-from backend.entity.Post import Post
+from backend.services.src.implementation.Database_Impl import add_user, add_post, get_latest_post, create_tables
+import backend.services.src.implementation.Database_Impl as database
+from backend.services.src.entity.User import User
+from backend.services.src.entity.Post import Post
 
 
 class TestDatabase(unittest.TestCase):

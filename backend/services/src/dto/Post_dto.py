@@ -1,7 +1,7 @@
 import sys
 sys.path.append('C:\\Users\\Ivan\\Desktop\\social-media-platform\\backend\\')
 
-from backend.dto.User_dto import UserDTO
+from backend.services.src.dto.User_dto import UserDTO
 from backend.entity.Post import Post
 
 

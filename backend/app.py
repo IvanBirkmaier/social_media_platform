@@ -1,7 +1,8 @@
-import backend.implementation.Database_Impl as database_impl
+import services.src.implementation as database_impl
+from services.src.entity.Post import Post
+from services.src.entity.User import User
 from fastapi import FastAPI
-from backend.entity.Post import Post
-from backend.entity.User import User
+
 
 # Erstellen Sie eine Instanz der FastAPI-Anwendung
 app = FastAPI()

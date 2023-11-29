@@ -1,6 +1,6 @@
-import backend.implementation.Database_Impl as database_impl
-from backend.entity.Post import Post
-from backend.entity.User import User
+import backend.services.src.implementation.Database_Impl as database_impl
+from backend.services.src.entity.Post import Post
+from backend.services.src.entity.User import User
 
 # Das natürlich dann mit Frontend richtig anpassen!!!
 # Bild muss noch richtig gespeichert werden, bisher nur Dummy String
