@@ -1,8 +1,5 @@
-import sys
-sys.path.append('C:\\Users\\Ivan\\Desktop\\social-media-platform\\backend\\')
-
 from backend.services.src.dto.User_dto import UserDTO
-from backend.entity.Post import Post
+from backend.services.src.entity.Post import Post
 
 
 class PostDTO:

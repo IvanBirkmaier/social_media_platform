@@ -1,9 +1,9 @@
 import sqlite3
-from backend.services.src.entity.User import User
-from backend.services.src.entity.Post import Post
+from services.src.entity.User import User
+from services.src.entity.Post import Post
 
 # Pfad aus Sicht von app.py bedenken
-DB_PATH = './database/social_media.db' 
+DB_PATH = '../database/social_media.db' 
 
 
 def create_tables():
