@@ -1,1 +1,7 @@
-1. Um die Rquirement.txt automatisch aus der conda enviroment erstellen zu lassenbenötigt man folgenden Befehl: conda list -e > requirements.txt
+1. Um die Rquirement.txt automatisch aus der conda enviroment erstellen zu lassen, benötigt man folgenden Befehl: conda list -e > requirements.txt
+2. Datenbank im Container checken commands:
+    2.1: docker ps
+    2.2: docker exec -it [Container-ID oder Name] bash
+    2.3: psql -U [Benutzername] -d [Datenbankname]
+    2.4: SELECT * FROM users;
+

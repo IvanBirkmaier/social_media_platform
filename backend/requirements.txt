@@ -34,3 +34,7 @@ xz==5.4.2
 zlib==1.2.13
 
 
+async-timeout=4.0.3 
+asyncpg=0.29.0 
+greenlet=3.0.1 
+sqlalchemy=2.0.23
