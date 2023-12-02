@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  db:
+    build: 
+      context: ./database
+    environment:
+      POSTGRES_DB: meine_db
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  fastapi:
+    build: 
+      context: ./backend
+    environment:
+      DATABASE_URL: postgresql://user:password@host.docker.internal:5432/meine_db
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:

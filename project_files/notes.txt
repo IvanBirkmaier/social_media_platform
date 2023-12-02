@@ -1,4 +1,5 @@
 1. Um die Rquirement.txt automatisch aus der conda enviroment erstellen zu lassen, benötigt man folgenden Befehl: conda list -e > requirements.txt
+
 2. Datenbank im Container checken commands:
     2.1: docker ps
     2.2: docker exec -it [Container-ID oder Name] bash
@@ -10,5 +11,7 @@
 
 4. Um API zu starten:
     4.1: docker run -p 8000:8000 mein_api_image
+
+5 Start API local ohne Container:  uvicorn app:app --host 127.0.0.1 --port 8000 --reload
 
 
