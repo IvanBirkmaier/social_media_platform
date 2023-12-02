@@ -19,7 +19,7 @@ def get_db():
 
 @app.post("/users/", response_model=UserCreate)
 def create_user_endpoint(user_create: UserCreate, db: Session = Depends(get_db)):
-    #init_db() # Initialisieren der Datenbank
+    init_db() # Initialisieren der Datenbank
     db_user = db.query(User).filter(User.username == user_create.username).first()
     if db_user:
         raise HTTPException(status_code=400, detail="Username already registered")
