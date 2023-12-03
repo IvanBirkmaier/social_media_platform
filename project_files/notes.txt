@@ -7,7 +7,7 @@
     2.4: SELECT * FROM users;
 
 3. Um Datenbank zu starten:
-    3.1: docker run -d --name db_social_media -p 5432:5432 datenbank
+    3.1: docker run -d --name db_social_media -p 5432:5432 database
 
 4. Um API zu starten:
     4.1: docker run -p 8000:8000 mein_api_image
@@ -34,3 +34,24 @@
     } | ConvertTo-Json 
     Invoke-RestMethod -Method Post -Uri "http://localhost:8000/users/" -Headers $headers -Body $body 
 
+
+
+Anlegen benutzer:
+$Url = "http://localhost:8000/users/"
+>> $Body = @{
+>>     username = "Ihrnutzeredname"
+>>     email = "IhreEmaileee1@example.com"
+>>     password = "IhrPas"
+>> } | ConvertTo-Json
+>> 
+>> Invoke-RestMethod -Uri $Url -Method Post -Body $Body -ContentType "application/json"
+
+Login:
+$Url = "http://localhost:8000/login"  # Ändern Sie die URL entsprechend Ihrer API-Konfiguration
+$Body = @{
+    username = "IhrBenutzername"
+    password = "IhrPasswort"
+} | ConvertTo-Json
+
+# Führen Sie die POST-Anfrage aus
+Invoke-RestMethod -Uri $Url -Method Post -Body $Body -ContentType "application/json"

@@ -39,3 +39,6 @@ sqlalchemy==2.0.23
 # Datenbanktreiber, falls noch nicht hinzugefügt
 psycopg2-binary==2.9.3
 
+# Für das Passwortverschleicher
+bcrypt==4.1.1
+
