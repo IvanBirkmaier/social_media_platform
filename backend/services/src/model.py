@@ -1,8 +1,16 @@
 from sqlalchemy import Column, Integer, String, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from dotenv import load_dotenv
+import os
 
-DATABASE_URL = "postgresql://user:password@localhost:5432/meine_db" # Um API local ausführen zu können. Mit laufenden DB-Container 
+load_dotenv() 
+DATABASE_URL = os.environ.get("DATABASE_URL")
+
+
+# Der Rest Ihres Codes
+
+#DATABASE_URL = "postgresql://user:password@localhost:5432/meine_db" # Um API local ausführen zu können. Mit laufenden DB-Container 
 #DATABASE_URL = "postgresql://user:password@host.docker.internal:5432/meine_db" # Um API im Container auszuführen. Vor dem builden der Images wechseln 
 
 engine = create_engine(DATABASE_URL)

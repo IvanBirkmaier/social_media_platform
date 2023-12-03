@@ -17,7 +17,7 @@ services:
     build: 
       context: ./backend
     environment:
-      DATABASE_URL: postgresql://user:password@host.docker.internal:5432/meine_db
+      - DATABASE_URL=postgresql://user:password@host.docker.internal:5432/meine_db
     ports:
       - "8000:8000"
     depends_on:

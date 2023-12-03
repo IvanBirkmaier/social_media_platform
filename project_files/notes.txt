@@ -12,6 +12,25 @@
 4. Um API zu starten:
     4.1: docker run -p 8000:8000 mein_api_image
 
-5 Start API local ohne Container:  uvicorn app:app --host 127.0.0.1 --port 8000 --reload
+5. Start API local ohne Container:  uvicorn app:app --host 127.0.0.1 --port 8000 --reload
 
+6. Docker Befehle:
+    6.1 docker stop $(docker ps -aq) stopt alle container
+    6.2 docker rm $(docker ps -aq) Löscht alle laufenden und nicht laufenden Container
+    6.3 docker rmi $(docker images -q) löscht alle images
+        6.3.1 docker rmi [Image-ID] einzelnes image löschen
+    6.4 docker start [Container-ID] Gestoppten Container wieder starten
+    6.5 docker ps anzeigen aller laufenden Container
+        6.5.1 docker ps -a anzeigen aller container (egal ob laufend oder gestoppt)
+    6.6 docker compose up -d um die docker compose zu starten
+
+7. Powershell REST-Call um API über console zu testen:
+        $headers = @{
+        "accept" = "application/json"
+        "Content-Type" = "application/json"
+    }
+        $body = @{     "username" = "x"
+        "email" = "ers@example.com" 
+    } | ConvertTo-Json 
+    Invoke-RestMethod -Method Post -Uri "http://localhost:8000/users/" -Headers $headers -Body $body 
 
