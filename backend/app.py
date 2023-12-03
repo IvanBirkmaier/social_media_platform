@@ -1,11 +1,10 @@
 from fastapi import FastAPI, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from pydantic import BaseModel, EmailStr
-from services.src.model import User, Post, Comment, SessionLocal, init_db
+from services.src.model import User, SessionLocal, init_db
 from services.src.crud import (create_user, check_user_login, create_post,
                                create_comment, get_user_posts, get_post_comments,
                                get_user_id_by_username, get_random_posts_not_by_user)
-import bcrypt
 
 app = FastAPI()
 
@@ -28,7 +27,7 @@ class UserLogin(BaseModel):
 class PostCreate(BaseModel):
     user_id: int
     description: str
-    image: bytes
+    base64_image: str
 
 class CommentCreate(BaseModel):
     user_id: int
@@ -46,7 +45,6 @@ def get_db():
 # API Endpunkte
 @app.post("/users/", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 def create_user_endpoint(user_create: UserCreate, db: Session = Depends(get_db)):
-    init_db()  # Initialisieren der Datenbank
     db_user = db.query(User).filter(User.username == user_create.username).first()
     if db_user:
         raise HTTPException(status_code=400, detail="Username already registered")
@@ -61,7 +59,8 @@ def login(user_login: UserLogin, db: Session = Depends(get_db)):
 
 @app.post("/posts/", response_model=PostCreate, status_code=status.HTTP_201_CREATED)
 def create_post_endpoint(post_create: PostCreate, db: Session = Depends(get_db)):
-    return create_post(db, post_create.user_id, post_create.description, post_create.image)
+    init_db()  # Initialisieren der Datenbank
+    return create_post(db, post_create.user_id, post_create.description, post_create.base64_image)
 
 @app.post("/comments/", response_model=CommentCreate, status_code=status.HTTP_201_CREATED)
 def create_comment_endpoint(comment_create: CommentCreate, db: Session = Depends(get_db)):
