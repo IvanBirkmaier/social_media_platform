@@ -3,7 +3,7 @@
 2. Datenbank im Container checken commands:
     2.1: docker ps
     2.2: docker exec -it [Container-ID oder Name] bash
-    2.3: psql -U [Benutzername] -d [Datenbankname]
+    2.3: psql -U user -d meine_db
     2.4: SELECT * FROM users;
 
 3. Um Datenbank zu starten:

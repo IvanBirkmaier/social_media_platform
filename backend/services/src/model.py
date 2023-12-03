@@ -42,5 +42,3 @@ class Comment(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
 
-def init_db():
-    Base.metadata.create_all(bind=engine)

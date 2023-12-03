@@ -1,10 +1,14 @@
 from fastapi import FastAPI, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from pydantic import BaseModel, EmailStr
-from services.src.model import User, SessionLocal, init_db
+from services.src.model import User, SessionLocal, Base, engine
 from services.src.crud import (create_user, check_user_login, create_post,
                                create_comment, get_user_posts, get_post_comments,
                                get_user_id_by_username, get_random_posts_not_by_user)
+
+def create_tables():
+    Base.metadata.create_all(bind=engine)
+create_tables()
 
 app = FastAPI()
 
@@ -45,7 +49,6 @@ def get_db():
 # API Endpunkte
 @app.post("/users/", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 def create_user_endpoint(user_create: UserCreate, db: Session = Depends(get_db)):
-    init_db()  # Initialisieren der Datenbank
     db_user = db.query(User).filter(User.username == user_create.username).first()
     if db_user:
         raise HTTPException(status_code=400, detail="Username already registered")
