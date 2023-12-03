@@ -23,28 +23,17 @@
     6.5 docker ps anzeigen aller laufenden Container
         6.5.1 docker ps -a anzeigen aller container (egal ob laufend oder gestoppt)
     6.6 docker compose up -d um die docker compose zu starten
-
-7. Powershell REST-Call um API über console zu testen:
-        $headers = @{
-        "accept" = "application/json"
-        "Content-Type" = "application/json"
-    }
-        $body = @{     "username" = "x"
-        "email" = "ers@example.com" 
-    } | ConvertTo-Json 
-    Invoke-RestMethod -Method Post -Uri "http://localhost:8000/users/" -Headers $headers -Body $body 
-
-
+    6.7 docker-compose down -v um volume zu löscht 
 
 Anlegen benutzer:
 $Url = "http://localhost:8000/users/"
->> $Body = @{
->>     username = "Ihrnutzeredname"
->>     email = "IhreEmaileee1@example.com"
->>     password = "IhrPas"
->> } | ConvertTo-Json
->> 
->> Invoke-RestMethod -Uri $Url -Method Post -Body $Body -ContentType "application/json"
+ $Body = @{
+     username = "Ihrnutzeredname"
+     email = "IhreEmaileee1@example.com"
+     password = "pas"
+ } | ConvertTo-Json
+ 
+ Invoke-RestMethod -Uri $Url -Method Post -Body $Body -ContentType "application/json"
 
 Login:
 $Url = "http://localhost:8000/login"  # Ändern Sie die URL entsprechend Ihrer API-Konfiguration
