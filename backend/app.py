@@ -3,12 +3,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from pydantic import BaseModel, EmailStr
-from services.src.model import User, SessionLocal, Base, engine
+from services.src.model import Account, SessionLocal, Base, engine
 from dotenv import load_dotenv
 import os
-from services.src.crud import (create_user, check_user_login, create_post,
+from services.src.crud import (create_account, check_user_login, create_post,
                                create_comment, get_user_posts, get_post_comments,
-                               get_user_id_by_username, get_random_posts_not_by_user, check_username_existence, check_email_existence)
+                               get_random_posts_not_by_user, check_username_existence, check_email_existence)
 
 load_dotenv() 
 FRONTEND_URL = os.environ.get("FRONTEND_URL")
@@ -64,10 +64,10 @@ def get_db():
 # API Endpunkte
 @app.post("/users/", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 def create_user_endpoint(user_create: UserCreate, db: Session = Depends(get_db)):
-    db_user = db.query(User).filter(User.username == user_create.username).first()
+    db_user = db.query(Account).filter(Account.username == user_create.username).first()
     if db_user:
         raise HTTPException(status_code=400, detail="Username already registered")
-    return create_user(db, user_create.username, user_create.email, user_create.password)
+    return create_account(db, user_create.username, user_create.email, user_create.password)
 
 
 @app.get("/check-username/{username}")

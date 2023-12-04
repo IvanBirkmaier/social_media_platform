@@ -61,7 +61,6 @@ const RegistrationInformation: React.FC<RegistrationInformationProps> = ({
                   id="lastname"
                   value={userData.lastName}
                   onChange={(e) => updateUserData({ lastName: e.target.value })}
-                  required
                 />
               </div>
             </div>
@@ -75,7 +74,6 @@ const RegistrationInformation: React.FC<RegistrationInformationProps> = ({
                   onChange={(e) =>
                     updateUserData({ stadt: e.target.value })
                   }
-                  required
                 />
               </div>
               <div>
@@ -114,7 +112,7 @@ const RegistrationInformation: React.FC<RegistrationInformationProps> = ({
               <label htmlFor="datenschutz">Datenschutz</label>
             </div>
             <div className="button-wrapper">
-              <button type="button" onClick={onBack} className="button-secondary">Zurück</button>
+              <button type="button" onClick={onBack} className="button-secondary">Überspringen</button>
               <button type="submit">Weiter</button>
             </div>
           </form>

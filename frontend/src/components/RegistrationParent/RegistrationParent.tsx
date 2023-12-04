@@ -5,33 +5,25 @@ import RegistrationInformation from "../RegistrationInformation/RegistrationInfo
 
 interface UserData {
   userEmail: string;
+  userName: string;
   firstName: string;
   lastName: string;
-  role: string;
-  institutionName: string;
-  schoolNumber: string;
-  stasseOne: string;
-  hausnummerOne: string;
-  stasseTwo: string;
-  hausnummerTwo: string;
+  stadt: string;
+  plz: string;
+  street: string;
   phone: string;
-  schulName: string;
 }
 const RegistrationParent: React.FC = () => {
   const [step, setStep] = useState(1);
   const [userData, setUserData] = useState({
     userEmail: "",
+    userName: "",
     firstName: "",
     lastName: "",
-    role: "",
-    institutionName: "",
-    schoolNumber: "",
-    stasseOne: "",
-    hausnummerOne: "",
-    stasseTwo: "",
-    hausnummerTwo: "",
+    stadt: "",
+    plz: "",
+    street: "",
     phone: "",
-    schulName: "",
   });
 
   const goToNextStep = () => {

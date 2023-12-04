@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import func
-from .model import User,Post,Comment
+from .model import Account, Profile, Post, Comment
 import bcrypt
 import base64
 
@@ -14,27 +14,40 @@ def check_password_hash(password, hash):
     return bcrypt.checkpw(password.encode('utf-8'), hash.encode('utf-8'))
 
 
-# Erstellen eines Users (registrierung)
-def create_user(db: Session, username: str, email: str, password: str):
+# Erstellen eines Accounts (Registrierung)
+def create_account(db: Session, username: str, email: str, password: str):
     hashed_password = hash_password(password)
-    user = User(username=username, email=email, password_hash=hashed_password)
-    db.add(user)
+    account = Account(username=username, email=email, password_hash=hashed_password)
+    db.add(account)
     db.commit()
-    db.refresh(user)
-    return user
+    db.refresh(account)
+    return account
+
+# Erstellen eines Profils
+def create_profile(db: Session, account_id: int, vorname: str, nachname: str, city: str, plz: int, street: str, phone_number: str):
+    profile = Profile(account_id=account_id, vorname=vorname, nachname=nachname, city=city, plz=plz, street=street, phone_number=phone_number)
+    db.add(profile)
+    db.commit()
+    db.refresh(profile)
+    return profile
+
+# Lesen eines Profils über die Account-ID
+def read_profile(db: Session, account_id: int):
+    return db.query(Profile).filter(Profile.account_id == account_id).first()
+
 
 # Überprüfen, ob der Benutzername bereits vergeben ist
 def check_username_existence(db: Session, username: str):
-    return db.query(User).filter(User.username == username).first() is not None
+    return db.query(Account).filter(Account.username == username).first() is not None
 
 # Überprüfen, ob die E-Mail bereits vergeben ist
 def check_email_existence(db: Session, email: str):
-    return db.query(User).filter(User.email == email).first() is not None
+    return db.query(Account).filter(Account.email == email).first() is not None
 
 
 # User Login
 def check_user_login(db: Session, username: str, password: str):
-    user = db.query(User).filter(User.username == username).first()
+    user = db.query(Account).filter(Account.username == username).first()
     if user and check_password_hash(password, user.password_hash):
         return user
     return None
@@ -82,12 +95,6 @@ def get_user_posts(db: Session, user_id: int):
 # Auslesen aller Comments eines Posts
 def get_post_comments(db: Session, post_id: int):
     return db.query(Comment).filter(Comment.post_id == post_id).all()
-
-# Auslesen der UserID über den Username
-def get_user_id_by_username(db: Session, username: str):
-    result = db.query(User.id).filter(User.username == username).all()
-    # Extrahieren Sie die IDs aus den Tupeln und geben Sie sie als Liste zurück
-    return [user_id for (user_id,) in result]
 
 
 # Auslesen von 10 zufälligen Post die nicht dem User gehören (Für ein Feed)

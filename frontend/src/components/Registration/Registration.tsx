@@ -61,6 +61,25 @@ const Registration: React.FC<RegistrationProps> = ({
     }, 500),
     []
   );
+  const createAccount = async (userData, password) => {
+    const response = await fetch('http://localhost:8000/users/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        username: userData.userName,
+        email: userData.userEmail,
+        password: password,
+      }),
+    });
+  
+    if (!response.ok) {
+      throw new Error('Fehler beim Erstellen des Accounts');
+    }
+  
+    return response.json();
+  };  
 
   const handleUsernameChange = (e) => {
     const newUsername = e.target.value;
@@ -73,18 +92,30 @@ const Registration: React.FC<RegistrationProps> = ({
     updateUserData({ ...userData, userEmail: newEmail });
     checkEmailAvailability(newEmail);
   };
-
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
+  
     if (password !== confirmPassword) {
       setPasswordError("Passwörter stimmen nicht überein.");
       return;
     }
     setPasswordError("");
-    if (!usernameError && !emailError) {
-      onContinue();
+  
+    if (usernameError || emailError) {
+      // Anzeigen weiterer Fehlermeldungen, falls nötig
+      return;
+    }
+  
+    try {
+      const accountData = await createAccount(userData, password);
+      console.log(accountData); // Für Debugging-Zwecke
+      onContinue(); // Weiterleitung oder nächster Schritt im UI-Flow
+    } catch (error) {
+      console.error(error);
+      // Setzen Sie hier eine Fehlermeldung, um dem Benutzer Feedback zu geben
     }
   };
+  
 
   return (
     <div className="registration-wrapper">
@@ -137,7 +168,7 @@ const Registration: React.FC<RegistrationProps> = ({
               {passwordError && <p className="error">{passwordError}</p>}
             </div>
             <div className="button-wrapper">
-              <button type="submit" disabled={!!usernameError || !!emailError}>Speichern</button>
+              <button type="submit" disabled={!!usernameError || !!emailError}>Erstellen</button>
             </div>
             <p className="text">
               Sie haben bereits einen Account? <Link to="/">Zum Login</Link>
