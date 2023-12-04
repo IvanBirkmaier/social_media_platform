@@ -1,0 +1,8 @@
+{
+    "firstName": "Ivan",
+    "lastName": "Birkmaeir",
+    "role": "Student",
+    "institutionName": "Example University",
+    "schoolNumber": "12345",
+    "schools": ["School A", "School B", "School C"]
+  }
