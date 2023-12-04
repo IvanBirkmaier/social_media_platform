@@ -23,6 +23,14 @@ def create_user(db: Session, username: str, email: str, password: str):
     db.refresh(user)
     return user
 
+# Überprüfen, ob der Benutzername bereits vergeben ist
+def check_username_existence(db: Session, username: str):
+    return db.query(User).filter(User.username == username).first() is not None
+
+# Überprüfen, ob die E-Mail bereits vergeben ist
+def check_email_existence(db: Session, email: str):
+    return db.query(User).filter(User.email == email).first() is not None
+
 
 # User Login
 def check_user_login(db: Session, username: str, password: str):

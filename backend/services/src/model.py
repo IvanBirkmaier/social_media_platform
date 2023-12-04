@@ -20,6 +20,12 @@ class User(Base):
     username = Column(String, unique=True)
     email = Column(String, unique=True)
     password_hash = Column(String)
+    vorname = Column(String)
+    nachname = Column(String)
+    city = Column(String)
+    plz = Column(Integer)
+    street = Column(Integer)
+    phone_number = Column(Integer)
     created_at = Column(DateTime, default=datetime.utcnow)
     posts = relationship("Post", backref="author")  # Beziehung zu Posts
     comments = relationship("Comment", backref="commenter")  # Beziehung zu Kommentaren

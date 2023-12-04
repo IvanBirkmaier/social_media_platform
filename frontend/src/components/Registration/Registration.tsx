@@ -1,15 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import "./Registration.raw.scss";
 import Header from "components/Header/Header";
 import { Link } from "react-router-dom";
 
 interface UserData {
   userEmail: string;
+  userName: string;
   firstName: string;
   lastName: string;
-  role: string;
-  institutionName: string;
-  schoolNumber: string;
+  stadt: string;
+  plz: string;
+  street: string;
+  phone: string;
 }
 
 interface RegistrationProps {
@@ -26,6 +28,51 @@ const Registration: React.FC<RegistrationProps> = ({
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [usernameError, setUsernameError] = useState("");
+  const [emailError, setEmailError] = useState("");
+
+  // Debounce-Funktion
+  const debounce = (func, delay) => {
+    let inDebounce;
+    return function(...args) {
+      clearTimeout(inDebounce);
+      inDebounce = setTimeout(() => func(...args), delay);
+    };
+  };
+
+  const checkUsernameAvailability = useCallback(
+    debounce((username) => {
+      fetch(`http://localhost:8000/check-username/${username}`)
+        .then((res) => res.json())
+        .then((data) => {
+          setUsernameError(data.username_exists ? "Benutzername ist bereits vergeben." : "");
+        });
+    }, 500),
+    []
+  );
+
+  const checkEmailAvailability = useCallback(
+    debounce((email) => {
+      fetch(`http://localhost:8000/check-email/${email}`)
+        .then((res) => res.json())
+        .then((data) => {
+          setEmailError(data.email_exists ? "E-Mail ist bereits vergeben." : "");
+        });
+    }, 500),
+    []
+  );
+
+  const handleUsernameChange = (e) => {
+    const newUsername = e.target.value;
+    updateUserData({ ...userData, userName: newUsername });
+    checkUsernameAvailability(newUsername);
+  };
+
+  const handleEmailChange = (e) => {
+    const newEmail = e.target.value;
+    updateUserData({ ...userData, userEmail: newEmail });
+    checkEmailAvailability(newEmail);
+  };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -34,8 +81,9 @@ const Registration: React.FC<RegistrationProps> = ({
       return;
     }
     setPasswordError("");
-    console.log(userData.userEmail, password);
-    onContinue();
+    if (!usernameError && !emailError) {
+      onContinue();
+    }
   };
 
   return (
@@ -46,14 +94,26 @@ const Registration: React.FC<RegistrationProps> = ({
         <div className="registration-form">
           <form onSubmit={handleSubmit}>
             <div>
-              <label htmlFor="useremail">E-mail *</label>
+              <label htmlFor="username">Benutzername *</label>
+              <input
+                required
+                type="text"
+                id="username"
+                value={userData.userName}
+                onChange={handleUsernameChange}
+              />
+              {usernameError && <p className="error">{usernameError}</p>}
+            </div>
+            <div>
+              <label htmlFor="useremail">E-Mail *</label>
               <input
                 required
                 type="email"
                 id="useremail"
                 value={userData.userEmail}
-                onChange={(e) => updateUserData({ userEmail: e.target.value })}
+                onChange={handleEmailChange}
               />
+              {emailError && <p className="error">{emailError}</p>}
             </div>
             <div>
               <label htmlFor="password">Passwort *</label>
@@ -77,7 +137,7 @@ const Registration: React.FC<RegistrationProps> = ({
               {passwordError && <p className="error">{passwordError}</p>}
             </div>
             <div className="button-wrapper">
-              <button type="submit">Speichern</button>
+              <button type="submit" disabled={!!usernameError || !!emailError}>Speichern</button>
             </div>
             <p className="text">
               Sie haben bereits einen Account? <Link to="/">Zum Login</Link>

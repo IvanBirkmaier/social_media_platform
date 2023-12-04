@@ -82,3 +82,20 @@
     }
   }
 }
+
+/* In Ihrer Registration.raw.scss */
+.availability-indicator {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  background-size: contain;
+  margin-left: 10px;
+}
+
+.available {
+  background-image: url('frontend\src\assets\gc.png'); /* Ersetzen Sie dies mit dem Pfad zum grünen Häkchen-Icon */
+}
+
+.unavailable {
+  background-image: url('frontend\src\assets\rx.png'); /* Ersetzen Sie dies mit dem Pfad zum roten X-Icon */
+}

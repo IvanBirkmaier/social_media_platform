@@ -1,10 +1,17 @@
 from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from pydantic import BaseModel, EmailStr
 from services.src.model import User, SessionLocal, Base, engine
+from dotenv import load_dotenv
+import os
 from services.src.crud import (create_user, check_user_login, create_post,
                                create_comment, get_user_posts, get_post_comments,
-                               get_user_id_by_username, get_random_posts_not_by_user)
+                               get_user_id_by_username, get_random_posts_not_by_user, check_username_existence, check_email_existence)
+
+load_dotenv() 
+FRONTEND_URL = os.environ.get("FRONTEND_URL")
 
 def create_tables():
     Base.metadata.create_all(bind=engine)
@@ -12,6 +19,14 @@ create_tables()
 
 app = FastAPI()
 
+# Fügt Middleware hinzu, um CORS für Ihre App zu konfigurieren
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[FRONTEND_URL],  # Port auf dem frontend läuft oder dann halt oder ['*'] für alle Ursprünge
+    allow_credentials=True,
+    allow_methods=["*"],  # oder ['GET', 'POST', 'PUT', ...]
+    allow_headers=["*"],
+)
 # Pydantic Modelle
 class UserCreate(BaseModel):
     username: str
@@ -53,6 +68,20 @@ def create_user_endpoint(user_create: UserCreate, db: Session = Depends(get_db))
     if db_user:
         raise HTTPException(status_code=400, detail="Username already registered")
     return create_user(db, user_create.username, user_create.email, user_create.password)
+
+
+@app.get("/check-username/{username}")
+def check_username(username: str, db: Session = Depends(get_db)):
+    if check_username_existence(db, username):
+        return JSONResponse(content={"username_exists": True}, status_code=200)
+    return JSONResponse(content={"username_exists": False}, status_code=200)
+
+@app.get("/check-email/{email}")
+def check_email(email: str, db: Session = Depends(get_db)):
+    if check_email_existence(db, email):
+        return JSONResponse(content={"email_exists": True}, status_code=200)
+    return JSONResponse(content={"email_exists": False}, status_code=200)
+
 
 @app.post("/login/")
 def login(user_login: UserLogin, db: Session = Depends(get_db)):

@@ -4,14 +4,15 @@ import Header from "components/Header/Header";
 
 interface UserData {
   userEmail: string;
+  userName: string;
   firstName: string;
   lastName: string;
-  username: string;
   stadt: string;
   plz: string;
   street: string;
   phone: string;
 }
+
 interface RegistrationInformationProps {
   userData: UserData;
   updateUserData: (newData: Partial<UserData>) => void;
@@ -64,26 +65,12 @@ const RegistrationInformation: React.FC<RegistrationInformationProps> = ({
                 />
               </div>
             </div>
-
-         
-            <div>
-              <label htmlFor="institutionName">Benutzername</label>
-              <input
-                type="text"
-                id="institutionName"
-                value={userData.username}
-                onChange={(e) =>
-                  updateUserData({ username: e.target.value })
-                }
-              />
-            </div>
-
             <div className="username-wrapper">
               <div>
-                <label htmlFor="strasse">Stadt </label>
+                <label htmlFor="city">Stadt </label>
                 <input
                   type="text"
-                  id="strasse"
+                  id="city"
                   value={userData.stadt}
                   onChange={(e) =>
                     updateUserData({ stadt: e.target.value })
@@ -92,15 +79,26 @@ const RegistrationInformation: React.FC<RegistrationInformationProps> = ({
                 />
               </div>
               <div>
-                <label htmlFor="hausnummer">Postleitzahl</label>
+                <label htmlFor="plz">Postleitzahl</label>
                 <input
                   type="number"
-                  id="hausnummer"
+                  id="plz"
                   value={userData.plz}
                   onChange={(e) => updateUserData({ plz: e.target.value })}
                   required
                 />
               </div>
+            </div>
+            <div>
+              <label htmlFor="street">Straße und Hausnummer</label>
+              <input
+                type="text"
+                id="street"
+                value={userData.street}
+                onChange={(e) =>
+                  updateUserData({ street: e.target.value })
+                }
+              />
             </div>
             <div>
               <label htmlFor="phone">Telefonnummer</label>
