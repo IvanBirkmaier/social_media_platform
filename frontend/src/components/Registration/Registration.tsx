@@ -20,10 +20,11 @@ interface RegistrationProps {
   updateUserData: (newData: Partial<UserData>) => void;
 }
 
-const Registration: React.FC<RegistrationProps> = ({
+const Registration: React.FC<RegistrationProps & { onCreateAccountSuccess: (accountId: number) => void }> = ({
   onContinue,
   userData,
   updateUserData,
+  onCreateAccountSuccess
 }) => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -108,6 +109,7 @@ const Registration: React.FC<RegistrationProps> = ({
   
     try {
       const accountData = await createAccount(userData, password);
+      onCreateAccountSuccess(accountData.id); // Nehmen Sie an, dass die Account-ID zurückgegeben wird
       console.log(accountData); // Für Debugging-Zwecke
       onContinue(); // Weiterleitung oder nächster Schritt im UI-Flow
     } catch (error) {

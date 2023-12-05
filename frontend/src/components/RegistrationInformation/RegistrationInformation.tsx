@@ -1,6 +1,8 @@
 import React from "react";
 import "./RegistrationInformation.raw.scss";
 import Header from "components/Header/Header";
+import { useNavigate } from "react-router-dom"; // Änderung hier
+
 
 interface UserData {
   userEmail: string;
@@ -20,20 +22,52 @@ interface RegistrationInformationProps {
   onSubmitSuccess: () => void; 
 }
 
-const RegistrationInformation: React.FC<RegistrationInformationProps> = ({
+const RegistrationInformation: React.FC<RegistrationInformationProps & { accountId: number }> = ({
   userData,
   updateUserData,
   onBack,
   onSubmitSuccess,
+  accountId,
 }) => {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const jsonData = JSON.stringify(userData);
-    console.log(userData);
-    console.log("Form Data in JSON:", jsonData);
-    onSubmitSuccess();
+  const navigate = useNavigate(); // Änderung hier
+  const handleSkip = () => {
+    navigate('/home'); // Weiterleitung zur /home-Route
+  };
+  const createProfile = async () => {
+    try {
+      const response = await fetch('http://localhost:8000/profile/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          account_id: accountId,
+          vorname: userData.firstName,
+          nachname: userData.lastName,
+          city: userData.stadt,
+          plz: userData.plz,
+          street: userData.street,
+          phone_number: userData.phone,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Fehler beim Erstellen des Profils');
+      }
+
+      return response.json();
+    } catch (error) {
+      console.error(error);
+      // Setzen Sie hier eine Fehlermeldung, um dem Benutzer Feedback zu geben
+    }
   };
 
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const profileData = await createProfile();
+    console.log(profileData); // Für Debugging-Zwecke
+    onSubmitSuccess();
+  };
   return (
     <div className="registration-info-wrapper">
       <div className="background-image"></div>
@@ -101,7 +135,7 @@ const RegistrationInformation: React.FC<RegistrationInformationProps> = ({
             <div>
               <label htmlFor="phone">Telefonnummer</label>
               <input
-                type="number"
+                type="text"
                 id="phone"
                 value={userData.phone}
                 onChange={(e) => updateUserData({ phone: e.target.value })}
@@ -112,7 +146,7 @@ const RegistrationInformation: React.FC<RegistrationInformationProps> = ({
               <label htmlFor="datenschutz">Datenschutz</label>
             </div>
             <div className="button-wrapper">
-              <button type="button" onClick={onBack} className="button-secondary">Überspringen</button>
+            <button type="button" onClick={handleSkip} className="button-secondary">Überspringen</button>
               <button type="submit">Weiter</button>
             </div>
           </form>

@@ -42,10 +42,18 @@ const RegistrationParent: React.FC = () => {
     setStep(3);
   };
 
+  const [accountId, setAccountId] = useState(null);
+
+  const handleCreateAccountSuccess = (accountId) => {
+    setAccountId(accountId);
+    goToNextStep();
+  };
+
   return (
     <div>
       {step === 1 && (
         <Registration
+          onCreateAccountSuccess={handleCreateAccountSuccess}
           onContinue={goToNextStep}
           userData={userData}
           updateUserData={updateUserData}
@@ -53,6 +61,7 @@ const RegistrationParent: React.FC = () => {
       )}
       {step === 2 && (
         <RegistrationInformation
+          accountId={accountId}
           userData={userData}
           updateUserData={updateUserData}
           onBack={goToPreviousStep}

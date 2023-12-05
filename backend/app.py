@@ -6,7 +6,7 @@ from pydantic import BaseModel, EmailStr
 from services.src.model import Account, SessionLocal, Base, engine
 from dotenv import load_dotenv
 import os
-from services.src.crud import (create_account, check_user_login, create_post,
+from services.src.crud import (create_profile, create_account, check_user_login, create_post,
                                create_comment, get_user_posts, get_post_comments,
                                get_random_posts_not_by_user, check_username_existence, check_email_existence)
 
@@ -22,16 +22,17 @@ app = FastAPI()
 # Fügt Middleware hinzu, um CORS für Ihre App zu konfigurieren
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[FRONTEND_URL],  # Port auf dem frontend läuft oder dann halt oder ['*'] für alle Ursprünge
+    allow_origins=["*"],  # Port auf dem frontend läuft oder dann halt oder ['*'] für alle Ursprünge
     allow_credentials=True,
     allow_methods=["*"],  # oder ['GET', 'POST', 'PUT', ...]
     allow_headers=["*"],
 )
 # Pydantic Modelle
 class UserCreate(BaseModel):
-    username: str
     email: EmailStr
     password: str
+    username: str
+
 
 class UserResponse(BaseModel):
     id: int
@@ -53,6 +54,15 @@ class CommentCreate(BaseModel):
     post_id: int
     text: str
 
+class ProfileCreate(BaseModel):
+    account_id: int
+    vorname: str
+    nachname: str
+    city: str
+    plz: int
+    street: str
+    phone_number: str
+
 # Datenbank-Session Dependency
 def get_db():
     db = SessionLocal()
@@ -69,6 +79,12 @@ def create_user_endpoint(user_create: UserCreate, db: Session = Depends(get_db))
         raise HTTPException(status_code=400, detail="Username already registered")
     return create_account(db, user_create.username, user_create.email, user_create.password)
 
+# API-Endpunkt zum Erstellen eines Profils
+@app.post("/profile/", response_model=ProfileCreate, status_code=status.HTTP_201_CREATED)
+def create_profile_endpoint(profile_data: ProfileCreate, db: Session = Depends(get_db)):
+    # Sie können hier zusätzliche Validierungen oder Geschäftslogiken hinzufügen
+    profile = create_profile(db, **profile_data.dict())
+    return profile
 
 @app.get("/check-username/{username}")
 def check_username(username: str, db: Session = Depends(get_db)):

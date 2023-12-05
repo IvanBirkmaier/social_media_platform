@@ -7,7 +7,7 @@
     2.4: SELECT * FROM users;
 
 3. Um Datenbank zu starten:
-    3.1: docker run -d --name db_social_media -p 5432:5432 database
+    3.1:  docker run -d --name db_social_media -p 5432:5432 database
 
 4. Um API zu starten:
     4.1: docker run -p 8000:8000 mein_api_image
