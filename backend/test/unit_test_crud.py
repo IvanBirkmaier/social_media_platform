@@ -1,5 +1,5 @@
 import pytest
-from ..src.crud import hash_password, check_password_hash, create_account, check_username_existence, check_email_existence
+from backend.services.src.crud import hash_password, check_password_hash, create_account, check_username_existence, check_email_existence
 from unittest.mock import MagicMock
 
 def test_hash_and_check_password():

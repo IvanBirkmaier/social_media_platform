@@ -97,7 +97,7 @@ paths:
   /login/:
     post:
       tags:
-        - user
+        - account
       summary: User login
       operationId: loginUser
       requestBody:
