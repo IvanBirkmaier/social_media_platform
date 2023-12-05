@@ -46,10 +46,10 @@ def check_email_existence(db: Session, email: str):
 
 
 # User Login
-def check_user_login(db: Session, username: str, password: str):
-    user = db.query(Account).filter(Account.username == username).first()
-    if user and check_password_hash(password, user.password_hash):
-        return user
+def check_account_login(db: Session, username: str, password: str):
+    account = db.query(Account).filter(Account.username == username).first()
+    if account and check_password_hash(password, account.password_hash):
+        return account
     return None
 
 # Funktion, um Bytes in einen Base64-String zu konvertieren
@@ -57,9 +57,9 @@ def convert_bytes_to_base64(image_bytes):
     return base64.b64encode(image_bytes).decode('utf-8')
 
 # Post zu erstellen
-def create_post(db: Session, user_id: int, description: str, base64_image: str):
+def create_post(db: Session, account_id: int, description: str, base64_image: str):
     image_bytes = base64.b64decode(base64_image)
-    db_post = Post(user_id=user_id, description=description, image=image_bytes)
+    db_post = Post(account_id=account_id, description=description, image=image_bytes)
     db.add(db_post)
     db.commit()
     db.refresh(db_post)
@@ -71,8 +71,8 @@ def create_post(db: Session, user_id: int, description: str, base64_image: str):
     return db_post
 
 # Erstellen eines Kommentars
-def create_comment(db: Session, user_id: int, post_id: int, text: str):
-    db_comment = Comment(user_id=user_id, post_id=post_id, text=text)
+def create_comment(db: Session, account_id: int, post_id: int, text: str):
+    db_comment = Comment(account_id=account_id, post_id=post_id, text=text)
     db.add(db_comment)
     db.commit()
     db.refresh(db_comment)
@@ -85,8 +85,8 @@ def convert_image_to_base64(image_bytes):
     return None
 
 # CRUD-Methode zum Abrufen der Posts eines Benutzers
-def get_user_posts(db: Session, user_id: int):
-    posts = db.query(Post).filter(Post.user_id == user_id).all()
+def get_account_posts(db: Session, account_id: int):
+    posts = db.query(Post).filter(Post.account_id == account_id).all()
     for post in posts:
         # Konvertieren Sie das Bild in Base64, bevor Sie das Objekt zurückgeben
         post.image = convert_image_to_base64(post.image)
@@ -98,8 +98,8 @@ def get_post_comments(db: Session, post_id: int):
 
 
 # Auslesen von 10 zufälligen Post die nicht dem User gehören (Für ein Feed)
-def get_random_posts_not_by_user(db: Session, user_id: int):
-    posts = db.query(Post).filter(Post.user_id != user_id).order_by(func.random()).limit(10).all()
+def get_random_posts_not_by_account(db: Session, account_id: int):
+    posts = db.query(Post).filter(Post.account_id != account_id).order_by(func.random()).limit(10).all()
     for post in posts:
         # Konvertieren Sie das Bild in Base64, bevor Sie das Objekt zurückgeben
         post.image = convert_image_to_base64(post.image)

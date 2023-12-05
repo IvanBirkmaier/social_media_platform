@@ -6,12 +6,12 @@ from pydantic import BaseModel, EmailStr
 from services.src.model import Account, SessionLocal, Base, engine
 from dotenv import load_dotenv
 import os
-from services.src.crud import (create_profile, create_account, check_user_login, create_post,
-                               create_comment, get_user_posts, get_post_comments,
-                               get_random_posts_not_by_user, check_username_existence, check_email_existence)
+from services.src.crud import (create_profile, create_account, check_account_login, create_post,
+                               create_comment, get_account_posts, get_post_comments,
+                               get_random_posts_not_by_account, check_username_existence, check_email_existence)
 
 load_dotenv() 
-FRONTEND_URL = os.environ.get("FRONTEND_URL")
+FRONTEND_URL = os.environ.get("FRONTEND_URL") # Für die Connection zum Frontend (Sicherheitsmaßnahme)
 
 def create_tables():
     Base.metadata.create_all(bind=engine)
@@ -22,19 +22,20 @@ app = FastAPI()
 # Fügt Middleware hinzu, um CORS für Ihre App zu konfigurieren
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Port auf dem frontend läuft oder dann halt oder ['*'] für alle Ursprünge
+    allow_origins=[FRONTEND_URL],
+   # allow_origins=["*"],  # Port auf dem frontend läuft oder dann halt oder ['*'] für alle Ursprünge
     allow_credentials=True,
     allow_methods=["*"],  # oder ['GET', 'POST', 'PUT', ...]
     allow_headers=["*"],
 )
-# Pydantic Modelle
-class UserCreate(BaseModel):
+
+class AccountCreate(BaseModel):
     email: EmailStr
     password: str
     username: str
 
 
-class UserResponse(BaseModel):
+class AccountResponse(BaseModel):
     id: int
     username: str
     email: EmailStr
@@ -45,12 +46,12 @@ class UserLogin(BaseModel):
     password: str
 
 class PostCreate(BaseModel):
-    user_id: int
+    account_id: int
     description: str
     base64_image: str
 
 class CommentCreate(BaseModel):
-    user_id: int
+    account_id: int
     post_id: int
     text: str
 
@@ -72,8 +73,8 @@ def get_db():
         db.close()
 
 # API Endpunkte
-@app.post("/users/", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
-def create_user_endpoint(user_create: UserCreate, db: Session = Depends(get_db)):
+@app.post("/account/", response_model=AccountResponse, status_code=status.HTTP_201_CREATED)
+def create_user_endpoint(user_create: AccountCreate, db: Session = Depends(get_db)):
     db_user = db.query(Account).filter(Account.username == user_create.username).first()
     if db_user:
         raise HTTPException(status_code=400, detail="Username already registered")
@@ -98,34 +99,29 @@ def check_email(email: str, db: Session = Depends(get_db)):
         return JSONResponse(content={"email_exists": True}, status_code=200)
     return JSONResponse(content={"email_exists": False}, status_code=200)
 
-
 @app.post("/login/")
 def login(user_login: UserLogin, db: Session = Depends(get_db)):
-    user = check_user_login(db, user_login.username, user_login.password)
+    user = check_account_login(db, user_login.username, user_login.password)
     if user is None:
         raise HTTPException(status_code=400, detail="Incorrect username or password")
     return {"message": "Login successful"}
 
 @app.post("/posts/", response_model=PostCreate, status_code=status.HTTP_201_CREATED)
 def create_post_endpoint(post_create: PostCreate, db: Session = Depends(get_db)):
-    return create_post(db, post_create.user_id, post_create.description, post_create.base64_image)
+    return create_post(db, post_create.account_id, post_create.description, post_create.base64_image)
 
 @app.post("/comments/", response_model=CommentCreate, status_code=status.HTTP_201_CREATED)
 def create_comment_endpoint(comment_create: CommentCreate, db: Session = Depends(get_db)):
-    return create_comment(db, comment_create.user_id, comment_create.post_id, comment_create.text)
+    return create_comment(db, comment_create.account_id, comment_create.post_id, comment_create.text)
 
-@app.get("/users/{user_id}/posts/")
-def get_posts_by_user(user_id: int, db: Session = Depends(get_db)):
-    return get_user_posts(db, user_id)
+@app.get("/account/{account_id}/posts/")
+def get_posts_by_user(account_id: int, db: Session = Depends(get_db)):
+    return get_account_posts(db, account_id)
 
 @app.get("/posts/{post_id}/comments/")
 def get_comments_by_post(post_id: int, db: Session = Depends(get_db)):
     return get_post_comments(db, post_id)
 
-@app.get("/users/username/{username}/")
-def get_userid_by_username(username: str, db: Session = Depends(get_db)):
-    return get_user_id_by_username(db, username)
-
 @app.get("/posts/random/")
-def get_random_posts(user_id: int, db: Session = Depends(get_db)):
-    return get_random_posts_not_by_user(db, user_id)
+def get_random_posts(account_id: int, db: Session = Depends(get_db)):
+    return get_random_posts_not_by_account(db, account_id)

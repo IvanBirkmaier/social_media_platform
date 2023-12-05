@@ -6,28 +6,94 @@ info:
 servers:
   - url: http://localhost:8000
 paths:
-  /users/:
+  /account/:
     post:
       tags:
-        - user
-      summary: Create a new user
-      operationId: createUser
+        - account
+      summary: Create a new user account
+      operationId: createUserAccount
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserCreate'
+              $ref: '#/components/schemas/AccountCreate'
       responses:
         '201':
-          description: User created successfully
+          description: User account created successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserResponse'
+                $ref: '#/components/schemas/AccountResponse'
         '400':
           description: Username already registered
 
+  /profile/:
+    post:
+      tags:
+        - profile
+      summary: Create a new user profile
+      operationId: createUserProfile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProfileCreate'
+      responses:
+        '201':
+          description: User profile created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileCreate'
+
+  /check-username/{username}:
+    get:
+      tags:
+        - account
+      summary: Check if username exists
+      operationId: checkUsername
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Username existence status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  username_exists:
+                    type: boolean
+
+  /check-email/{email}:
+    get:
+      tags:
+        - account
+      summary: Check if email exists
+      operationId: checkEmail
+      parameters:
+        - name: email
+          in: path
+          required: true
+          schema:
+            type: string
+            format: email
+      responses:
+        '200':
+          description: Email existence status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  email_exists:
+                    type: boolean
   /login/:
     post:
       tags:
@@ -93,14 +159,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/CommentCreate'
 
-  /users/{user_id}/posts/:
+  /account/{account_id}/posts/:
     get:
       tags:
-        - user
-      summary: Get posts by user
-      operationId: getPostsByUser
+        - account
+      summary: Get posts by account
+      operationId: getPostsByAccount
       parameters:
-        - name: user_id
+        - name: account_id
           in: path
           required: true
           schema:
@@ -137,29 +203,6 @@ paths:
                 items:
                   $ref: '#/components/schemas/CommentCreate'  # Assuming same schema as CommentCreate for simplicity
 
-  /users/username/{username}/:
-    get:
-      tags:
-        - user
-      summary: Get user ID by username
-      operationId: getUserIdByUsername
-      parameters:
-        - name: username
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: User ID
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  user_id:
-                    type: integer
-
   /posts/random/:
     get:
       tags:
@@ -184,7 +227,7 @@ paths:
 
 components:
   schemas:
-    UserCreate:
+    AccountCreate:
       type: object
       required:
         - username
@@ -198,7 +241,8 @@ components:
           format: email
         password:
           type: string
-    UserResponse:
+
+    AccountResponse:
       type: object
       required:
         - id
@@ -212,6 +256,32 @@ components:
         email:
           type: string
           format: email
+
+    ProfileCreate:
+      type: object
+      required:
+        - account_id
+        - vorname
+        - nachname
+        - city
+        - plz
+        - street
+        - phone_number
+      properties:
+        account_id:
+          type: integer
+        vorname:
+          type: string
+        nachname:
+          type: string
+        city:
+          type: string
+        plz:
+          type: integer
+        street:
+          type: string
+        phone_number:
+          type: string
     UserLogin:
       type: object
       required:
@@ -248,3 +318,4 @@ components:
           type: integer
         text:
           type: string
+

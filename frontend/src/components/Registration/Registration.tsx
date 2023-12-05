@@ -63,7 +63,7 @@ const Registration: React.FC<RegistrationProps & { onCreateAccountSuccess: (acco
     []
   );
   const createAccount = async (userData, password) => {
-    const response = await fetch('http://localhost:8000/users/', {
+    const response = await fetch('http://localhost:8000/account/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
