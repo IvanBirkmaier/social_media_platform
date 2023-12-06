@@ -1,8 +1,19 @@
-import React from "react";
-import "./RegistrationSucess.raw.scss"
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import "./RegistrationSucess.raw.scss";
 import Header from "components/Header/Header";
 
 const RegistrationSuccess: React.FC = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      navigate('/home');
+    }, 2500);
+
+    return () => clearTimeout(timer);
+  }, [navigate]);
+
   return (
     <div className="registration-wrapper">
       <div className="background-image"></div>
