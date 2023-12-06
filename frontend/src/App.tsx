@@ -4,6 +4,8 @@ import ResetPassword from "components/ResetPassword/ResetPassword";
 import RegistrationParent from "components/RegistrationParent/RegistrationParent";
 import LoginParent from "components/LoginParent/LoginParent";
 import RequestPassword from "components/RequestPassword/RequestPassword";
+import Home from "components/Home/Home";
+
 
 const App: React.FC = () => {
   return (
@@ -14,6 +16,7 @@ const App: React.FC = () => {
         <Route path="/registrationsuccess" element={<RegistrationSuccess />} />
         <Route path="/resetpassword" element={<ResetPassword />} />
         <Route path="/requestpassword" element={<RequestPassword />} />
+        <Route path="/home" element={<Home />} />
       </Routes>
     </>
   );
