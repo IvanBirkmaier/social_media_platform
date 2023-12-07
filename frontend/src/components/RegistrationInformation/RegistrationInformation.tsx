@@ -85,7 +85,6 @@ const RegistrationInformation: React.FC<RegistrationInformationProps & { account
                   onChange={(e) =>
                     updateUserData({ firstName: e.target.value })
                   }
-                  required
                 />
               </div>
               <div>
@@ -117,7 +116,6 @@ const RegistrationInformation: React.FC<RegistrationInformationProps & { account
                   id="plz"
                   value={userData.plz}
                   onChange={(e) => updateUserData({ plz: e.target.value })}
-                  required
                 />
               </div>
             </div>

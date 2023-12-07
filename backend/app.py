@@ -103,7 +103,7 @@ def check_email(email: str, db: Session = Depends(get_db)):
 def login(user_login: UserLogin, db: Session = Depends(get_db)):
     user = check_account_login(db, user_login.username, user_login.password)
     if user is None:
-        raise HTTPException(status_code=400, detail="Incorrect username or password")
+        raise HTTPException(status_code=400, detail="Falscher Benutzername oder Passwort")
     return {"message": "Login successful"}
 
 @app.post("/posts/", response_model=PostCreate, status_code=status.HTTP_201_CREATED)

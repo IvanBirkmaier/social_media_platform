@@ -9,7 +9,7 @@ const RegistrationSuccess: React.FC = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       navigate('/home');
-    }, 2500);
+    }, 1500);
 
     return () => clearTimeout(timer);
   }, [navigate]);
