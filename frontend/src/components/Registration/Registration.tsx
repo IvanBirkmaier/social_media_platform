@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from "react";
 import "./Registration.raw.scss";
-import Header from "components/Header/Header";
+import Header from "../Header/Header";
 import { Link } from "react-router-dom";
 
 interface UserData {
@@ -20,12 +20,9 @@ interface RegistrationProps {
   updateUserData: (newData: Partial<UserData>) => void;
 }
 
-const Registration: React.FC<RegistrationProps & { onCreateAccountSuccess: (accountId: number) => void }> = ({
-  onContinue,
-  userData,
-  updateUserData,
-  onCreateAccountSuccess
-}) => {
+const Registration: React.FC<
+  RegistrationProps & { onCreateAccountSuccess: (accountId: number) => void }
+> = ({ onContinue, userData, updateUserData, onCreateAccountSuccess }) => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
@@ -33,40 +30,47 @@ const Registration: React.FC<RegistrationProps & { onCreateAccountSuccess: (acco
   const [emailError, setEmailError] = useState("");
 
   // Debounce-Funktion
-  const debounce = (func, delay) => {
-    let inDebounce;
-    return function(...args) {
+  const debounce = <F extends (...args: any[]) => void>(
+    func: F,
+    delay: number
+  ) => {
+    let inDebounce: NodeJS.Timeout | undefined;
+    return function (this: ThisParameterType<F>, ...args: Parameters<F>) {
       clearTimeout(inDebounce);
-      inDebounce = setTimeout(() => func(...args), delay);
+      inDebounce = setTimeout(() => func.apply(this, args), delay);
     };
   };
 
   const checkUsernameAvailability = useCallback(
-    debounce((username) => {
+    debounce((username: string) => {
       fetch(`http://localhost:8000/check-username/${username}`)
         .then((res) => res.json())
         .then((data) => {
-          setUsernameError(data.username_exists ? "Benutzername ist bereits vergeben." : "");
+          setUsernameError(
+            data.username_exists && "Benutzername ist bereits vergeben."
+          );
         });
     }, 500),
     []
   );
 
   const checkEmailAvailability = useCallback(
-    debounce((email) => {
+    debounce((email: string) => {
       fetch(`http://localhost:8000/check-email/${email}`)
         .then((res) => res.json())
         .then((data) => {
-          setEmailError(data.email_exists ? "E-Mail ist bereits vergeben." : "");
+          setEmailError(
+            data.email_exists ? "E-Mail ist bereits vergeben." : ""
+          );
         });
     }, 500),
     []
   );
-  const createAccount = async (userData, password) => {
-    const response = await fetch('http://localhost:8000/account/', {
-      method: 'POST',
+  const createAccount = async (userData: UserData, password: string) => {
+    const response = await fetch("http://localhost:8000/account/", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         username: userData.userName,
@@ -74,39 +78,39 @@ const Registration: React.FC<RegistrationProps & { onCreateAccountSuccess: (acco
         password: password,
       }),
     });
-  
-    if (!response.ok) {
-      throw new Error('Fehler beim Erstellen des Accounts');
-    }
-  
-    return response.json();
-  };  
 
-  const handleUsernameChange = (e) => {
+    if (!response.ok) {
+      throw new Error("Fehler beim Erstellen des Accounts");
+    }
+
+    return response.json();
+  };
+
+  const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newUsername = e.target.value;
     updateUserData({ ...userData, userName: newUsername });
     checkUsernameAvailability(newUsername);
   };
 
-  const handleEmailChange = (e) => {
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newEmail = e.target.value;
     updateUserData({ ...userData, userEmail: newEmail });
     checkEmailAvailability(newEmail);
   };
-  const handleSubmit = async (event) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-  
+
     if (password !== confirmPassword) {
       setPasswordError("Passwörter stimmen nicht überein.");
       return;
     }
     setPasswordError("");
-  
+
     if (usernameError || emailError) {
       // Anzeigen weiterer Fehlermeldungen, falls nötig
       return;
     }
-  
+
     try {
       const accountData = await createAccount(userData, password);
       onCreateAccountSuccess(accountData.id); // Nehmen Sie an, dass die Account-ID zurückgegeben wird
@@ -117,7 +121,6 @@ const Registration: React.FC<RegistrationProps & { onCreateAccountSuccess: (acco
       // Setzen Sie hier eine Fehlermeldung, um dem Benutzer Feedback zu geben
     }
   };
-  
 
   return (
     <div className="registration-wrapper">
@@ -170,10 +173,13 @@ const Registration: React.FC<RegistrationProps & { onCreateAccountSuccess: (acco
               {passwordError && <p className="error">{passwordError}</p>}
             </div>
             <div className="button-wrapper">
-              <button type="submit" disabled={!!usernameError || !!emailError}>Erstellen</button>
+              <button type="submit" disabled={!!usernameError || !!emailError}>
+                Erstellen
+              </button>
             </div>
             <p className="text">
-              Sie haben bereits einen Account? <Link to="/">Zum Login</Link>
+              Sie haben bereits einen Account?{" "}
+              <Link to="/login">Zum Login</Link>
             </p>
           </form>
         </div>

@@ -4,7 +4,8 @@
     2.1: docker ps
     2.2: docker exec -it [Container-ID oder Name] bash
     2.3: psql -U user -d meine_db
-    2.4: SELECT * FROM users;
+    2.4: \d see every tables
+    2.5: SELECT * FROM accounts;
 
 3. Um Datenbank zu starten:
     3.1:  docker run -d --name db_social_media -p 5432:5432 database
@@ -14,7 +15,10 @@
 
 5. Start API local ohne Container:  uvicorn app:app --host 127.0.0.1 --port 8000 --reload
 
-6. Docker Befehle:
+6. Frontend starten: ins frontend navigieren: beim ersten mal: npm i, ansonsten npm run dev
+    tailwind and shadcn for css
+
+7. Docker Befehle:
     6.1 docker stop $(docker ps -aq) stopt alle container
     6.2 docker rm $(docker ps -aq) Löscht alle laufenden und nicht laufenden Container
     6.3 docker rmi $(docker images -q) löscht alle images
