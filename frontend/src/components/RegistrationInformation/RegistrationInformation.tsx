@@ -3,7 +3,6 @@ import "./RegistrationInformation.raw.scss";
 import Header from "components/Header/Header";
 import { useNavigate } from "react-router-dom"; // Änderung hier
 
-
 interface UserData {
   userEmail: string;
   userName: string;
@@ -19,26 +18,22 @@ interface RegistrationInformationProps {
   userData: UserData;
   updateUserData: (newData: Partial<UserData>) => void;
   onBack: () => void;
-  onSubmitSuccess: () => void; 
+  onSubmitSuccess: () => void;
 }
 
-const RegistrationInformation: React.FC<RegistrationInformationProps & { accountId: number }> = ({
-  userData,
-  updateUserData,
-  onBack,
-  onSubmitSuccess,
-  accountId,
-}) => {
+const RegistrationInformation: React.FC<
+  RegistrationInformationProps & { accountId: number }
+> = ({ userData, updateUserData, onSubmitSuccess, accountId }) => {
   const navigate = useNavigate(); // Änderung hier
   const handleSkip = () => {
-    navigate('/home'); // Weiterleitung zur /home-Route
+    navigate("/home"); // Weiterleitung zur /home-Route
   };
   const createProfile = async () => {
     try {
-      const response = await fetch('http://localhost:8000/profile/', {
-        method: 'POST',
+      const response = await fetch("http://localhost:8000/profile/", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           account_id: accountId,
@@ -52,7 +47,7 @@ const RegistrationInformation: React.FC<RegistrationInformationProps & { account
       });
 
       if (!response.ok) {
-        throw new Error('Fehler beim Erstellen des Profils');
+        throw new Error("Fehler beim Erstellen des Profils");
       }
 
       return response.json();
@@ -104,9 +99,7 @@ const RegistrationInformation: React.FC<RegistrationInformationProps & { account
                   type="text"
                   id="city"
                   value={userData.stadt}
-                  onChange={(e) =>
-                    updateUserData({ stadt: e.target.value })
-                  }
+                  onChange={(e) => updateUserData({ stadt: e.target.value })}
                 />
               </div>
               <div>
@@ -125,9 +118,7 @@ const RegistrationInformation: React.FC<RegistrationInformationProps & { account
                 type="text"
                 id="street"
                 value={userData.street}
-                onChange={(e) =>
-                  updateUserData({ street: e.target.value })
-                }
+                onChange={(e) => updateUserData({ street: e.target.value })}
               />
             </div>
             <div>
@@ -140,11 +131,17 @@ const RegistrationInformation: React.FC<RegistrationInformationProps & { account
               />
             </div>
             <div className="checkbox-wrapper">
-              <input type="checkbox" id="datenschutz" required/>
+              <input type="checkbox" id="datenschutz" required />
               <label htmlFor="datenschutz">Datenschutz</label>
             </div>
             <div className="button-wrapper">
-            <button type="button" onClick={handleSkip} className="button-secondary">Überspringen</button>
+              <button
+                type="button"
+                onClick={handleSkip}
+                className="button-secondary"
+              >
+                Überspringen
+              </button>
               <button type="submit">Weiter</button>
             </div>
           </form>

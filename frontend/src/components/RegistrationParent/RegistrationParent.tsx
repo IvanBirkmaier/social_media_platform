@@ -42,9 +42,9 @@ const RegistrationParent: React.FC = () => {
     setStep(3);
   };
 
-  const [accountId, setAccountId] = useState(null);
+  const [accountId, setAccountId] = useState(-1);
 
-  const handleCreateAccountSuccess = (accountId) => {
+  const handleCreateAccountSuccess = (accountId: number) => {
     setAccountId(accountId);
     goToNextStep();
   };
