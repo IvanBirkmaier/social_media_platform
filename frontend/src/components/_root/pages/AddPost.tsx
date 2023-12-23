@@ -7,11 +7,12 @@ type AddPostProps = {
   mediaUrl: string;
 };
 
-const AddPost = ({ fieldChange, mediaUrl }: AddPostProps) => {
+const AddPost = ({ fieldChange = () => {}, mediaUrl }: AddPostProps) => {
   const convertFileToUrl = (file: File) => URL.createObjectURL(file);
 
   const [file, setFile] = useState<File[]>([]);
   const [fileUrl, setFileUrl] = useState<string>(mediaUrl);
+  const [description, setDescription] = useState("");
   const onDrop = useCallback(
     (acceptedFiles: FileWithPath[]) => {
       setFile(acceptedFiles);
@@ -27,14 +28,30 @@ const AddPost = ({ fieldChange, mediaUrl }: AddPostProps) => {
       "image/*": [".png", ".jpeg", ".jpg"],
     },
   });
+
+  const handleSubmit = () => {
+    // Implementiere hier die Logik zum Erstellen und Speichern des Posts
+    // Beispiel: Hochladen des Bildes und der Beschreibung an einen Server
+    console.log("Post wird hochgeladen:", file, description);
+    // Weitere Logik zum Speichern des Posts
+  };
+
   return (
     <div className="flex flex-1">
       <div className="common-container">
         <div className="max-w-5xl flex-start gap-3 justify-start w-full">
           <h2 className="h3-bold md:h2-bold text-left w-full">Add Post</h2>
+          {/* Button zum Hochladen des Posts */}
+        <Button
+          type="button" 
+          className="shad-button_dark_4"
+          onClick={handleSubmit}
+        >
+          Upload
+        </Button>
         </div>
-
-        {/* <PostForm action="Create" /> */}
+        <div className="flex flex-row gap-4">
+          {/* <PostForm action="Create" /> */}
         <div
           {...getRootProps()}
           className="flex flex-center flex-col bg-dark-3 rounded-xl cursor-pointer"
@@ -70,7 +87,18 @@ const AddPost = ({ fieldChange, mediaUrl }: AddPostProps) => {
             </div>
           )}
         </div>
+        {/* Textfeld für die Beschreibung */}
+        <textarea
+          className="description-textarea"
+          placeholder="Enter description here..."
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+        />
       </div>
+
+        </div>
+
+        
     </div>
   );
 };
