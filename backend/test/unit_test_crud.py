@@ -1,11 +1,11 @@
 import sys
 import os
-
 current_dir = os.path.dirname(os.path.realpath(__file__))
 parent_dir = os.path.dirname(current_dir)
 sys.path.append(parent_dir)
 
 from services.src.crud import hash_password, check_password_hash, create_account, create_profile, check_username_existence, check_email_existence, read_profile
+from services.src.model import Account, Profile, Post, Comment
 
 import pytest
 from unittest.mock import MagicMock
@@ -24,17 +24,20 @@ def test_create_account():
     mock_db = MagicMock()
     mock_account = MagicMock()
 
-    # Annahme, dass der Account erstellt wurde
+    # Mock the account creation process
     mock_db.add = MagicMock()
     mock_db.commit = MagicMock()
-    mock_db.refresh = MagicMock(return_value=mock_account)
+    mock_db.refresh = MagicMock(return_value=None)  # mock_db.refresh doesn't need a specific return
 
+    # Call create_account
     account = create_account(mock_db, "test_user", "test@example.com", "test_password")
 
+    # Assertions
     mock_db.add.assert_called_once()
     mock_db.commit.assert_called_once()
-    mock_db.refresh.assert_called_once_with(mock_account)
-    assert account == mock_account
+    mock_db.refresh.assert_called_once()  # Modified to not expect a specific mock account
+    assert isinstance(account, Account)  # Check if returned account is an instance of Account
+
 
 def test_check_username_existence():
     mock_db = MagicMock()
@@ -61,8 +64,8 @@ def test_create_profile():
     
     mock_db.add.assert_called_once()
     mock_db.commit.assert_called_once()
-    mock_db.refresh.assert_called_once_with(mock_profile)
-    assert profile == mock_profile
+    mock_db.refresh.assert_called_once()
+    assert isinstance(profile, Profile)  # Check if returned account is an instance of Account
     
 # def read_profile(db: Session, account_id: int):
 def test_read_profile():
@@ -75,8 +78,9 @@ def test_read_profile():
     
     profile = create_profile(mock_db, 1, "Torben", "Testmann", "Teststadt", "0815", "Testerstraße 1", "0123456")
     
-    mock_db.query().filter().first = MagicMock(return_value=None)
+    mock_db.query().filter().first = MagicMock(return_value=mock_profile)
     db_profile = read_profile(mock_db, 1)
+    
     assert db_profile.vorname == profile.vorname
     assert db_profile.nachname == profile.nachname
     assert db_profile.city == profile.city
@@ -98,7 +102,7 @@ def test_check_account_login():
 
     account = create_account(mock_db, "test_user", "test@example.com", "test_password")
     
-    mock_db.query().filter().first = MagicMock(return_value=None)
+    mock_db.query().filter().first = MagicMock(return_value=mock_account)
     db_account = check_account_login(mock_db, "test_user", "test_password")
     assert db_account == account
     assert db_account != None
@@ -135,14 +139,14 @@ def test_create_post():
     
     mock_db.add.assert_called_once()
     mock_db.commit.assert_called_once()
-    mock_db.refresh.assert_called_once_with(mock_post)
-    assert post == mock_post
+    mock_db.refresh.assert_called_once()
+    assert isinstance(post, Post)
     
 
 from services.src.crud import create_comment
 
 # def create_post(db: Session, account_id: int, description: str, base64_image: str):
-def test_create_post():
+def test_create_comment():
     mock_db = MagicMock()
     mock_comment = MagicMock()
     
@@ -152,11 +156,29 @@ def test_create_post():
     
     comment = create_comment(mock_db, 1, 1, "Have a nice trip!")
     
-    mock_db.query().filter().first = MagicMock(return_value=None)
+    mock_db.query().filter().first = MagicMock(return_value=mock_comment)
     
     mock_db.add.assert_called_once()
     mock_db.commit.assert_called_once()
-    mock_db.refresh.assert_called_once_with(mock_comment)
-    assert comment == mock_comment
+    mock_db.refresh.assert_called_once()
+    assert isinstance(comment, Comment)
     
+from services.src.crud import get_account_posts
+from typing import List
+
+def test_get_account_posts():
+    mock_db = MagicMock()
+    mock_post = MagicMock()
     
+    mock_db.add = MagicMock()
+    mock_db.commit = MagicMock()
+    mock_db.refresh = MagicMock(return_value=mock_post)
+    
+    post1 = create_post(mock_db, 1, "Greetings from Vienna", "")
+    post2 = create_post(mock_db, 1, "Visiting Technisches Museum", "")
+    post3 = create_post(mock_db, 1, "Dinner in Schweizerhaus!","")
+    posts = get_account_posts(mock_db,account_id=1)
+    
+    mock_db.query().filter().first = MagicMock(return_value=None)
+    
+    assert len(posts) == 0
