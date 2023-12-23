@@ -6,6 +6,7 @@
     2.3: psql -U user -d meine_db
     2.4: \d see every tables
     2.5: SELECT * FROM accounts;
+    or select id, account_id, description, created_at from posts;
 
 3. Um Datenbank zu starten:
     3.1:  docker run -d --name db_social_media -p 5432:5432 database
