@@ -26,7 +26,7 @@ const RegistrationInformation: React.FC<
 > = ({ userData, updateUserData, onSubmitSuccess, accountId }) => {
   const navigate = useNavigate(); // Änderung hier
   const handleSkip = () => {
-    navigate("/home"); // Weiterleitung zur /home-Route
+    navigate("/"); // Weiterleitung zur /home-Route
   };
   const createProfile = async () => {
     try {

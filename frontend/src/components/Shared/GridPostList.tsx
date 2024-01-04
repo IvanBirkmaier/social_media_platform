@@ -47,7 +47,24 @@ const GridPostList = ({ image, id, showUser = true }: GridPostListProps) => {
       {selectedImage && (
         <div className="overlay">
           <div className="overlay-inner">
-            <img src={selectedImage} alt="Selected" />
+            <div className="post-card ">
+              <img src={selectedImage} alt="Selected" />
+              <div className="post-content">
+                {/* <h2>{postDescription}</h2> Titel des Beitrags */}
+                <h2 className="text-white">Test Desctiption</h2>{" "}
+                {/* Titel des Beitrags */}
+              </div>
+            </div>
+            <div className="comments">
+              <h3>Kommentare</h3>
+              {/* {comments.map((comment, index) => (
+                <div key={index} className="comment">
+                  <p>
+                    {comment.author}: {comment.text}
+                  </p>
+                </div>
+              ))} */}
+            </div>
             <button onClick={handleClose}>Schließen</button>
           </div>
         </div>
