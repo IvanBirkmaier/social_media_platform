@@ -104,7 +104,7 @@ def login(user_login: UserLogin, db: Session = Depends(get_db)):
     user = check_account_login(db, user_login.username, user_login.password)
     if user is None:
         raise HTTPException(status_code=400, detail="Falscher Benutzername oder Passwort")
-    return {"message": "Login successful"}
+    return user.id
 
 @app.post("/posts/", response_model=PostCreate, status_code=status.HTTP_201_CREATED)
 def create_post_endpoint(post_create: PostCreate, db: Session = Depends(get_db)):
@@ -114,14 +114,26 @@ def create_post_endpoint(post_create: PostCreate, db: Session = Depends(get_db))
 def create_comment_endpoint(comment_create: CommentCreate, db: Session = Depends(get_db)):
     return create_comment(db, comment_create.account_id, comment_create.post_id, comment_create.text)
 
+# @app.get("/account/{account_id}/posts/")
+# def get_posts_by_user(account_id: int, db: Session = Depends(get_db)):
+#     return get_account_posts(db, account_id)
+
 @app.get("/account/{account_id}/posts/")
 def get_posts_by_user(account_id: int, db: Session = Depends(get_db)):
-    return get_account_posts(db, account_id)
+    posts = get_account_posts(db, account_id)
+    return JSONResponse(content={"posts": posts}, status_code=status.HTTP_200_OK)
+
 
 @app.get("/posts/{post_id}/comments/")
 def get_comments_by_post(post_id: int, db: Session = Depends(get_db)):
     return get_post_comments(db, post_id)
 
+# @app.get("/posts/random/")
+# def get_random_posts(account_id: int, db: Session = Depends(get_db)):
+#     return get_random_posts_not_by_account(db, account_id)
+
 @app.get("/posts/random/")
 def get_random_posts(account_id: int, db: Session = Depends(get_db)):
-    return get_random_posts_not_by_account(db, account_id)
+    random_posts = get_random_posts_not_by_account(db, account_id)
+    return JSONResponse(content={"posts": random_posts}, status_code=status.HTTP_200_OK)
+

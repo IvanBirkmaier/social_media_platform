@@ -5,7 +5,7 @@ import RegistrationParent from "./components/RegistrationParent/RegistrationPare
 import LoginParent from "./components/LoginParent/LoginParent";
 import RequestPassword from "./components/RequestPassword/RequestPassword";
 import RootLayout from "./components/_root/RootLayout";
-import { Home } from "./components/_root/pages";
+import { Home, AddPost } from "./components/_root/pages";
 import "./index.css";
 
 const App = () => {
@@ -21,6 +21,7 @@ const App = () => {
         {/* private routes */}
         <Route element={<RootLayout />}>
           <Route index element={<Home />} />
+          <Route path="/addPost" element={<AddPost />} />
         </Route>
       </Routes>
     </main>

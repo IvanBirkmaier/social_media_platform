@@ -85,12 +85,22 @@ def convert_image_to_base64(image_bytes):
     return None
 
 # CRUD-Methode zum Abrufen der Posts eines Benutzers
+# def get_account_posts(db: Session, account_id: int):
+#     posts = db.query(Post).filter(Post.account_id == account_id).all()
+#     for post in posts:
+#         # Konvertieren Sie das Bild in Base64, bevor Sie das Objekt zurückgeben
+#         post.image = convert_image_to_base64(post.image)
+#     return posts
+
 def get_account_posts(db: Session, account_id: int):
     posts = db.query(Post).filter(Post.account_id == account_id).all()
-    for post in posts:
-        # Konvertieren Sie das Bild in Base64, bevor Sie das Objekt zurückgeben
-        post.image = convert_image_to_base64(post.image)
-    return posts
+    return [{
+        "id": post.id,
+        "account_id": post.account_id,
+        "description": post.description,
+        "base64_image": convert_image_to_base64(post.image)
+    } for post in posts]
+
 
 # Auslesen aller Comments eines Posts
 def get_post_comments(db: Session, post_id: int):
@@ -98,12 +108,44 @@ def get_post_comments(db: Session, post_id: int):
 
 
 # Auslesen von 10 zufälligen Post die nicht dem User gehören (Für ein Feed)
+# def get_random_posts_not_by_account(db: Session, account_id: int):
+#     # posts = db.query(Post).filter(Post.account_id != account_id).order_by(func.random()).limit(10).all()
+#     # for post in posts:
+#     #     # Konvertieren Sie das Bild in Base64, bevor Sie das Objekt zurückgeben
+#     #     post.image = convert_image_to_base64(post.image)
+#     # return posts
+#     posts = db.query(Post).filter(Post.account_id != account_id).order_by(func.random()).limit(10).all()
+#     result = []
+#     for post in posts:
+#         post_data = {
+#             "image": convert_image_to_base64(post.image),
+#             "description": post.description,
+#             "account_id": post.account_id
+#         }
+#         result.append(post_data)
+#     return result
+
 def get_random_posts_not_by_account(db: Session, account_id: int):
     posts = db.query(Post).filter(Post.account_id != account_id).order_by(func.random()).limit(10).all()
-    for post in posts:
-        # Konvertieren Sie das Bild in Base64, bevor Sie das Objekt zurückgeben
-        post.image = convert_image_to_base64(post.image)
-    return posts
+    return [{
+        "id": post.id,
+        "account_id": post.account_id,
+        "description": post.description,
+        "base64_image": convert_image_to_base64(post.image)
+    } for post in posts]
 
+
+# Löscht einen Post
+def delete_post(db: Session, post_id: int):
+    # Suche den Post in der Datenbank über seine ID
+    db_post = db.query(Post).filter(Post.id == post_id).first()
+
+    # Überprüfe, ob der Post existiert
+    if db_post is None:
+        raise ValueError("Post mit der ID {} wurde nicht gefunden.".format(post_id))
+
+    # Lösche den Post aus der Datenbank
+    db.delete(db_post)
+    db.commit()
 
 

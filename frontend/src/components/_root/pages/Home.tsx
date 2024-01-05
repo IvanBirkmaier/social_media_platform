@@ -1,42 +1,107 @@
-import React, { useState } from "react";
-import photo from "assets/examplePost.jpeg";
-import photo1 from "assets/post2.jpeg";
-import photo2 from "assets/post3.jpg";
-import searchLogo from "assets/icons/search.svg";
+import React, { useState, useEffect } from "react";
 import Loader from "@/components/Shared/Loader";
 import GridPostList from "@/components/Shared/GridPostList";
+import searchLogo from "assets/icons/search.svg";
+
+// Function to fetch random posts from FastAPI
+// const fetchRandomPosts = async (accountId: number) => {
+//   try {
+//     const response = await fetch(
+//       `http://localhost:8000/posts/random/?account_id=${accountId}`
+//     );
+//     if (!response.ok) {
+//       throw new Error("Network response was not ok");
+//     }
+//     return await response.json();
+//   } catch (error) {
+//     console.error("There has been a problem with your fetch operation:", error);
+//   }
+// };
+
+const fetchRandomPosts = async (accountId: number) => {
+  try {
+    const response = await fetch(
+      `http://localhost:8000/posts/random/?account_id=${accountId}`
+    );
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+    const data = await response.json();
+    console.log(data.posts);
+    return data.posts; // Adjusted to handle the new response structure
+  } catch (error) {
+    console.error("There has been a problem with your fetch operation:", error);
+  }
+};
+
+const fetchAccountPosts = async (accountId: number) => {
+  try {
+    const response = await fetch(
+      `http://localhost:8000/account/${accountId}/posts`
+    );
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+    const data = await response.json();
+    return data.posts; // Adjusted to handle the new response structure
+  } catch (error) {
+    console.error("There has been a problem with your fetch operation:", error);
+  }
+};
+
+// const fetchAccountPosts = async (accountId: number) => {
+//   try {
+//     const response = await fetch(
+//       `http://localhost:8000/account/${accountId}/posts`
+//     );
+//     if (!response.ok) {
+//       throw new Error("Network response was not ok");
+//     }
+//     return await response.json();
+//   } catch (error) {
+//     console.error("There has been a problem with your fetch operation:", error);
+//   }
+// };
 
 const Home = () => {
-  const images = [
-    photo,
-    photo1,
-    photo2,
-    photo2,
-    photo,
-    photo1,
-    photo1,
-    photo2,
-    photo,
-  ];
-
-  // get_random_posts_not_by_account
-  // const posts = [];
-
-  // if (!posts) {
-  //   return (
-  //     <div className="flex-center w-full h-full">
-  //       <Loader></Loader>
-  //     </div>
-  //   );
-  // }
-
+  const [posts, setPosts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchValue, setSearchValue] = useState("");
 
+  useEffect(() => {
+    const loadPosts = async () => {
+      const accountId = 2; // Replace with the actual account ID as needed
+      const fetchedPosts = await fetchRandomPosts(accountId);
+      if (fetchedPosts) {
+        setPosts(fetchedPosts);
+        setIsLoading(false);
+      }
+    };
+
+    loadPosts();
+  }, []);
+
   const shouldShowSearchResults = searchValue !== "";
-  // const shouldShowPosts =
-  //   !shouldShowSearchResults &&
-  //   posts.pages.every((item) => item.documents.length === 0);
-  const shouldShowPosts = !shouldShowSearchResults && images.length === 0;
+
+  const formatBase64Image = (base64String: string) => {
+    // Prüfen, ob der String bereits mit dem korrekten Präfix beginnt
+    if (base64String.startsWith("data:image/jpeg;base64,")) {
+      return base64String;
+    } else {
+      // Ersetzen eines fehlerhaften Präfixes, falls vorhanden
+      const correctedString = base64String.replace(
+        "dataimage/jpegbase64",
+        "data:image/jpeg;base64,"
+      );
+      // Überprüfen, ob der String überhaupt ein Präfix hat
+      if (correctedString.startsWith("data:")) {
+        return correctedString;
+      } else {
+        // Korrektes Präfix hinzufügen, falls es ganz fehlt
+        return `data:image/jpeg;base64,${correctedString}`;
+      }
+    }
+  };
 
   return (
     <div className="explore-container">
@@ -48,31 +113,34 @@ const Home = () => {
             placeholder="Search"
             className="explore-search"
             value={searchValue}
-            onChange={(e) => {
-              const { value } = e.target;
-              setSearchValue(value);
-            }}
+            onChange={(e) => setSearchValue(e.target.value)}
           />
         </div>
       </div>
 
       <div className="flex-between w-full max-w-5xl mt-16 mb-7">
         <h2 className="h3-bold md:h2-bold w-full">Home</h2>
-        <div className="flex-center gap-3 bg-gray-300 rounded-xl px-4 py-2 cusror-pointer">
-          <p className="small-medium md:base-medium text-light-4">Filter</p>
-        </div>
+        {/* ...other elements */}
       </div>
 
-      {/* <div className="flex flex-wrap gap-9 w-full max-w-5xl"> */}
       <div className="grid-container">
-        {shouldShowSearchResults ? (
+        {isLoading ? (
+          <Loader />
+        ) : shouldShowSearchResults ? (
           <p>Show Search Results</p>
-        ) : shouldShowPosts ? (
-          <p className="text-light-4 mt-10 text-center w-full">End of posts</p>
+        ) : posts.length === 0 ? (
+          <p className="text-light-4 mt-10 text-center w-full">
+            No posts found
+          </p>
         ) : (
-          images.map((item, index) => (
-            // <GridPostList key={'page-${index}' posts = {item.documents}}
-            <GridPostList image={item} id={index} showUser={true} key={index} />
+          posts.map((post: any, index) => (
+            <GridPostList
+              image={formatBase64Image(post.base64_image)} // Stellt sicher, dass das Präfix korrekt ist// Assuming the image is in JPEG format
+              description={post.description}
+              id={post.id}
+              showUser={true}
+              key={index}
+            />
           ))
         )}
       </div>
