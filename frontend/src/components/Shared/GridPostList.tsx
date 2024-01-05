@@ -3,11 +3,17 @@ import abstractUser from "assets/icons/abstractUser.svg";
 
 interface GridPostListProps {
   image: string; // Base64 encoded image string
+  description: string;
   id: number;
   showUser?: boolean;
 }
 
-const GridPostList = ({ image, id, showUser = true }: GridPostListProps) => {
+const GridPostList = ({
+  image,
+  id,
+  showUser = true,
+  description,
+}: GridPostListProps) => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   const handleImageClick = (image: string) => {
@@ -56,7 +62,7 @@ const GridPostList = ({ image, id, showUser = true }: GridPostListProps) => {
             <div className="post-card">
               <img src={selectedImage} alt="Selected" />
               <div className="post-content">
-                <h2 className="text-white">Test Description</h2>
+                <h2 className="text-white">{description}</h2>
               </div>
             </div>
             <div className="comments">

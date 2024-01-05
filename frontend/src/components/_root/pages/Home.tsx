@@ -83,7 +83,7 @@ const Home = () => {
 
   const shouldShowSearchResults = searchValue !== "";
 
-  const formatBase64Image = (base64String) => {
+  const formatBase64Image = (base64String: string) => {
     // Prüfen, ob der String bereits mit dem korrekten Präfix beginnt
     if (base64String.startsWith("data:image/jpeg;base64,")) {
       return base64String;
@@ -136,6 +136,7 @@ const Home = () => {
           posts.map((post: any, index) => (
             <GridPostList
               image={formatBase64Image(post.base64_image)} // Stellt sicher, dass das Präfix korrekt ist// Assuming the image is in JPEG format
+              description={post.description}
               id={post.id}
               showUser={true}
               key={index}
