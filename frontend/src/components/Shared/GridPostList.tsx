@@ -8,6 +8,8 @@ interface GridPostListProps {
   showUser?: boolean;
 }
 
+const IMAGE_RESOLUTION = { width: 800, height: 450 }; // Beispielauflösung
+
 const GridPostList = ({
   image,
   id,
@@ -37,7 +39,7 @@ const GridPostList = ({
           <img
             src={formattedImage}
             alt="post"
-            className="h-full w-full object-cover"
+            className="h-full w-full object-cover object-center"
             onClick={() => handleImageClick(image)}
           />
         </div>
@@ -58,19 +60,31 @@ const GridPostList = ({
 
       {selectedImage && (
         <div className="overlay">
-          <div className="overlay-inner">
-            <div className="post-card">
-              <img src={selectedImage} alt="Selected" />
-              <div className="post-content">
-                <h2 className="text-white">{description}</h2>
-              </div>
+          {/* <div className="overlay-inner"> */}
+          <div className="post_details-card">
+            <img
+              src={selectedImage}
+              className="post_details-img" // h-full w-full object-cover object-center Verwende object-fit und object-position
+              style={{
+                width: IMAGE_RESOLUTION.width,
+                height: IMAGE_RESOLUTION.height,
+              }} // Setze die Auflösung für alle Bilder
+              alt="Selected"
+            />
+            <div className="post_details-info">
+              <h3 className="text-white">{description}</h3>
+              {/* <div className="post_details-info"> */}
+              <hr className="parting_line" />
+              <input type="text" />
             </div>
-            <div className="comments">
-              <h3>Comments</h3>
-              {/* Comment section can be implemented here */}
-            </div>
-            <button onClick={handleClose}>Close</button>
+
+            {/* Comment section can be implemented here */}
+            {/* </div> */}
           </div>
+          <button onClick={handleClose} className="text-red">
+            Close
+          </button>
+          {/* </div> */}
         </div>
       )}
     </ul>
