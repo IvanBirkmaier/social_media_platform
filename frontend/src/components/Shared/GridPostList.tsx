@@ -6,6 +6,7 @@ interface GridPostListProps {
   description: string;
   id: number;
   showUser?: boolean;
+  username: string;
 }
 
 const IMAGE_RESOLUTION = { width: 1000, height: 562 }; // Beispielauflösung
@@ -15,6 +16,7 @@ const GridPostList = ({
   id,
   showUser = true,
   description,
+  username,
 }: GridPostListProps) => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -71,7 +73,7 @@ const GridPostList = ({
                 alt="creator"
                 className="h-8 w-8 rounded-full"
               />
-              <p className="line-clamp-1 text-gray-200">User Name</p>
+              <p className="line-clamp-1 text-gray-200">{username}</p>
             </div>
           </div>
         )}
@@ -91,7 +93,8 @@ const GridPostList = ({
               alt="Selected"
             />
             <div className="post_details-info">
-              <h3
+              <h3 className="text-orange-300 h3-bold">{username}</h3>
+              <h2
                 className="text-white"
                 style={{
                   wordWrap: "break-word",
@@ -101,7 +104,7 @@ const GridPostList = ({
                 }}
               >
                 {description}
-              </h3>
+              </h2>
               {/* <div className="post_details-info"> */}
               <hr className="parting_line" />
               <input type="text" />

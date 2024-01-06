@@ -140,7 +140,7 @@ const Home = () => {
       </div>
 
       <div className="flex-between w-full max-w-5xl mt-16 mb-7">
-        <h2 className="h3-bold md:h2-bold w-full">Home</h2>
+        <h2 className="h3-bold md:h2-bold w-full">Home of {user?.username}</h2>
         {/* ...other elements */}
       </div>
 
@@ -154,7 +154,8 @@ const Home = () => {
                 image={formatBase64Image(post.base64_image)}
                 description={post.description}
                 id={post.id}
-                showUser={true}
+                showUser={user?.username !== post.username}
+                username={post.username}
                 key={index}
               />
             ))
@@ -174,6 +175,7 @@ const Home = () => {
               description={post.description}
               id={post.id}
               showUser={true}
+              username={post.username}
               key={index}
             />
           ))

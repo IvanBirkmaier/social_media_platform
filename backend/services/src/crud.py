@@ -101,13 +101,14 @@ def get_account_id_by_username(db: Session, username: str):
 #     return posts
 
 def get_account_posts(db: Session, account_id: int):
-    posts = db.query(Post).filter(Post.account_id == account_id).all()
+    posts = db.query(Post, Account.username).join(Account).filter(Post.account_id == account_id).all()
     return [{
         "id": post.id,
         "account_id": post.account_id,
         "description": post.description,
-        "base64_image": convert_image_to_base64(post.image)
-    } for post in posts]
+        "base64_image": convert_image_to_base64(post.image),
+        "username": username
+    } for post, username in posts]
 
 
 # Auslesen aller Comments eines Posts
@@ -117,13 +118,14 @@ def get_post_comments(db: Session, post_id: int):
 
 # Auslesen von 9 zufälligen Post die nicht dem User gehören (Für ein Feed)
 def get_random_posts_not_by_account(db: Session, account_id: int):
-    posts = db.query(Post).filter(Post.account_id != account_id).order_by(func.random()).limit(9).all()
+    posts = db.query(Post, Account.username).join(Account, Post.account_id == Account.id).filter(Post.account_id != account_id).order_by(func.random()).limit(9).all()
     return [{
         "id": post.id,
         "account_id": post.account_id,
         "description": post.description,
-        "base64_image": convert_image_to_base64(post.image)
-    } for post in posts]
+        "base64_image": convert_image_to_base64(post.image),
+        "username": username
+    } for post, username  in posts]
 
 
 # Löscht einen Post
