@@ -1,7 +1,7 @@
-name: Run Tests on Pull Request to Develop
+name: Run Tests on Push to feature_actions_herbert
 
 on:
-  pull_request:
+  push:
     branches: [feature_actions_herbert]
 
 jobs:
