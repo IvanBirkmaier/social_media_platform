@@ -1,11 +1,13 @@
-name: Run Tests on Push to feature_actions_herbert
+name: Run Tests on PR Merge to Main
 
 on:
-  push:
-    branches: [feature_actions_herbert]
+  pull_request:
+    types: [closed]
+    branches: [main]
 
 jobs:
   test:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
 
     steps:
