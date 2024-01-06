@@ -20,8 +20,9 @@ import searchLogo from "assets/icons/search.svg";
 
 const fetchRandomPosts = async (accountId: number) => {
   try {
+    const backendUrl = import.meta.env.VITE_BACKEND_URL;
     const response = await fetch(
-      `http://localhost:8000/posts/random/?account_id=${accountId}`
+      `${backendUrl}/posts/random/?account_id=${accountId}`
     );
     if (!response.ok) {
       throw new Error("Network response was not ok");

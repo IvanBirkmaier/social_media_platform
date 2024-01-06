@@ -24,13 +24,14 @@ interface RegistrationInformationProps {
 const RegistrationInformation: React.FC<
   RegistrationInformationProps & { accountId: number }
 > = ({ userData, updateUserData, onSubmitSuccess, accountId }) => {
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
   const navigate = useNavigate(); // Änderung hier
   const handleSkip = () => {
     navigate("/"); // Weiterleitung zur /home-Route
   };
   const createProfile = async () => {
     try {
-      const response = await fetch("http://localhost:8000/profile/", {
+      const response = await fetch(`${backendUrl}/profile/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
