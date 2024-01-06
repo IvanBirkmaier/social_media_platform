@@ -2,6 +2,7 @@ import RegistrationSuccess from "../RegistrationSuccess/RegistrationSuccess";
 import { useState } from "react";
 import Registration from "../Registration/Registration";
 import RegistrationInformation from "../RegistrationInformation/RegistrationInformation";
+import { useAuth } from "../Auth/AuthContext";
 
 interface UserData {
   userEmail: string;
@@ -25,6 +26,7 @@ const RegistrationParent: React.FC = () => {
     street: "",
     phone: "",
   });
+  const { login } = useAuth();
 
   const goToNextStep = () => {
     setStep(step + 1);
@@ -46,6 +48,7 @@ const RegistrationParent: React.FC = () => {
 
   const handleCreateAccountSuccess = (accountId: number) => {
     setAccountId(accountId);
+    login({ id: accountId, username: userData.userName });
     goToNextStep();
   };
 

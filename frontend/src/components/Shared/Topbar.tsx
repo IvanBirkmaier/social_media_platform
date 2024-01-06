@@ -1,16 +1,17 @@
-//import React, { useEffect } from "react";
 import logo from "assets/befake-logo.svg";
-import logout from "assets/icons/logout.svg";
+import logout_svg from "assets/icons/logout.svg";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../ui/button";
+import { useAuth } from "../Auth/AuthContext";
 
 const Topbar = () => {
-  //   const { mutate: signOut, isSuccess } = useSignOutAccount();
   const navigate = useNavigate();
+  const { logout } = useAuth();
 
-  //   useEffect(() => {
-  //     if (isSuccess) navigate("/sign-in");
-  //   }, [isSuccess]);
+  const handleLogout = () => {
+    logout(); // Aufrufen der Logout-Funktion aus dem Authentifizierungskontext
+    navigate("/login"); // Weiterleitung zur Login-Seite
+  };
 
   return (
     <section className="topbar">
@@ -25,10 +26,10 @@ const Topbar = () => {
 
         <Button variant="ghost" className="shad-button_ghost">
           <img
-            src={logout}
+            src={logout_svg}
             alt="logout"
             className="h-10 w-auto"
-            onClick={() => navigate("/login")}
+            onClick={handleLogout}
           ></img>
         </Button>
       </div>

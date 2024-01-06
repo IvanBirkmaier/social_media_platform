@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "./Login.raw.scss";
 import Header from "../Header/Header";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../Auth/AuthContext";
 
 const LoginForm: React.FC<{ onLoginSuccess: () => void }> = ({
   onLoginSuccess,
@@ -11,6 +12,7 @@ const LoginForm: React.FC<{ onLoginSuccess: () => void }> = ({
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate(); // Hook um im Router zu navigieren
+  const { login } = useAuth();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -30,10 +32,10 @@ const LoginForm: React.FC<{ onLoginSuccess: () => void }> = ({
       });
 
       const data = await response.json();
-
       if (response.ok) {
         onLoginSuccess(); // Sie können hier auch eine Weiterleitung einfügen
-        console.log(response);
+        console.log(data);
+        login({ id: data.id, username: data.username });
         navigate("/"); // Weiterleitung zur Startseite nach dem Login
       } else {
         setErrorMessage(data.detail || "Anmeldung fehlgeschlagen.");

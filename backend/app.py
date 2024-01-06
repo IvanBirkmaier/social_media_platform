@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 import os
 from services.src.crud import (create_profile, create_account, check_account_login, create_post,
                                create_comment, get_account_posts, get_post_comments,
-                               get_random_posts_not_by_account, check_username_existence, check_email_existence)
+                               get_random_posts_not_by_account, check_username_existence, check_email_existence, get_account_id_by_username)
 
 load_dotenv() 
 FRONTEND_URL = os.environ.get("FRONTEND_URL") # Für die Connection zum Frontend (Sicherheitsmaßnahme)
@@ -80,6 +80,14 @@ def create_user_endpoint(user_create: AccountCreate, db: Session = Depends(get_d
         raise HTTPException(status_code=400, detail="Username already registered")
     return create_account(db, user_create.username, user_create.email, user_create.password)
 
+@app.get("/account-id/{username}")
+def get_account_id(username: str, db: Session = Depends(get_db)):
+    account_id = get_account_id_by_username(db, username)
+    if account_id is not None:
+        return {"account_id": account_id}
+    else:
+        return {"account_id": 0}
+
 # API-Endpunkt zum Erstellen eines Profils
 @app.post("/profile/", response_model=ProfileCreate, status_code=status.HTTP_201_CREATED)
 def create_profile_endpoint(profile_data: ProfileCreate, db: Session = Depends(get_db)):
@@ -104,7 +112,7 @@ def login(user_login: UserLogin, db: Session = Depends(get_db)):
     user = check_account_login(db, user_login.username, user_login.password)
     if user is None:
         raise HTTPException(status_code=400, detail="Falscher Benutzername oder Passwort")
-    return user.id
+    return {"id": user.id, "username": user.username}
 
 @app.post("/posts/", response_model=PostCreate, status_code=status.HTTP_201_CREATED)
 def create_post_endpoint(post_create: PostCreate, db: Session = Depends(get_db)):
@@ -114,9 +122,6 @@ def create_post_endpoint(post_create: PostCreate, db: Session = Depends(get_db))
 def create_comment_endpoint(comment_create: CommentCreate, db: Session = Depends(get_db)):
     return create_comment(db, comment_create.account_id, comment_create.post_id, comment_create.text)
 
-# @app.get("/account/{account_id}/posts/")
-# def get_posts_by_user(account_id: int, db: Session = Depends(get_db)):
-#     return get_account_posts(db, account_id)
 
 @app.get("/account/{account_id}/posts/")
 def get_posts_by_user(account_id: int, db: Session = Depends(get_db)):
@@ -127,10 +132,6 @@ def get_posts_by_user(account_id: int, db: Session = Depends(get_db)):
 @app.get("/posts/{post_id}/comments/")
 def get_comments_by_post(post_id: int, db: Session = Depends(get_db)):
     return get_post_comments(db, post_id)
-
-# @app.get("/posts/random/")
-# def get_random_posts(account_id: int, db: Session = Depends(get_db)):
-#     return get_random_posts_not_by_account(db, account_id)
 
 @app.get("/posts/random/")
 def get_random_posts(account_id: int, db: Session = Depends(get_db)):

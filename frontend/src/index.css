@@ -178,7 +178,7 @@ input:focus-visible {
   }
 
   .post_details-card {
-    @apply bg-dark-2 w-full max-w-5xl rounded-[30px] flex-col flex xl:flex-row border border-dark-4 xl:rounded-l-[24px];
+    @apply bg-dark-2 w-full max-w-7xl rounded-[30px] flex-col flex xl:flex-row border border-dark-4 xl:rounded-l-[24px];
   }
 
   .post_details-img {
@@ -263,8 +263,8 @@ input:focus-visible {
     @apply bg-dark-2 rounded-3xl border border-dark-4 p-5 lg:p-7 w-full max-w-screen-sm;
   }
 
-  .comments {
-    @apply bg-dark-4 rounded-lg;
+  .comment_input {
+    @apply h-6 bg-gray-500 border-dark-4 rounded-[5px] placeholder:text-gray-600 focus-visible:ring-0 focus-visible:ring-offset-0 ring-offset-0 !important;
   }
 
   .post-card_img {

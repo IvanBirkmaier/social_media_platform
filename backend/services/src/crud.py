@@ -84,6 +84,14 @@ def convert_image_to_base64(image_bytes):
         return base64.b64encode(image_bytes).decode('utf-8')
     return None
 
+# Funktion, um die Account-ID anhand des Benutzernamens zu finden
+def get_account_id_by_username(db: Session, username: str):
+    account = db.query(Account).filter(Account.username == username).first()
+    if account:
+        return account.id
+    else:
+        return None
+
 # CRUD-Methode zum Abrufen der Posts eines Benutzers
 # def get_account_posts(db: Session, account_id: int):
 #     posts = db.query(Post).filter(Post.account_id == account_id).all()
@@ -93,13 +101,14 @@ def convert_image_to_base64(image_bytes):
 #     return posts
 
 def get_account_posts(db: Session, account_id: int):
-    posts = db.query(Post).filter(Post.account_id == account_id).all()
+    posts = db.query(Post, Account.username).join(Account).filter(Post.account_id == account_id).all()
     return [{
         "id": post.id,
         "account_id": post.account_id,
         "description": post.description,
-        "base64_image": convert_image_to_base64(post.image)
-    } for post in posts]
+        "base64_image": convert_image_to_base64(post.image),
+        "username": username
+    } for post, username in posts]
 
 
 # Auslesen aller Comments eines Posts
@@ -107,32 +116,16 @@ def get_post_comments(db: Session, post_id: int):
     return db.query(Comment).filter(Comment.post_id == post_id).all()
 
 
-# Auslesen von 10 zufälligen Post die nicht dem User gehören (Für ein Feed)
-# def get_random_posts_not_by_account(db: Session, account_id: int):
-#     # posts = db.query(Post).filter(Post.account_id != account_id).order_by(func.random()).limit(10).all()
-#     # for post in posts:
-#     #     # Konvertieren Sie das Bild in Base64, bevor Sie das Objekt zurückgeben
-#     #     post.image = convert_image_to_base64(post.image)
-#     # return posts
-#     posts = db.query(Post).filter(Post.account_id != account_id).order_by(func.random()).limit(10).all()
-#     result = []
-#     for post in posts:
-#         post_data = {
-#             "image": convert_image_to_base64(post.image),
-#             "description": post.description,
-#             "account_id": post.account_id
-#         }
-#         result.append(post_data)
-#     return result
-
+# Auslesen von 9 zufälligen Post die nicht dem User gehören (Für ein Feed)
 def get_random_posts_not_by_account(db: Session, account_id: int):
-    posts = db.query(Post).filter(Post.account_id != account_id).order_by(func.random()).limit(10).all()
+    posts = db.query(Post, Account.username).join(Account, Post.account_id == Account.id).filter(Post.account_id != account_id).order_by(func.random()).limit(9).all()
     return [{
         "id": post.id,
         "account_id": post.account_id,
         "description": post.description,
-        "base64_image": convert_image_to_base64(post.image)
-    } for post in posts]
+        "base64_image": convert_image_to_base64(post.image),
+        "username": username
+    } for post, username  in posts]
 
 
 # Löscht einen Post
