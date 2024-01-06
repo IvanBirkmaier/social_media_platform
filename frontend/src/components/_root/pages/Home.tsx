@@ -6,9 +6,10 @@ import { useAuth } from "@/components/Auth/AuthContext";
 
 // Function to fetch random posts from FastAPI
 const fetchRandomPosts = async (accountId: number) => {
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
   try {
     const response = await fetch(
-      `http://localhost:8000/posts/random/?account_id=${accountId}`
+      `${backendUrl}/posts/random/?account_id=${accountId}`
     );
     if (!response.ok) {
       throw new Error("Network response was not ok");
@@ -45,7 +46,7 @@ const fetchAccountIdByUsername = async (username: string) => {
       throw new Error("Network response was not ok");
     }
     const data = await response.json();
-    return data.account_id; // Gibt die Account-ID zurück
+    return data.account_id;
   } catch (error) {
     console.error("There has been a problem with your fetch operation:", error);
   }

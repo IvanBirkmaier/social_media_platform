@@ -263,8 +263,8 @@ input:focus-visible {
     @apply bg-dark-2 rounded-3xl border border-dark-4 p-5 lg:p-7 w-full max-w-screen-sm;
   }
 
-  .comments {
-    @apply bg-dark-4 rounded-lg;
+  .comment_input {
+    @apply h-6 bg-gray-500 border-dark-4 rounded-[5px] placeholder:text-gray-600 focus-visible:ring-0 focus-visible:ring-offset-0 ring-offset-0 !important;
   }
 
   .post-card_img {

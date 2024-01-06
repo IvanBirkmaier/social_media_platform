@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import abstractUser from "assets/icons/abstractUser.svg";
+import { useAuth } from "../Auth/AuthContext";
 
 interface GridPostListProps {
   image: string; // Base64 encoded image string
@@ -18,17 +19,18 @@ const GridPostList = ({
   description,
   username,
 }: GridPostListProps) => {
+  const { user } = useAuth();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
+  const [comment, setComment] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleImageClick = (image: string) => {
     console.log(id);
     setSelectedImage(image);
   };
 
-  // const handleClose = () => {
-  //   setSelectedImage(null);
-  // };
+  // close overlay if click outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -47,6 +49,41 @@ const GridPostList = ({
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [selectedImage]);
+
+  // Comment
+  const handleCommentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setComment(e.target.value);
+  };
+
+  const submitComment = async () => {
+    if (comment.trim() === "") return; // Prüfen, ob der Kommentar leer ist
+
+    setIsSubmitting(true);
+    try {
+      const response = await fetch("http://localhost:8000/comments/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          // Fügen Sie weitere Header hinzu, falls erforderlich (z.B. für die Authentifizierung)
+        },
+        body: JSON.stringify({
+          account_id: user?.id,
+          post_id: id,
+          text: comment,
+        }),
+      });
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+        setComment(""); // Kommentarfeld zurücksetzen
+      } else {
+        throw new Error("Fehler beim Senden des Kommentars");
+      }
+    } catch (error) {
+      console.error("Fehler beim Senden des Kommentars", error);
+    }
+    setIsSubmitting(false);
+  };
 
   // Ensure the base64 string is formatted for HTML image source
   const formattedImage = image.startsWith("data:image/jpeg;base64,")
@@ -105,18 +142,24 @@ const GridPostList = ({
               >
                 {description}
               </h2>
-              {/* <div className="post_details-info"> */}
-              <hr className="parting_line" />
-              <input type="text" />
-            </div>
 
-            {/* Comment section can be implemented here */}
-            {/* </div> */}
+              <hr className="parting_line" />
+              <input
+                className="comment_input"
+                type="text"
+                placeholder="Kommentiere"
+                value={comment}
+                onChange={handleCommentChange}
+              />
+              <button
+                className="submit_comment_button text-lime-300"
+                onClick={submitComment}
+                disabled={isSubmitting}
+              >
+                Posten
+              </button>
+            </div>
           </div>
-          {/* <button onClick={handleClose} className="text-red">
-            Close
-          </button> */}
-          {/* </div> */}
         </div>
       )}
     </ul>

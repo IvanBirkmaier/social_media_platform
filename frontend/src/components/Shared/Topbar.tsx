@@ -1,4 +1,3 @@
-import React, { useEffect } from "react";
 import logo from "assets/befake-logo.svg";
 import logout_svg from "assets/icons/logout.svg";
 import { Link, useNavigate } from "react-router-dom";
