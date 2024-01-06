@@ -1,4 +1,4 @@
-import RegistrationSuccess from "components/RegistrationSuccess/RegistrationSuccess";
+import RegistrationSuccess from "../RegistrationSuccess/RegistrationSuccess";
 import { useState } from "react";
 import Registration from "../Registration/Registration";
 import RegistrationInformation from "../RegistrationInformation/RegistrationInformation";

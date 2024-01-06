@@ -1,27 +1,30 @@
 import { Button } from "@/components/ui/button";
-import React, { useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import { FileWithPath, useDropzone } from "react-dropzone";
-import { useNavigate } from "react-router-dom";
+//import { useNavigate } from "react-router-dom";
 
 type AddPostProps = {
-  fieldChange: (files: File[]) => void;
-  mediaUrl: string;
+  fieldChange?: (files: File[]) => void;
+  mediaUrl?: string;
 };
 
-const AddPost = ({ fieldChange = () => {}, mediaUrl }: AddPostProps) => {
-  const navigate = useNavigate();
+const AddPost = ({ fieldChange, mediaUrl }: AddPostProps) => {
+  //const navigate = useNavigate();
   const convertFileToUrl = (file: File) => URL.createObjectURL(file);
 
   const [file, setFile] = useState<File[]>([]);
-  const [fileUrl, setFileUrl] = useState<string>(mediaUrl);
+  const [fileUrl, setFileUrl] = useState<string>(mediaUrl || '');
   const [description, setDescription] = useState("");
+  
   const onDrop = useCallback(
     (acceptedFiles: FileWithPath[]) => {
       setFile(acceptedFiles);
-      fieldChange(acceptedFiles);
+      if (fieldChange) {
+        fieldChange(acceptedFiles);
+      }
       setFileUrl(convertFileToUrl(acceptedFiles[0]));
     },
-    [file]
+    [file, fieldChange]
   );
 
   const { getRootProps, getInputProps } = useDropzone({
@@ -32,7 +35,7 @@ const AddPost = ({ fieldChange = () => {}, mediaUrl }: AddPostProps) => {
   });
 
   // Hilfsfunktion, um Dateien in Base64 zu konvertieren
-  const toBase64 = (file) =>
+  const toBase64 = (file: File) =>
     new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.readAsDataURL(file);

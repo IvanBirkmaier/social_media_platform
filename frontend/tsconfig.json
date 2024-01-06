@@ -7,13 +7,18 @@
     "module": "ESNext",
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
+
+    /* Shadcn */
+    "baseUrl": ".",
     "paths": {
-      "components/*": ["components/*"],
-      "assets/*": ["assets/*"],
-      "constants/*": ["constants/*"],
-      "views/*": ["views/*"],
-      "utils/*": ["utils/*"]
+      "@/*": ["src/*"],
+      "components/*": ["src/components/*"],
+      "assets/*": ["src/assets/*"],
+      "constants/*": ["src/constants/*"],
+      "views/*": ["src/views/*"],
+      "utils/*": ["src/utils/*"]
     },
+    
 
     /* Bundler mode */
     "moduleResolution": "node",
@@ -30,11 +35,6 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
 
-    /* Shadcn */
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"]
-    }
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist"],

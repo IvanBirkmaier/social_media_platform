@@ -1,6 +1,6 @@
 import React from "react";
 import "./RegistrationInformation.raw.scss";
-import Header from "components/Header/Header";
+import Header from "../Header/Header";
 import { useNavigate } from "react-router-dom"; // Änderung hier
 
 interface UserData {
