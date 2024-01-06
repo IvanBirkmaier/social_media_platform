@@ -23,6 +23,7 @@ interface RegistrationProps {
 const Registration: React.FC<
   RegistrationProps & { onCreateAccountSuccess: (accountId: number) => void }
 > = ({ onContinue, userData, updateUserData, onCreateAccountSuccess }) => {
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
@@ -43,7 +44,10 @@ const Registration: React.FC<
 
   const checkUsernameAvailability = useCallback(
     debounce((username: string) => {
-      fetch(`http://localhost:8000/check-username/${username}`)
+      
+      
+      
+      fetch(`${backendUrl}/check-username/${username}`)
         .then((res) => res.json())
         .then((data) => {
           setUsernameError(
@@ -56,7 +60,7 @@ const Registration: React.FC<
 
   const checkEmailAvailability = useCallback(
     debounce((email: string) => {
-      fetch(`http://localhost:8000/check-email/${email}`)
+      fetch(`${backendUrl}/check-email/${email}`)
         .then((res) => res.json())
         .then((data) => {
           setEmailError(
@@ -67,7 +71,7 @@ const Registration: React.FC<
     []
   );
   const createAccount = async (userData: UserData, password: string) => {
-    const response = await fetch("http://localhost:8000/account/", {
+    const response = await fetch(`${backendUrl}/account/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

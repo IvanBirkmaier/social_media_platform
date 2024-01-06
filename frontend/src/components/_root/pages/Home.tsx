@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Loader from "@/components/Shared/Loader";
 import GridPostList from "@/components/Shared/GridPostList";
 import searchLogo from "assets/icons/search.svg";
@@ -20,8 +20,9 @@ import searchLogo from "assets/icons/search.svg";
 
 const fetchRandomPosts = async (accountId: number) => {
   try {
+    const backendUrl = import.meta.env.VITE_BACKEND_URL;
     const response = await fetch(
-      `http://localhost:8000/posts/random/?account_id=${accountId}`
+      `${backendUrl}/posts/random/?account_id=${accountId}`
     );
     if (!response.ok) {
       throw new Error("Network response was not ok");
@@ -34,6 +35,7 @@ const fetchRandomPosts = async (accountId: number) => {
   }
 };
 
+/*
 const fetchAccountPosts = async (accountId: number) => {
   try {
     const response = await fetch(
@@ -49,19 +51,20 @@ const fetchAccountPosts = async (accountId: number) => {
   }
 };
 
-// const fetchAccountPosts = async (accountId: number) => {
-//   try {
-//     const response = await fetch(
-//       `http://localhost:8000/account/${accountId}/posts`
-//     );
-//     if (!response.ok) {
-//       throw new Error("Network response was not ok");
-//     }
-//     return await response.json();
-//   } catch (error) {
-//     console.error("There has been a problem with your fetch operation:", error);
-//   }
-// };
+const fetchAccountPosts = async (accountId: number) => {
+  try {
+    const response = await fetch(
+      `http://localhost:8000/account/${accountId}/posts`
+    );
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+    return await response.json();
+  } catch (error) {
+    console.error("There has been a problem with your fetch operation:", error);
+  }
+};
+*/
 
 const Home = () => {
   const [posts, setPosts] = useState([]);

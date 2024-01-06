@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import abstractUser from "assets/icons/abstractUser.svg";
 
 interface GridPostListProps {
