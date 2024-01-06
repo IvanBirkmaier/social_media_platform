@@ -7,6 +7,7 @@ import { useAuth } from "../Auth/AuthContext";
 const LoginForm: React.FC<{ onLoginSuccess: () => void }> = ({
   onLoginSuccess,
 }) => {
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -22,7 +23,7 @@ const LoginForm: React.FC<{ onLoginSuccess: () => void }> = ({
     }
 
     try {
-      const response = await fetch("http://localhost:8000/login/", {
+      const response = await fetch(`${backendUrl}/login/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

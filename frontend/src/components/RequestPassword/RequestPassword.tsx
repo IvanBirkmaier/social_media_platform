@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Header from "components/Header/Header";
+import Header from "../Header/Header";
 import { Link } from "react-router-dom";
 
 const RequestPassword: React.FC = () => {
