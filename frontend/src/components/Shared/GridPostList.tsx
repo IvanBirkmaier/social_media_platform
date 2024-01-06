@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import abstractUser from "assets/icons/abstractUser.svg";
 
 interface GridPostListProps {
@@ -8,7 +8,7 @@ interface GridPostListProps {
   showUser?: boolean;
 }
 
-const IMAGE_RESOLUTION = { width: 800, height: 450 }; // Beispielauflösung
+const IMAGE_RESOLUTION = { width: 1000, height: 562 }; // Beispielauflösung
 
 const GridPostList = ({
   image,
@@ -17,15 +17,34 @@ const GridPostList = ({
   description,
 }: GridPostListProps) => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const overlayRef = useRef<HTMLDivElement>(null);
 
   const handleImageClick = (image: string) => {
     console.log(id);
     setSelectedImage(image);
   };
 
-  const handleClose = () => {
-    setSelectedImage(null);
-  };
+  // const handleClose = () => {
+  //   setSelectedImage(null);
+  // };
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        overlayRef.current &&
+        !overlayRef.current.contains(event.target as Node)
+      ) {
+        setSelectedImage(null);
+      }
+    };
+
+    if (selectedImage) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [selectedImage]);
 
   // Ensure the base64 string is formatted for HTML image source
   const formattedImage = image.startsWith("data:image/jpeg;base64,")
@@ -61,7 +80,7 @@ const GridPostList = ({
       {selectedImage && (
         <div className="overlay">
           {/* <div className="overlay-inner"> */}
-          <div className="post_details-card">
+          <div ref={overlayRef} className="post_details-card">
             <img
               src={selectedImage}
               className="post_details-img" // h-full w-full object-cover object-center Verwende object-fit und object-position
@@ -72,7 +91,17 @@ const GridPostList = ({
               alt="Selected"
             />
             <div className="post_details-info">
-              <h3 className="text-white">{description}</h3>
+              <h3
+                className="text-white"
+                style={{
+                  wordWrap: "break-word",
+                  overflowWrap: "break-word",
+                  wordBreak: "break-all",
+                  whiteSpace: "normal",
+                }}
+              >
+                {description}
+              </h3>
               {/* <div className="post_details-info"> */}
               <hr className="parting_line" />
               <input type="text" />
@@ -81,9 +110,9 @@ const GridPostList = ({
             {/* Comment section can be implemented here */}
             {/* </div> */}
           </div>
-          <button onClick={handleClose} className="text-red">
+          {/* <button onClick={handleClose} className="text-red">
             Close
-          </button>
+          </button> */}
           {/* </div> */}
         </div>
       )}

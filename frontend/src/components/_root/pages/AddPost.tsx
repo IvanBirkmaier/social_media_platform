@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import React, { useCallback, useState } from "react";
 import { FileWithPath, useDropzone } from "react-dropzone";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/components/Auth/AuthContext";
 
 type AddPostProps = {
   fieldChange: (files: File[]) => void;
@@ -10,6 +11,7 @@ type AddPostProps = {
 
 const AddPost = ({ fieldChange = () => {}, mediaUrl }: AddPostProps) => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const convertFileToUrl = (file: File) => URL.createObjectURL(file);
 
   const [file, setFile] = useState<File[]>([]);
@@ -45,7 +47,7 @@ const AddPost = ({ fieldChange = () => {}, mediaUrl }: AddPostProps) => {
       try {
         const base64Image = await toBase64(file[0]);
         const postPayload = {
-          account_id: 1, // Dies sollte die tatsächliche Account-ID sein
+          account_id: user?.id || 0,
           description: description,
           base64_image: base64Image,
         };

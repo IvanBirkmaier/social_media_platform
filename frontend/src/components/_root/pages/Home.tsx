@@ -2,22 +2,9 @@ import React, { useState, useEffect } from "react";
 import Loader from "@/components/Shared/Loader";
 import GridPostList from "@/components/Shared/GridPostList";
 import searchLogo from "assets/icons/search.svg";
+import { useAuth } from "@/components/Auth/AuthContext";
 
 // Function to fetch random posts from FastAPI
-// const fetchRandomPosts = async (accountId: number) => {
-//   try {
-//     const response = await fetch(
-//       `http://localhost:8000/posts/random/?account_id=${accountId}`
-//     );
-//     if (!response.ok) {
-//       throw new Error("Network response was not ok");
-//     }
-//     return await response.json();
-//   } catch (error) {
-//     console.error("There has been a problem with your fetch operation:", error);
-//   }
-// };
-
 const fetchRandomPosts = async (accountId: number) => {
   try {
     const response = await fetch(
@@ -49,28 +36,32 @@ const fetchAccountPosts = async (accountId: number) => {
   }
 };
 
-// const fetchAccountPosts = async (accountId: number) => {
-//   try {
-//     const response = await fetch(
-//       `http://localhost:8000/account/${accountId}/posts`
-//     );
-//     if (!response.ok) {
-//       throw new Error("Network response was not ok");
-//     }
-//     return await response.json();
-//   } catch (error) {
-//     console.error("There has been a problem with your fetch operation:", error);
-//   }
-// };
+const fetchAccountIdByUsername = async (username: string) => {
+  try {
+    const response = await fetch(
+      `http://localhost:8000/account-id/${username}`
+    );
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+    const data = await response.json();
+    return data.account_id; // Gibt die Account-ID zurück
+  } catch (error) {
+    console.error("There has been a problem with your fetch operation:", error);
+  }
+};
 
 const Home = () => {
+  const { user } = useAuth();
   const [posts, setPosts] = useState([]);
+  const [searchedPosts, setSearchedPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchValue, setSearchValue] = useState("");
+  const [searched_accountId, setAccountId] = useState(null);
 
   useEffect(() => {
     const loadPosts = async () => {
-      const accountId = 2; // Replace with the actual account ID as needed
+      const accountId = user?.id || 0;
       const fetchedPosts = await fetchRandomPosts(accountId);
       if (fetchedPosts) {
         setPosts(fetchedPosts);
@@ -80,6 +71,36 @@ const Home = () => {
 
     loadPosts();
   }, []);
+
+  useEffect(() => {
+    setSearchedPosts([]);
+
+    if (searchValue) {
+      fetchAccountIdByUsername(searchValue)
+        .then((id) => {
+          setAccountId(id);
+        })
+        .catch((error) => {
+          console.error("Error fetching account ID:", error);
+          setAccountId(null);
+        });
+    }
+  }, [searchValue]);
+
+  useEffect(() => {
+    const loadSearchedPosts = async () => {
+      if (searched_accountId !== null && searched_accountId !== 0) {
+        setIsLoading(true);
+        const posts = await fetchAccountPosts(searched_accountId);
+        if (posts) {
+          setSearchedPosts(posts);
+        }
+        setIsLoading(false);
+      }
+    };
+
+    loadSearchedPosts();
+  }, [searched_accountId]);
 
   const shouldShowSearchResults = searchValue !== "";
 
@@ -127,15 +148,29 @@ const Home = () => {
         {isLoading ? (
           <Loader />
         ) : shouldShowSearchResults ? (
-          <p>Show Search Results</p>
+          searchedPosts.length > 0 ? (
+            searchedPosts.map((post, index) => (
+              <GridPostList
+                image={formatBase64Image(post.base64_image)}
+                description={post.description}
+                id={post.id}
+                showUser={true}
+                key={index}
+              />
+            ))
+          ) : (
+            <p className="text-light-4 mt-10 text-center w-full">
+              No posts found
+            </p>
+          )
         ) : posts.length === 0 ? (
           <p className="text-light-4 mt-10 text-center w-full">
             No posts found
           </p>
         ) : (
-          posts.map((post: any, index) => (
+          posts.map((post, index) => (
             <GridPostList
-              image={formatBase64Image(post.base64_image)} // Stellt sicher, dass das Präfix korrekt ist// Assuming the image is in JPEG format
+              image={formatBase64Image(post.base64_image)}
               description={post.description}
               id={post.id}
               showUser={true}
