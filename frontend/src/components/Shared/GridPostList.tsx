@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import abstractUser from "assets/icons/abstractUser.svg";
 import { useAuth } from "../Auth/AuthContext";
+import { backendUrl } from "@/utils/utils";
+import CommentList from "./CommentList";
 
 interface GridPostListProps {
   image: string; // Base64 encoded image string
@@ -24,6 +26,7 @@ const GridPostList = ({
   const overlayRef = useRef<HTMLDivElement>(null);
   const [comment, setComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [commentsUpdateTrigger, setCommentsUpdateTrigger] = useState(0); // Neuer Zustand
 
   const handleImageClick = (image: string) => {
     console.log(id);
@@ -60,7 +63,7 @@ const GridPostList = ({
 
     setIsSubmitting(true);
     try {
-      const response = await fetch("http://localhost:8000/comments/", {
+      const response = await fetch(`${backendUrl}/comments/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -76,6 +79,7 @@ const GridPostList = ({
         const data = await response.json();
         console.log(data);
         setComment(""); // Kommentarfeld zurücksetzen
+        setCommentsUpdateTrigger((prev) => prev + 1); // Aktualisieren des Triggers
       } else {
         throw new Error("Fehler beim Senden des Kommentars");
       }
@@ -158,6 +162,8 @@ const GridPostList = ({
               >
                 Posten
               </button>
+              {/* Kommentarliste anzeigen */}
+              <CommentList postId={id} updateTrigger={commentsUpdateTrigger} />
             </div>
           </div>
         </div>

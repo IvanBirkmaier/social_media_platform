@@ -112,8 +112,16 @@ def get_account_posts(db: Session, account_id: int):
 
 
 # Auslesen aller Comments eines Posts
+# def get_post_comments(db: Session, post_id: int):
+#     return db.query(Comment).filter(Comment.post_id == post_id).all()
 def get_post_comments(db: Session, post_id: int):
-    return db.query(Comment).filter(Comment.post_id == post_id).all()
+    return (
+        db.query(Comment, Account.username)
+        .join(Account, Comment.account_id == Account.id)
+        .filter(Comment.post_id == post_id)
+        .order_by(Comment.created_at.desc())  # Sortiert nach Erstellungsdatum, neueste zuerst
+        .all()
+    )
 
 
 # Auslesen von 9 zufälligen Post die nicht dem User gehören (Für ein Feed)

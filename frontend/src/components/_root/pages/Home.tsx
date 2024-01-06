@@ -3,10 +3,17 @@ import Loader from "@/components/Shared/Loader";
 import GridPostList from "@/components/Shared/GridPostList";
 import searchLogo from "assets/icons/search.svg";
 import { useAuth } from "@/components/Auth/AuthContext";
+import { backendUrl } from "@/utils/utils";
+
+interface Post {
+  id: number;
+  description: string;
+  username: string;
+  base64_image: string;
+}
 
 // Function to fetch random posts from FastAPI
 const fetchRandomPosts = async (accountId: number) => {
-  const backendUrl = import.meta.env.VITE_BACKEND_URL;
   try {
     const response = await fetch(
       `${backendUrl}/posts/random/?account_id=${accountId}`
@@ -24,9 +31,7 @@ const fetchRandomPosts = async (accountId: number) => {
 
 const fetchAccountPosts = async (accountId: number) => {
   try {
-    const response = await fetch(
-      `http://localhost:8000/account/${accountId}/posts`
-    );
+    const response = await fetch(`${backendUrl}/account/${accountId}/posts`);
     if (!response.ok) {
       throw new Error("Network response was not ok");
     }
@@ -39,9 +44,7 @@ const fetchAccountPosts = async (accountId: number) => {
 
 const fetchAccountIdByUsername = async (username: string) => {
   try {
-    const response = await fetch(
-      `http://localhost:8000/account-id/${username}`
-    );
+    const response = await fetch(`${backendUrl}/account-id/${username}`);
     if (!response.ok) {
       throw new Error("Network response was not ok");
     }
@@ -54,8 +57,8 @@ const fetchAccountIdByUsername = async (username: string) => {
 
 const Home = () => {
   const { user } = useAuth();
-  const [posts, setPosts] = useState([]);
-  const [searchedPosts, setSearchedPosts] = useState([]);
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [searchedPosts, setSearchedPosts] = useState<Post[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchValue, setSearchValue] = useState("");
   const [searched_accountId, setAccountId] = useState(null);
