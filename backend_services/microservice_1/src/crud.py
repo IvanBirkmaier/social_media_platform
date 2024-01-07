@@ -143,8 +143,6 @@ def get_random_posts_not_by_account(db: Session, account_id: int):
         "username": username
     } for post, username  in posts]
 
-
-
 # Löscht einen Post
 def delete_post(db: Session, post_id: int):
     # Suche den Post in der Datenbank über seine ID
