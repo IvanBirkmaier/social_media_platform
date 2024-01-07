@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 from .model import Account, Profile, Post, Comment
-from .producer import kafka_send_post_id
+from .producer import kafka_send_post_id, kafka_send_comment_id
 import bcrypt
 import base64
 
@@ -80,6 +80,9 @@ def create_comment(db: Session, account_id: int, post_id: int, text: str):
     db.add(db_comment)
     db.commit()
     db.refresh(db_comment)
+    
+    # Senden der Kommentar-ID an Kafka
+    kafka_send_comment_id(db_comment.id)
     return db_comment
 
 # Hilfsfunktion, um Bytes in einen Base64-String zu konvertieren

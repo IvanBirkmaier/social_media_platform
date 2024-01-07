@@ -6,8 +6,9 @@ from dotenv import load_dotenv
 import os
 
 load_dotenv() 
-# DATABASE_URL = os.environ.get("DATABASE_URL")
-DATABASE_URL = "postgresql://user:password@db:5432/meine_db"
+#DATABASE_URL = os.environ.get("DATABASE_URL")
+DATABASE_URL = os.getenv('DATABASE_URL', 'postgresql://user:password@db:5432/meine_db')
+
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
@@ -61,4 +62,5 @@ class Comment(Base):
     account_id = Column(Integer, ForeignKey('accounts.id'), nullable=False)
     post_id = Column(Integer, ForeignKey('posts.id'), nullable=False)
     text = Column(Text)
+    classifier = Column(Text)
     created_at = Column(DateTime, default=datetime.utcnow)

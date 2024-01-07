@@ -1,18 +1,28 @@
+import logging
 from .model import Post
 from .optimizer import compress_image_bytes
 from sqlalchemy.orm import Session
 
-# Funktion, um ein Bild nach ID zu optimieren und in der Datenbank zu überschreiben
+# Konfigurieren des Loggings
+logging.basicConfig(level=logging.INFO)
+
 def optimize_and_update_image(db: Session, post_id: int):
     try:
-        # Bild nach ID auslesen
         post = db.query(Post).filter(Post.id == post_id).first()
-        if post and post.image:
-            # Bild optimieren
-            optimized_image_bytes = compress_image_bytes(post.image)
+        if not post:
+            logging.warning(f"Post mit ID {post_id} nicht gefunden.")
+            return False
 
-            # Optimiertes Bild in der Datenbank überschreiben
-            post.image = optimized_image_bytes
-            db.commit()
+        if not post.image:
+            logging.info(f"Kein Bild zum Optimieren für Post ID {post_id} vorhanden.")
+            return True
+
+        optimized_image_bytes = compress_image_bytes(post.image)
+        post.image = optimized_image_bytes
+        db.commit()
+        logging.info(f"Bild für Post ID {post_id} erfolgreich optimiert.")
+        return True
+
     except Exception as e:
-        print(f"Fehler bei der Bildoptimierung: {e}")
+        logging.error(f"Fehler bei der Bildoptimierung für Post ID {post_id}: {e}", exc_info=True)
+        return False
