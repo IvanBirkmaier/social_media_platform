@@ -30,6 +30,15 @@
     6.6 docker compose up -d um die docker compose zu starten
     6.7 docker-compose down -v um volume zu löscht 
 
+
+Test Bildptimierung:
+$PostId = 123 # Ersetzen Sie 123 mit der tatsächlichen Post-ID
+$Url = "http://localhost:8001/optimize/$PostId" # Ersetzen Sie localhost und den Port mit Ihrer tatsächlichen URL und Port
+curl -X POST $Url
+
+
+
+
 Anlegen benutzer:
 $Url = "http://localhost:8000/users/"
  $Body = @{

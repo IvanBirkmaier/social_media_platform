@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 from .model import Account, Profile, Post, Comment
+from .producer import kafka_send_post_id
 import bcrypt
 import base64
 
@@ -63,12 +64,15 @@ def create_post(db: Session, account_id: int, description: str, base64_image: st
     db.add(db_post)
     db.commit()
     db.refresh(db_post)
-    
     # Konvertieren Sie das Bild in Base64, bevor Sie das Objekt zurückgeben
     # db_post.image = convert_bytes_to_base64(db_post.image)
     db_post.base64_image = base64_image
 
+    # hinzufügen zu kafka
+    kafka_send_post_id(db_post.id)
+    
     return db_post
+
 
 # Erstellen eines Kommentars
 def create_comment(db: Session, account_id: int, post_id: int, text: str):
@@ -140,11 +144,6 @@ def get_random_posts_not_by_account(db: Session, account_id: int):
     } for post, username  in posts]
 
 
-
-
-# Auslesen aller Comments eines Posts
-def get_post_comments(db: Session, post_id: int):
-    return db.query(Comment).filter(Comment.post_id == post_id).all()
 
 # Löscht einen Post
 def delete_post(db: Session, post_id: int):

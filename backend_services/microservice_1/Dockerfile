@@ -9,6 +9,8 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 ENV DATABASE_URL=postgresql://user:password@host.docker.internal:5432/meine_db
 ENV FRONTEND_URL=http://localhost:3000
+ENV KAFKA_BOOTSTRAP_SERVERS=localhost:9092
+ENV KAFKA_TOPIC=post_queue
 
 
 # Installieren Sie die Abhängigkeiten
