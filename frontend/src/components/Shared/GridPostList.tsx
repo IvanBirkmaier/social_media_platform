@@ -3,6 +3,7 @@ import abstractUser from "assets/icons/abstractUser.svg";
 import { useAuth } from "../Auth/AuthContext";
 import { backendUrl } from "@/utils/utils";
 import CommentList from "./CommentList";
+import post_svg from "assets/icons/arrow_right.svg";
 
 interface GridPostListProps {
   image: string; // Base64 encoded image string
@@ -126,11 +127,14 @@ const GridPostList = ({
           <div ref={overlayRef} className="post_details-card">
             <img
               src={selectedImage}
+              loading="lazy"
+              role="presentation"
               className="post_details-img" // h-full w-full object-cover object-center Verwende object-fit und object-position
               style={{
                 width: IMAGE_RESOLUTION.width,
                 height: IMAGE_RESOLUTION.height,
               }} // Setze die Auflösung für alle Bilder
+              decoding="async"
               alt="Selected"
             />
             <div className="post_details-info">
@@ -148,20 +152,34 @@ const GridPostList = ({
               </h2>
 
               <hr className="parting_line" />
-              <input
-                className="comment_input"
-                type="text"
-                placeholder="Kommentiere"
-                value={comment}
-                onChange={handleCommentChange}
-              />
-              <button
-                className="submit_comment_button text-lime-300"
-                onClick={submitComment}
-                disabled={isSubmitting}
-              >
-                Posten
-              </button>
+
+              <div className="comment_input_container">
+                <input
+                  className="comment_input"
+                  type="text"
+                  placeholder="Kommentiere"
+                  value={comment}
+                  onChange={handleCommentChange}
+                />
+                {/* <button
+                  className="submit_comment_button text-lime-300"
+                  onClick={submitComment}
+                  disabled={isSubmitting}
+                >
+                  Posten
+                </button> */}
+                <img
+                  src={post_svg} // Pfade entsprechend anpassen
+                  alt="Posten"
+                  onClick={isSubmitting ? () => {} : submitComment}
+                  style={{
+                    cursor: isSubmitting ? "not-allowed" : "pointer", // Zeige Handzeiger bei Hover
+                    width: "29px",
+                    height: "29px",
+                  }}
+                />
+              </div>
+
               <CommentList postId={id} updateTrigger={commentsUpdateTrigger} />
             </div>
           </div>

@@ -319,8 +319,14 @@ input:focus-visible {
     margin: 8px;  Optionaler Abstand 
   } */
 
+  .comment_input_container {
+    display: flex; /* Flex-Container verwenden */
+    align-items: center; /* Vertikal zentrieren */
+    gap: 8px; /* Abstand zwischen Input und Button */
+  }
+
   .comment-list-container {
-    @apply w-full h-60 overflow-auto;
+    @apply w-full h-[21.5rem] overflow-auto;
   }
 
   .comment-list-container::-webkit-scrollbar {
@@ -329,6 +335,7 @@ input:focus-visible {
 
   .comment {
     /* Stil für jeden einzelnen Kommentar hier festlegen */
+    @apply mb-2;
   }
 
   .image-container {

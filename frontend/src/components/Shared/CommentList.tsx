@@ -40,7 +40,9 @@ const CommentList: React.FC<CommentListProps> = ({ postId, updateTrigger }) => {
       {comments.map((comment) => (
         <div key={comment.comment_id} className="comment">
           <div>
-            <p className="text-red">{comment.username}</p>
+            <p className="text-red" style={{ fontSize: "80%" }}>
+              {comment.username}
+            </p>
             <p className="text-white">{comment.text}</p>
           </div>
         </div>
