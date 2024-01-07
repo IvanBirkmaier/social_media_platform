@@ -72,6 +72,13 @@ def test_read_profile():
     mock_db = MagicMock()
     mock_profile = MagicMock()
     
+    mock_profile.vorname = "Torben"
+    mock_profile.nachname = "Testmann"
+    mock_profile.city = "Teststadt"
+    mock_profile.plz = "0815"
+    mock_profile.street = "Testerstraße 1"
+    mock_profile.phone_number = "0123456" 
+    
     mock_db.add = MagicMock()
     mock_db.commit = MagicMock()
     mock_db.refresh = MagicMock(return_value=mock_profile)
@@ -90,37 +97,56 @@ def test_read_profile():
     
 from services.src.crud import check_account_login
 
-# def check_account_login(db: Session, username: str, password: str):
-def test_check_account_login():
+def test_check_account_login_valid_credentials():
+    # Mocking the database session
     mock_db = MagicMock()
-    mock_account = MagicMock()
 
-    # Annahme, dass der Account erstellt wurde
-    mock_db.add = MagicMock()
-    mock_db.commit = MagicMock()
-    mock_db.refresh = MagicMock(return_value=mock_account)
+    # Creating a sample account with hashed password
+    username = "test_user"
+    password = "test_password"
+    hashed_password = hash_password(password)
+    mock_account = Account(username=username, password_hash=hashed_password)
 
-    account = create_account(mock_db, "test_user", "test@example.com", "test_password")
-    
+    # Mocking the database query result
     mock_db.query().filter().first = MagicMock(return_value=mock_account)
-    db_account = check_account_login(mock_db, "test_user", "test_password")
-    assert db_account == account
-    assert db_account != None
 
-def test_check_account_login_failed():
-    mock_db = MagicMock()
-    mock_account = MagicMock()
+    # Calling the function with valid credentials
+    result = check_account_login(mock_db, username, password)
 
-    # Annahme, dass der Account erstellt wurde
-    mock_db.add = MagicMock()
-    mock_db.commit = MagicMock()
-    mock_db.refresh = MagicMock(return_value=mock_account)
-
-    account = create_account(mock_db, "test_user", "test@example.com", "test_password")
+    # Assertions
+    assert result == mock_account
     
+def test_check_account_login_invalid_credentials():
+    # Mocking the database session
+    mock_db = MagicMock()
+
+    # Creating a sample account with hashed password
+    username = "test_user"
+    password = "test_password"
+    hashed_password = hash_password(password)
+    mock_account = Account(username=username, password_hash=hashed_password)
+
+    # Mocking the database query result (no account found)
     mock_db.query().filter().first = MagicMock(return_value=None)
-    db_account = check_account_login(mock_db, "test_user", "password")
-    assert db_account == None
+
+    # Calling the function with invalid credentials
+    result = check_account_login(mock_db, username, "wrong_password")
+
+    # Assertions
+    assert result is None
+    
+def test_check_account_login_no_account():
+    # Mocking the database session
+    mock_db = MagicMock()
+
+    # Mocking the database query result (no account found)
+    mock_db.query().filter().first = MagicMock(return_value=None)
+
+    # Calling the function with non-existent username
+    result = check_account_login(mock_db, "nonexistent_user", "password")
+
+    # Assertions
+    assert result is None
     
 from services.src.crud import create_post
 
@@ -163,22 +189,155 @@ def test_create_comment():
     mock_db.refresh.assert_called_once()
     assert isinstance(comment, Comment)
     
-from services.src.crud import get_account_posts
+from services.src.crud import get_account_posts, convert_image_to_base64
 from typing import List
 
-def test_get_account_posts():
+def test_get_account_posts_with_posts():
+    # Mocking the database session
     mock_db = MagicMock()
-    mock_post = MagicMock()
+
+    # Creating sample posts
+    posts_data = [
+        {"id": 1, "account_id": 1, "description": "Post 1", "image": b"image_data_1"},
+        {"id": 2, "account_id": 1, "description": "Post 2", "image": b"image_data_2"},
+    ]
+
+    # Mocking the database query result
+    mock_db.query().filter().all = MagicMock(return_value=[Post(**post_data) for post_data in posts_data])
+
+    # Calling the function
+    result = get_account_posts(mock_db, account_id=1)
+
+    # Assertions
+    assert len(result) == len(posts_data)
+    for i, post_data in enumerate(posts_data):
+        assert result[i]["id"] == post_data["id"]
+        assert result[i]["account_id"] == post_data["account_id"]
+        assert result[i]["description"] == post_data["description"]
+        assert result[i]["base64_image"] == convert_image_to_base64(post_data["image"])
+        
+def test_get_account_posts_no_posts():
+    # Mocking the database session
+    mock_db = MagicMock()
+
+    # Mocking the database query result (no posts found)
+    mock_db.query().filter().all = MagicMock(return_value=[])
+
+    # Calling the function with no posts
+    result = get_account_posts(mock_db, account_id=1)
+
+    # Assertions
+    assert result == []
+
+def test_get_account_posts_with_empty_image():
+    # Mocking the database session
+    mock_db = MagicMock()
+
+    # Creating a sample post with an empty image
+    post_data = {"id": 1, "account_id": 1, "description": "Post 1", "image": None}
+    # Mocking the database query result
+    mock_db.query().filter().all = MagicMock(return_value=[Post(**post_data)])
+
+    # Calling the function
+    result = get_account_posts(mock_db, account_id=1)
+
+    # Assertions
+    assert len(result) == 1
+    assert result[0]["id"] == post_data["id"]
+    assert result[0]["account_id"] == post_data["account_id"]
+    assert result[0]["description"] == post_data["description"]
+    assert result[0]["base64_image"] is None
     
-    mock_db.add = MagicMock()
-    mock_db.commit = MagicMock()
-    mock_db.refresh = MagicMock(return_value=mock_post)
+from services.src.crud import get_random_posts_not_by_account
     
-    post1 = create_post(mock_db, 1, "Greetings from Vienna", "")
-    post2 = create_post(mock_db, 1, "Visiting Technisches Museum", "")
-    post3 = create_post(mock_db, 1, "Dinner in Schweizerhaus!","")
-    posts = get_account_posts(mock_db,account_id=1)
+def test_get_random_posts_not_by_account_with_posts():
+    # Mocking the database session
+    mock_db = MagicMock()
+
+    # Creating sample posts
+    posts_data = [
+        {"id": 1, "account_id": 2, "description": "Post 1", "image": b"image_data_1"},
+        {"id": 2, "account_id": 3, "description": "Post 2", "image": b"image_data_2"},
+    ]
+
+    # Mocking the database query result
+    mock_db.query().filter().order_by().limit().all = MagicMock(return_value=[Post(**post_data) for post_data in posts_data])
+
+    # Calling the function
+    result = get_random_posts_not_by_account(mock_db, account_id=1)
+
+    # Assertions
+    assert len(result) == len(posts_data)
+    for i, post_data in enumerate(posts_data):
+        assert result[i]["id"] == post_data["id"]
+        assert result[i]["account_id"] == post_data["account_id"]
+        assert result[i]["description"] == post_data["description"]
+        assert result[i]["base64_image"] == convert_image_to_base64(post_data["image"])
+
+def test_get_random_posts_not_by_account_no_posts():
+    # Mocking the database session
+    mock_db = MagicMock()
+
+    # Mocking the database query result (no posts found)
+    mock_db.query().filter().order_by().limit().all = MagicMock(return_value=[])
+
+    # Calling the function with no posts
+    result = get_random_posts_not_by_account(mock_db, account_id=1)
+
+    # Assertions
+    assert result == []
+
+def test_get_random_posts_not_by_account_with_empty_image():
+    # Mocking the database session
+    mock_db = MagicMock()
+
+    # Creating a sample post with an empty image
+    post_data = {"id": 1, "account_id": 2, "description": "Post 1", "image": None}
+
+    # Mocking the database query result
+    mock_db.query().filter().order_by().limit().all = MagicMock(return_value=[Post(**post_data)])
+
+    # Calling the function
+    result = get_random_posts_not_by_account(mock_db, account_id=1)
+
+    # Assertions
+    assert len(result) == 1
+    assert result[0]["id"] == post_data["id"]
+    assert result[0]["account_id"] == post_data["account_id"]
+    assert result[0]["description"] == post_data["description"]
+    assert result[0]["base64_image"] is None
     
+from services.src.crud import delete_post
+
+def test_delete_post_existing_post():
+    # Mocking the database session
+    mock_db = MagicMock()
+
+    # Creating a sample post
+    post_data = {"id": 1, "account_id": 2, "description": "Post 1", "image": b"image_data_1"}
+    existing_post = Post(**post_data)
+    mock_db.query().filter().first = MagicMock(return_value=existing_post)
+
+    # Calling the function with an existing post
+    delete_post(mock_db, post_id=1)
+
+    # Assertions
+    mock_db.query().filter().first.assert_called_once_with()
+    mock_db.delete.assert_called_once_with(existing_post)
+    mock_db.commit.assert_called_once()
+
+def test_delete_post_nonexistent_post():
+    # Mocking the database session
+    mock_db = MagicMock()
+
+    # Mocking the database query result (no post found)
     mock_db.query().filter().first = MagicMock(return_value=None)
-    
-    assert len(posts) == 0
+
+    # Calling the function with a nonexistent post
+    with pytest.raises(ValueError, match="Post mit der ID 1 wurde nicht gefunden."):
+        delete_post(mock_db, post_id=1)
+
+    # Assertions
+    mock_db.query().filter().first.assert_called_once_with()
+    mock_db.delete.assert_not_called()
+    mock_db.commit.assert_not_called()
