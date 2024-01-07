@@ -22,8 +22,8 @@ app = FastAPI()
 # Fügt Middleware hinzu, um CORS für Ihre App zu konfigurieren
 app.add_middleware(
     CORSMiddleware,
-    # allow_origins=[FRONTEND_URL],
-    allow_origins=["*"],  # Port auf dem frontend läuft oder dann halt oder ['*'] für alle Ursprünge
+    allow_origins=[FRONTEND_URL],
+    # allow_origins=["*"],  # Port auf dem frontend läuft oder dann halt oder ['*'] für alle Ursprünge
     allow_credentials=True,
     allow_methods=["*"],  # oder ['GET', 'POST', 'PUT', ...]
     allow_headers=["*"],

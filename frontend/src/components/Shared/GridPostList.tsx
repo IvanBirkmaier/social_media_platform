@@ -162,7 +162,6 @@ const GridPostList = ({
               >
                 Posten
               </button>
-              {/* Kommentarliste anzeigen */}
               <CommentList postId={id} updateTrigger={commentsUpdateTrigger} />
             </div>
           </div>

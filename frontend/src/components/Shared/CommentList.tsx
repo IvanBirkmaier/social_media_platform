@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { backendUrl } from "@/utils/utils";
 
 interface Comment {
-  id: number;
+  comment_id: number;
   account_id: number;
   post_id: number;
   text: string;
@@ -36,11 +36,9 @@ const CommentList: React.FC<CommentListProps> = ({ postId, updateTrigger }) => {
   }, [postId, updateTrigger]);
 
   return (
-    <div>
+    <div className="comment-list-container">
       {comments.map((comment) => (
-        <div key={comment.id}>
-          {/* Anpassen, wie Kommentare angezeigt werden sollen */}
-
+        <div key={comment.comment_id} className="comment">
           <div>
             <p className="text-red">{comment.username}</p>
             <p className="text-white">{comment.text}</p>
