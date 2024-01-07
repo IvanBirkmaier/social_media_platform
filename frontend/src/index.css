@@ -186,7 +186,7 @@ input:focus-visible {
   }
 
   .post_details-info {
-    @apply bg-dark-2 flex flex-col gap-5 lg:gap-7 flex-1 items-start p-8 rounded-[30px];
+    @apply bg-dark-2 flex flex-col gap-5 lg:gap-5 flex-1 items-start p-6 rounded-[20px];
   }
 
   .parting_line {
@@ -318,6 +318,18 @@ input:focus-visible {
     object-fit: cover; Stellt sicher, dass das Bild das Element vollständig ausfüllt, ohne seine Seitenverhältnisse zu verändern 
     margin: 8px;  Optionaler Abstand 
   } */
+
+  .comment-list-container {
+    @apply w-full h-60 overflow-auto;
+  }
+
+  .comment-list-container::-webkit-scrollbar {
+    width: 0px; /* Breite des Scrollbalkens */
+  }
+
+  .comment {
+    /* Stil für jeden einzelnen Kommentar hier festlegen */
+  }
 
   .image-container {
     flex: 1 1 200px; /* Jedes Bild beginnt bei einer Basis von 200px, aber kann wachsen oder schrumpfen */

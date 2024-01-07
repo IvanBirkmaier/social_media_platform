@@ -93,13 +93,6 @@ def get_account_id_by_username(db: Session, username: str):
         return None
 
 # CRUD-Methode zum Abrufen der Posts eines Benutzers
-# def get_account_posts(db: Session, account_id: int):
-#     posts = db.query(Post).filter(Post.account_id == account_id).all()
-#     for post in posts:
-#         # Konvertieren Sie das Bild in Base64, bevor Sie das Objekt zurückgeben
-#         post.image = convert_image_to_base64(post.image)
-#     return posts
-
 def get_account_posts(db: Session, account_id: int):
     posts = db.query(Post, Account.username).join(Account).filter(Post.account_id == account_id).all()
     return [{
@@ -112,8 +105,27 @@ def get_account_posts(db: Session, account_id: int):
 
 
 # Auslesen aller Comments eines Posts
+# def get_post_comments(db: Session, post_id: int):
+#     return db.query(Comment).filter(Comment.post_id == post_id).all()
 def get_post_comments(db: Session, post_id: int):
-    return db.query(Comment).filter(Comment.post_id == post_id).all()
+    comments_with_username = (
+        db.query(Comment, Account.username)
+        .join(Account, Comment.account_id == Account.id)
+        .filter(Comment.post_id == post_id)
+        .order_by(Comment.created_at.desc())
+        .all()
+    )
+
+    return [
+        {
+            "comment_id": comment.id,
+            "account_id": comment.account_id,
+            "text": comment.text,
+            "created_at": comment.created_at,
+            "username": username
+        }
+        for comment, username in comments_with_username
+    ]
 
 
 # Auslesen von 9 zufälligen Post die nicht dem User gehören (Für ein Feed)

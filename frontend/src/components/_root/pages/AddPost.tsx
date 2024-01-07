@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { useCallback, useState } from "react";
 import { FileWithPath, useDropzone } from "react-dropzone";
 import { useAuth } from "@/components/Auth/AuthContext";
+import { backendUrl } from "@/utils/utils";
 //import { useNavigate } from "react-router-dom";
 
 type AddPostProps = {
@@ -11,13 +12,13 @@ type AddPostProps = {
 
 const AddPost = ({ fieldChange, mediaUrl }: AddPostProps) => {
   //const navigate = useNavigate();
-    const { user } = useAuth();
+  const { user } = useAuth();
   const convertFileToUrl = (file: File) => URL.createObjectURL(file);
 
   const [file, setFile] = useState<File[]>([]);
-  const [fileUrl, setFileUrl] = useState<string>(mediaUrl || '');
+  const [fileUrl, setFileUrl] = useState<string>(mediaUrl || "");
   const [description, setDescription] = useState("");
-  
+
   const onDrop = useCallback(
     (acceptedFiles: FileWithPath[]) => {
       setFile(acceptedFiles);
@@ -56,7 +57,7 @@ const AddPost = ({ fieldChange, mediaUrl }: AddPostProps) => {
         };
 
         // Ersetze 'http://localhost:8000' mit der URL deines FastAPI-Servers
-        const response = await fetch("http://localhost:8000/posts/", {
+        const response = await fetch(`${backendUrl}/posts/`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
