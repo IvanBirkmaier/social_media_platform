@@ -19,6 +19,8 @@ services:
     environment:
       DATABASE_URL: postgresql://user:password@db:5432/meine_db
       FRONTEND_URL: http://localhost:3000
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      KAFKA_TOPIC: post_queue
     ports:
       - "8000:8000"
     depends_on:
@@ -45,5 +47,43 @@ services:
     depends_on:
       - microservice_one
 
+  zookeeper:
+    image: 'bitnami/zookeeper:latest'
+    ports:
+      - '2181:2181'
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    ports:
+      - '9092:9092'
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    depends_on:
+      - zookeeper
+  
+  consumer_one:
+    build:
+      context: ./kafka/consumers/consumer_1  # Pfad zum Verzeichnis des Dockerfiles des Consumers
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092  # Verwendet den Service-Namen von Kafka in Docker
+      KAFKA_TOPIC: post_queue
+      MICROSERVICE_2_API_URL: http://microservice_two:8001/optimize/  # Service-Name und Port von Microservice 2
+    depends_on:
+      - kafka
+      - microservice_two
+      - kafka-init
+  
+  kafka-init:
+    build: ./kafka/init
+    environment:
+      KAFKA_BROKER_ADDRESS: kafka:9092
+      KAFKA_TOPIC: post_queue
+    depends_on:
+      - kafka
+      - zookeeper
 volumes:
   postgres_data:
