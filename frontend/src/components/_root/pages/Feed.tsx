@@ -55,7 +55,7 @@ const fetchAccountIdByUsername = async (username: string) => {
   }
 };
 
-const Home = () => {
+const Feed = () => {
   const { user } = useAuth();
   const [posts, setPosts] = useState<Post[]>([]);
   const [searchedPosts, setSearchedPosts] = useState<Post[]>([]);
@@ -144,7 +144,7 @@ const Home = () => {
       </div>
 
       <div className="flex-between w-full max-w-5xl mt-16 mb-7">
-        <h2 className="h3-bold md:h2-bold w-full">Home of {user?.username}</h2>
+        <h2 className="h3-bold md:h2-bold w-full">Feed of {user?.username}</h2>
         {/* ...other elements */}
       </div>
 
@@ -189,4 +189,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Feed;

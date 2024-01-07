@@ -131,7 +131,6 @@ def get_post_comments(db: Session, post_id: int):
         for comment, username in comments_with_username
     ]
 
-
 # Auslesen von 9 zufälligen Post die nicht dem User gehören (Für ein Feed)
 def get_random_posts_not_by_account(db: Session, account_id: int):
     posts = db.query(Post, Account.username).join(Account, Post.account_id == Account.id).filter(Post.account_id != account_id).order_by(func.random()).limit(9).all()
@@ -143,7 +142,7 @@ def get_random_posts_not_by_account(db: Session, account_id: int):
         "username": username
     } for post, username  in posts]
 
-# Löscht einen Post
+# Löscht einen Post und alle dazugehörigen Kommentare
 def delete_post(db: Session, post_id: int):
     # Suche den Post in der Datenbank über seine ID
     db_post = db.query(Post).filter(Post.id == post_id).first()
@@ -152,8 +151,12 @@ def delete_post(db: Session, post_id: int):
     if db_post is None:
         raise ValueError("Post mit der ID {} wurde nicht gefunden.".format(post_id))
 
+    # Lösche zuerst alle Kommentare, die zu diesem Post gehören
+    db.query(Comment).filter(Comment.post_id == post_id).delete()
+
     # Lösche den Post aus der Datenbank
     db.delete(db_post)
     db.commit()
+
 
 
