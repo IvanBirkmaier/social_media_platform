@@ -13,9 +13,9 @@ services:
     ports:
       - "5432:5432"
 
-  fastapi:
+  microservice_one:
     build: 
-      context: ./backend
+      context: ./backend_services/microservice_1
     environment:
       DATABASE_URL: postgresql://user:password@db:5432/meine_db
       FRONTEND_URL: http://localhost:3000
@@ -24,15 +24,26 @@ services:
     depends_on:
       - db
 
+  microservice_two:
+    build:
+      context: ./backend_services/microservice_2
+    environment:
+      DATABASE_URL: postgresql://user:password@db:5432/meine_db
+    ports:
+      - "8001:8001"
+    depends_on:
+      - db
+      - microservice_one
+
   frontend:
     build:
       context: ./frontend
       args:
-        VITE_BACKEND_URL: http://fastapi:8000
+        VITE_BACKEND_URL: http://microservice_one:8000
     ports:
       - "3000:80"
     depends_on:
-      - fastapi
+      - microservice_one
 
 volumes:
   postgres_data:

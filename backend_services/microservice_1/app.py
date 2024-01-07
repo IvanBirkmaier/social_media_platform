@@ -3,10 +3,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from pydantic import BaseModel, EmailStr
-from services.src.model import Account, SessionLocal, Base, engine
+from src.model import Account, SessionLocal, Base, engine
 from dotenv import load_dotenv
 import os
-from services.src.crud import (create_profile, create_account, check_account_login, create_post,
+from src.crud import (create_profile, create_account, check_account_login, create_post,
                                create_comment, get_account_posts, get_post_comments,
                                get_random_posts_not_by_account, check_username_existence, check_email_existence, get_account_id_by_username)
 
