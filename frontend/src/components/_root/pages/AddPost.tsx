@@ -3,7 +3,7 @@ import { useCallback, useState } from "react";
 import { FileWithPath, useDropzone } from "react-dropzone";
 import { useAuth } from "@/components/Auth/AuthContext";
 import { backendUrl } from "@/utils/utils";
-//import { useNavigate } from "react-router-dom";
+import fileUploadIcon from "assets/icons/file-upload.svg";
 
 type AddPostProps = {
   fieldChange?: (files: File[]) => void;
@@ -122,7 +122,7 @@ const AddPost = ({ fieldChange, mediaUrl }: AddPostProps) => {
             ) : (
               <div className="file_uploader-box ">
                 <img
-                  src="/assets/icons/file-upload.svg"
+                  src={fileUploadIcon}
                   width={96}
                   height={77}
                   alt="file upload"
@@ -131,7 +131,7 @@ const AddPost = ({ fieldChange, mediaUrl }: AddPostProps) => {
                 <h3 className="base-medium text-light-2 mb-2 mt-6">
                   Drag photo here
                 </h3>
-                <p className="text-light-4 small-regular mb-6">SVG, PNG, JPG</p>
+                <p className="text-light-4 small-regular mb-6">JPG</p>
 
                 <Button type="button" className="shad-button_dark_4">
                   Select from computer
