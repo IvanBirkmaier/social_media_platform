@@ -4,6 +4,7 @@ import { useAuth } from "../Auth/AuthContext";
 import { backendUrl } from "@/utils/utils";
 import CommentList from "./CommentList";
 import post_svg from "assets/icons/arrow_right.svg";
+import deleteIcon from "assets/icons/delete.svg";
 
 interface GridPostListProps {
   image: string; // Base64 encoded image string
@@ -11,6 +12,7 @@ interface GridPostListProps {
   id: number;
   showUser?: boolean;
   username: string;
+  removePost: (postId: number) => void;
 }
 
 const IMAGE_RESOLUTION = { width: 1000, height: 562 }; // Beispielauflösung
@@ -21,6 +23,7 @@ const GridPostList = ({
   showUser = true,
   description,
   username,
+  removePost,
 }: GridPostListProps) => {
   const { user } = useAuth();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -32,6 +35,25 @@ const GridPostList = ({
   const handleImageClick = (image: string) => {
     console.log(id);
     setSelectedImage(image);
+  };
+
+  const handleDelete = async () => {
+    if (window.confirm("Are you sure you want to delete this post?")) {
+      try {
+        const response = await fetch(`${backendUrl}/posts/${id}/`, {
+          method: "DELETE",
+        });
+
+        if (!response.ok) {
+          throw new Error("Fehler beim Löschen des Beitrags");
+        }
+
+        removePost(id);
+        // Hier können Sie zusätzliche Logik hinzufügen, z.B. das Entfernen des Beitrags aus dem State
+      } catch (error) {
+        console.error("Fehler beim Löschen des Beitrags", error);
+      }
+    }
   };
 
   // close overlay if click outside
@@ -138,7 +160,18 @@ const GridPostList = ({
               alt="Selected"
             />
             <div className="post_details-info">
-              <h3 className="text-orange-300 h3-bold">{username}</h3>
+              <div className="w-full flex items-center justify-between">
+                <h3 className="text-orange-300 h3-bold">{username}</h3>
+                {!showUser && (
+                  <img
+                    src={deleteIcon}
+                    alt="Löschen"
+                    className="cursor-pointer h-6 w-auto" // Cursor-Style für Klickbarkeit
+                    onClick={handleDelete}
+                  />
+                )}
+              </div>
+
               <h2
                 className="text-white"
                 style={{

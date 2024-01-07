@@ -55,6 +55,11 @@ const fetchAccountIdByUsername = async (username: string) => {
   }
 };
 
+// Beim Feed soll kein Post löschbar sein
+const removePostFromList = () => {
+  return;
+};
+
 const Feed = () => {
   const { user } = useAuth();
   const [posts, setPosts] = useState<Post[]>([]);
@@ -79,7 +84,7 @@ const Feed = () => {
   useEffect(() => {
     setSearchedPosts([]);
 
-    if (searchValue) {
+    if (searchValue && searchValue != user?.username) {
       fetchAccountIdByUsername(searchValue)
         .then((id) => {
           setAccountId(id);
@@ -161,6 +166,7 @@ const Feed = () => {
                 showUser={user?.username !== post.username}
                 username={post.username}
                 key={index}
+                removePost={removePostFromList}
               />
             ))
           ) : (
@@ -181,6 +187,7 @@ const Feed = () => {
               showUser={true}
               username={post.username}
               key={index}
+              removePost={removePostFromList}
             />
           ))
         )}

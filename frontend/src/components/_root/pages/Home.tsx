@@ -42,6 +42,11 @@ const Home = () => {
     loadPosts();
   }, [user?.id]);
 
+  // zum aktualisieren der Post Liste
+  const removePostFromList = (postId: number) => {
+    setPosts((prevPosts) => prevPosts.filter((post) => post.id !== postId));
+  };
+
   const formatBase64Image = (base64String: string) => {
     // Prüfen, ob der String bereits mit dem korrekten Präfix beginnt
     if (base64String.startsWith("data:image/jpeg;base64,")) {
@@ -85,6 +90,7 @@ const Home = () => {
               showUser={false}
               username={post.username}
               key={index}
+              removePost={removePostFromList}
             />
           ))
         )}
