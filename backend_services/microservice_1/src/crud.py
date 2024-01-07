@@ -159,4 +159,32 @@ def delete_post(db: Session, post_id: int):
     db.commit()
 
 
+# Löscht einen Account und alle damit verbundenen Profile, Posts und Kommentare
+def delete_account(db: Session, account_id: int):
+    with db.begin():
+        # Suche den Account in der Datenbank über seine ID
+        db_account = db.query(Account).filter(Account.id == account_id).first()
+
+        if db_account is None:
+            raise ValueError(f"Account mit der ID {account_id} wurde nicht gefunden.")
+
+        # Lösche alle Kommentare, die vom Account erstellt wurden
+        db.query(Comment).filter(Comment.account_id == account_id).delete(synchronize_session=False)
+
+        # Lösche alle Kommentare von Posts des Accounts 
+        db.query(Comment).filter(Comment.post_id.in_(
+            db.query(Post.id).filter(Post.account_id == account_id)
+        )).delete(synchronize_session=False)
+
+        # Lösche alle Posts des Accounts
+        db.query(Post).filter(Post.account_id == account_id).delete(synchronize_session=False)
+
+        # Lösche das Profil, das zum Account gehört
+        db.query(Profile).filter(Profile.account_id == account_id).delete(synchronize_session=False)
+
+        # Lösche den Account
+        db.delete(db_account)
+
+
+
 

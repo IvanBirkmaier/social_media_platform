@@ -7,7 +7,7 @@ from src.model import Account, SessionLocal, Base, engine
 from dotenv import load_dotenv
 import os
 from src.crud import (create_profile, create_account, check_account_login, create_post, delete_post,
-                               create_comment, get_account_posts, get_post_comments,
+                               create_comment, get_account_posts, get_post_comments, delete_account,  
                                get_random_posts_not_by_account, check_username_existence, check_email_existence, get_account_id_by_username)
 
 load_dotenv() 
@@ -138,11 +138,20 @@ def get_random_posts(account_id: int, db: Session = Depends(get_db)):
     random_posts = get_random_posts_not_by_account(db, account_id)
     return JSONResponse(content={"posts": random_posts}, status_code=status.HTTP_200_OK)
 
+@app.delete("/account/{account_id}/", status_code=status.HTTP_204_NO_CONTENT)
+def delete_account_endpoint(account_id: int, db: Session = Depends(get_db)):
+    # Optional: Fügen Sie hier Authentifizierungs- und Autorisierungslogiken hinzu.
+    # Beispiel: Überprüfen Sie, ob der eingeloggte Benutzer das Recht hat, diesen Account zu löschen.
+    try:
+        delete_account(db, account_id)
+        return JSONResponse(content={"detail": "Account successfully deleted"}, status_code=status.HTTP_204_NO_CONTENT)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
 @app.delete("/posts/{post_id}/", status_code=status.HTTP_204_NO_CONTENT)
 def delete_post_endpoint(post_id: int, db: Session = Depends(get_db)):
     # Optional: Check if the user is authorized to delete the post
     # This might involve checking if the user owns the post or has admin privileges
-
     try:
         delete_post(db, post_id)
         return JSONResponse(content={"detail": "Post successfully deleted"}, status_code=status.HTTP_204_NO_CONTENT)
