@@ -6,6 +6,8 @@ import bcrypt
 import base64
 from PIL import Image
 import io
+from mimetypes import guess_extension, guess_type
+from io import BytesIO
 
 
 
@@ -56,9 +58,6 @@ def check_account_login(db: Session, username: str, password: str):
         return account
     return None
 
-# Funktion, um Bytes in einen Base64-String zu konvertieren
-def convert_bytes_to_base64(image_bytes):
-    return base64.b64encode(image_bytes).decode('utf-8')
 
 def validate_image_bytes(image_bytes):
     try:
@@ -71,20 +70,21 @@ def validate_image_bytes(image_bytes):
 
 # Post zu erstellen
 def create_post(db: Session, account_id: int, description: str, base64_image: str):
+    
+    # Dekodierung des Base64-Strings in Bytes
+    if "," in base64_image:
+        base64_image = base64_image.split(',')[1]
     image_bytes = base64.b64decode(base64_image)
 
     # Validierung der Bildbytes
     validate_image_bytes(image_bytes)
-
     db_post = Post(account_id=account_id, description=description, image=image_bytes)
     db.add(db_post)
     db.commit()
     db.refresh(db_post)
     db_post.base64_image = base64_image
     kafka_send_post_id(db_post.id)
-    
     return db_post
-
 
 
 # Erstellen eines Kommentars
@@ -98,11 +98,30 @@ def create_comment(db: Session, account_id: int, post_id: int, text: str):
     kafka_send_comment_id(db_comment.id)
     return db_comment
 
-# Hilfsfunktion, um Bytes in einen Base64-String zu konvertieren
+#########################################################################################################################################
+# # Hilfsfunktion, um Bytes in einen Base64-String zu konvertieren
+# def convert_image_to_base64(image_bytes):
+#     if image_bytes:
+#         return base64.b64encode(image_bytes).decode('utf-8')
+#     return None
+
+
+# # Funktion, um Bytes in einen Base64-String zu konvertieren
+# def convert_bytes_to_base64(image_bytes):
+#     return base64.b64encode(image_bytes).decode('utf-8')
+#########################################################################################################################################
+
+
 def convert_image_to_base64(image_bytes):
     if image_bytes:
-        return base64.b64encode(image_bytes).decode('utf-8')
+        image_stream = BytesIO(image_bytes)
+        image_format = Image.open(image_stream).format.lower()
+        mime_type, _ = guess_type(f".{image_format}")
+        base64_encoded = base64.b64encode(image_bytes).decode('utf-8')
+        return f"data:{mime_type};base64,{base64_encoded}"
     return None
+
+
 
 # Funktion, um die Account-ID anhand des Benutzernamens zu finden
 def get_account_id_by_username(db: Session, username: str):
@@ -124,9 +143,7 @@ def get_account_posts(db: Session, account_id: int):
     } for post, username in posts]
 
 
-# Auslesen aller Comments eines Posts
-# def get_post_comments(db: Session, post_id: int):
-#     return db.query(Comment).filter(Comment.post_id == post_id).all()
+
 def get_post_comments(db: Session, post_id: int):
     comments_with_username = (
         db.query(Comment, Account.username)

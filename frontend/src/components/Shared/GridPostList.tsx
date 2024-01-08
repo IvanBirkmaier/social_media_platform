@@ -112,17 +112,13 @@ const GridPostList = ({
     setIsSubmitting(false);
   };
 
-  // Ensure the base64 string is formatted for HTML image source
-  const formattedImage = image.startsWith("data:image/jpeg;base64,")
-    ? image
-    : `data:image/jpeg;base64,${image}`;
 
   return (
     <ul>
       <li className="relative min-w-80 h-80">
         <div className="grid-post_link">
           <img
-            src={formattedImage}
+            src={image}
             alt="post"
             className="h-full w-full object-cover object-center"
             onClick={() => handleImageClick(image)}

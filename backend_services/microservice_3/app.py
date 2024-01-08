@@ -17,7 +17,6 @@ def get_db():
 @app.post("/classify/{comment_id}", status_code=status.HTTP_200_OK)
 def classify_comment(comment_id: int, db: Session = Depends(get_db)):
     try:
-        print("11111111111111111: ###############################")
         classify_comments(db, comment_id)
         return {"message": "Klassifizierung konnte erfolgreich umgesetzt werden", "post_id": comment_id}
     except Exception as e:
