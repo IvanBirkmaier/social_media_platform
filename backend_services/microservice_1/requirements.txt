@@ -49,3 +49,4 @@ annotated-types>=0.4.0
 typing-extensions>=4.6.1 
 
 confluent_kafka==2.3.0
+Pillow==10.2.0

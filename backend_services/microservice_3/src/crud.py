@@ -4,8 +4,15 @@ from .classifier import classifier
 from sqlalchemy.orm import Session
 
 # Konfigurieren des Loggings
-logging.basicConfig(level=logging.INFO)
+# logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+
+logging.basicConfig()
+logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
+
+# Rest Ihres Codes...
+
 
 def classify_comments(db: Session, comment_id: int):
     try:
@@ -16,7 +23,7 @@ def classify_comments(db: Session, comment_id: int):
         if not comment:
             logger.warning(f"Kommentar mit ID {comment_id} nicht gefunden.")
             return False
-        print("1: ###############################",comment.text)
+        print("2: ###############################",comment.text)
 
         # Überprüfen, ob der Kommentar Text enthält
         if not comment.text:
@@ -26,6 +33,10 @@ def classify_comments(db: Session, comment_id: int):
 
         # Klassifizieren des Textes
         classified_text = classifier(comment.text)
+
+        print("Klasse:########################",classified_text)
+
+
         comment.classifier = classified_text
         db.commit()
         logger.info(f"Text für Kommentar ID {comment_id} erfolgreich klassifiziert.")

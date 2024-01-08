@@ -3,8 +3,11 @@ from .model import Post
 from .optimizer import compress_image_bytes
 from sqlalchemy.orm import Session
 
-# Konfigurieren des Loggings
-logging.basicConfig(level=logging.INFO)
+# # Konfigurieren des Loggings
+# logging.basicConfig(level=logging.INFO)
+
+logging.basicConfig()
+logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
 
 def optimize_and_update_image(db: Session, post_id: int):
     try:
