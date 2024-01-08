@@ -7,6 +7,7 @@ interface Comment {
   post_id: number;
   text: string;
   username: string;
+  classifier: string;
 }
 
 interface CommentListProps {
@@ -23,6 +24,7 @@ const CommentList: React.FC<CommentListProps> = ({ postId, updateTrigger }) => {
         const response = await fetch(`${backendUrl}/posts/${postId}/comments/`);
         if (response.ok) {
           const data = await response.json();
+          console.log(data);
           setComments(data);
         } else {
           throw new Error("Fehler beim Laden der Kommentare");
@@ -35,15 +37,31 @@ const CommentList: React.FC<CommentListProps> = ({ postId, updateTrigger }) => {
     fetchComments();
   }, [postId, updateTrigger]);
 
+  const sortedComments = comments.slice().sort((a, b) => {
+    if (a.classifier === "POS" && b.classifier !== "POS") {
+      return -1;
+    }
+    if (b.classifier === "POS" && a.classifier !== "POS") {
+      return 1;
+    }
+    return 0;
+  });
+
+  const createAsterisks = (text) => "*".repeat(text.length);
+
   return (
     <div className="comment-list-container">
-      {comments.map((comment) => (
+      {sortedComments.map((comment) => (
         <div key={comment.comment_id} className="comment">
           <div>
             <p className="text-red" style={{ fontSize: "80%" }}>
               {comment.username}
             </p>
-            <p className="text-white">{comment.text}</p>
+            <p className="text-white">
+              {comment.classifier && comment.classifier === "NEG"
+                ? createAsterisks(comment.text)
+                : comment.text}
+            </p>
           </div>
         </div>
       ))}
