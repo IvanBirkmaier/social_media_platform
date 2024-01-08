@@ -7,6 +7,10 @@ def compress_image_bytes(image_bytes, format='JPEG', quality=85):
     
     # Bild aus BytesIO-Objekt laden
     with Image.open(image_stream) as img:
+        # Konvertieren des Bildes in RGB, falls es RGBA oder P ist
+        if img.mode in ["RGBA", "P"]:
+            img = img.convert("RGB")
+
         # BytesIO-Objekt für das komprimierte Bild erstellen
         output_stream = io.BytesIO()
         
