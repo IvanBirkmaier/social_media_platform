@@ -2,6 +2,15 @@ import logging
 from .model import Comment
 from .classifier import classifier
 from sqlalchemy.orm import Session
+from .producer import kafka_send_comment_id
+from dotenv import load_dotenv
+import os
+
+
+
+
+load_dotenv() 
+KAFKA_TOPIC = os.environ.get('KAFKA_TOPIC')
 
 # Konfigurieren des Loggings
 # logging.basicConfig(level=logging.INFO)
@@ -32,8 +41,10 @@ def classify_comments(db: Session, comment_id: int):
 
         comment.classifier = classified_text
         db.commit()
-        logger.info(f"Text für Kommentar ID {comment_id} erfolgreich klassifiziert.")
-        print("Kommentar: ",comment.text," ID: ", comment_id, " Klasse: ", classified_text)
+        logger.info(f"ERGEBNISS:\nKommentar: {comment.text}\nID:{comment_id}\nKlasse: {classified_text}")
+        logger.info(f"OPTIMIZER: Text für Kommentar ID {comment_id} erfolgreich klassifiziert.")
+        kafka_send_comment_id(comment_id)
+        logger.info(f"KAFKA: Kommentar ID {comment_id} erfolgreich an Kafka-Queue: {KAFKA_TOPIC} gesendet.")
 
         return True
 

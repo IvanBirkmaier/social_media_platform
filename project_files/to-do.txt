@@ -1,0 +1,37 @@
+1. Bilodoptimierung:
+        # Scale Methode implementieren
+        # Derzeitige crud methoden mit fallback logik anpassen (Nimm reduzed size wenns dass nicht gibt nimm normale)
+        # API call + neuen crud methode = GET post_by_id
+
+2. Kommentare klassifizieren:
+    Backend:
+        # Producer
+            #Soll nur die POS und NEG in die Que hauen
+        # Konsumer einrichten (Env richtig setzen, Ports url)
+            # Konsumer in die compose aufnehmen (Dockerfile checken)
+        # Wensocket client (API richtig einrichten)
+            # Docker file + compose
+        # Websocket server mit env einrichten
+            # Dockerfile + Docker compose
+    Frontend:
+        # Webclient richtig einrichten 
+
+
+Deployment von der OpenAPI-Spezifikation
+
+Trello Board in Github übertrage
+
+Readme
+
+Präsentation vorbereiten.
+
+
+
+#######################################################################################################
+Unit Tests:
+Fast API - Tests
+
+Github Actions für die CI/CD Workflows
+    Regel 1 Execute tests on a pull request only. Wenn  jemand auf develop merged
+    Regel 2: Automate container build. Wenn jemand auf den main merged
+    Regel 2: Push container to a registry. Wenn jemand auf den main merged

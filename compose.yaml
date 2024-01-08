@@ -44,6 +44,8 @@ services:
       context: ./backend_services/microservice_3
     environment:
       DATABASE_URL: postgresql://user:password@db:5432/meine_db
+      KAFKA_TOPIC: classified_comments_queue
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
     ports:
       - "8002:8002"
     depends_on:
@@ -107,6 +109,8 @@ services:
       KAFKA_BROKER_ADDRESS: kafka:9092
       KAFKA_TOPIC_ONE: post_queue
       KAFKA_TOPIC_TWO: comment_queue
+      KAFKA_TOPIC_THREE: classified_comments_queue
+
     depends_on:
       - kafka
       - zookeeper

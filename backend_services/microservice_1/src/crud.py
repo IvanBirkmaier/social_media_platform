@@ -10,7 +10,6 @@ from mimetypes import guess_extension, guess_type
 from io import BytesIO
 
 
-
 # Passwort in einen Hash machen
 def hash_password(password):
     return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
@@ -97,19 +96,6 @@ def create_comment(db: Session, account_id: int, post_id: int, text: str):
     # Senden der Kommentar-ID an Kafka
     kafka_send_comment_id(db_comment.id)
     return db_comment
-
-#########################################################################################################################################
-# # Hilfsfunktion, um Bytes in einen Base64-String zu konvertieren
-# def convert_image_to_base64(image_bytes):
-#     if image_bytes:
-#         return base64.b64encode(image_bytes).decode('utf-8')
-#     return None
-
-
-# # Funktion, um Bytes in einen Base64-String zu konvertieren
-# def convert_bytes_to_base64(image_bytes):
-#     return base64.b64encode(image_bytes).decode('utf-8')
-#########################################################################################################################################
 
 
 def convert_image_to_base64(image_bytes):

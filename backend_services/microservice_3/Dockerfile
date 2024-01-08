@@ -13,6 +13,10 @@ RUN pip install --upgrade pip && \
 COPY ./src /code/src
 COPY app.py /code/
 
+ENV KAFKA_TOPIC=classified_comments_queue
+ENV KAFKA_BOOTSTRAP_SERVERS=localhost:9092
+
+
 # Gesundheitscheck (optional, angepasst an Ihre App)
 #HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
  #   CMD curl -f http://localhost:8002/ || exit 1
