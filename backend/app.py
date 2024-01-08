@@ -15,18 +15,20 @@ FRONTEND_URL = os.environ.get("FRONTEND_URL") # Für die Connection zum Frontend
 
 def create_tables():
     Base.metadata.create_all(bind=engine)
-create_tables()
+
+if __name__ == "__main__":
+    create_tables()
 
 app = FastAPI()
 
 # Fügt Middleware hinzu, um CORS für Ihre App zu konfigurieren
 app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[FRONTEND_URL],
-   # allow_origins=["*"],  # Port auf dem frontend läuft oder dann halt oder ['*'] für alle Ursprünge
-    allow_credentials=True,
-    allow_methods=["*"],  # oder ['GET', 'POST', 'PUT', ...]
-    allow_headers=["*"],
+CORSMiddleware,
+allow_origins=[FRONTEND_URL],
+# allow_origins=["*"],  # Port auf dem frontend läuft oder dann halt oder ['*'] für alle Ursprünge
+allow_credentials=True,
+allow_methods=["*"],  # oder ['GET', 'POST', 'PUT', ...]
+allow_headers=["*"],
 )
 
 class AccountCreate(BaseModel):

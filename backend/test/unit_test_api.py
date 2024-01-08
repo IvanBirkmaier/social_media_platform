@@ -6,22 +6,33 @@ sys.path.append(parent_dir)
 
 import pytest 
 from fastapi.testclient import TestClient
-from app import app, get_db, engine
-
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy.pool import StaticPool
 
-from services.src.model import Account, SessionLocal, Base, engine
+from services.src.model import Base
+from app import app, get_db
 
-# Use pytest-postgresql to manage a test PostgreSQL database
-pytest_plugins = ["pytest_postgresql"]
+SQLALCHEMY_DATABASE_URL = "sqlite://"
 
-DATABASE_URL = "postgresql://user:password@db:5433/test_db"
-engine = create_engine(DATABASE_URL)
+engine = create_engine(
+    SQLALCHEMY_DATABASE_URL,
+    connect_args={"check_same_thread": False},
+    poolclass=StaticPool,
+)
+
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-# Override the dependency to use the testing database
-app.dependency_overrides[get_db] = lambda: TestingSessionLocal()
+Base.metadata.create_all(bind=engine)
+
+def override_get_db():
+    try:
+        db = TestingSessionLocal()
+        yield db
+    finally:
+        db.close()
+
+app.dependency_overrides[get_db] = override_get_db
 
 client = TestClient(app)
 
