@@ -20,7 +20,8 @@ services:
       DATABASE_URL: postgresql://user:password@db:5432/meine_db
       FRONTEND_URL: http://localhost:3000
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-      KAFKA_TOPIC: post_queue
+      KAFKA_TOPIC_ONE: post_queue
+      KAFKA_TOPIC_TWO: comment_queue
     ports:
       - "8000:8000"
     depends_on:
@@ -36,6 +37,19 @@ services:
     depends_on:
       - db
       - microservice_one
+      - kafka
+
+  microservice_three:
+    build:
+      context: ./backend_services/microservice_3
+    environment:
+      DATABASE_URL: postgresql://user:password@db:5432/meine_db
+    ports:
+      - "8002:8002"
+    depends_on:
+      - db
+      - microservice_one
+      - kafka
 
   frontend:
     build:
@@ -67,23 +81,35 @@ services:
   
   consumer_one:
     build:
-      context: ./kafka/consumers/consumer_1  # Pfad zum Verzeichnis des Dockerfiles des Consumers
+      context: ./kafka/consumers/consumer_1
     environment:
-      KAFKA_BOOTSTRAP_SERVERS: kafka:9092  # Verwendet den Service-Namen von Kafka in Docker
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
       KAFKA_TOPIC: post_queue
-      MICROSERVICE_2_API_URL: http://microservice_two:8001/optimize/  # Service-Name und Port von Microservice 2
+      MICROSERVICE_2_API_URL: http://microservice_two:8001/optimize/
     depends_on:
       - kafka
       - microservice_two
-      - kafka-init
+
+  consumer_two:
+    build:
+      context: ./kafka/consumers/consumer_2
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      KAFKA_TOPIC: comment_queue
+      MICROSERVICE_3_API_URL: http://microservice_three:8002/classify/
+    depends_on:
+      - kafka
+      - microservice_three
   
   kafka-init:
     build: ./kafka/init
     environment:
       KAFKA_BROKER_ADDRESS: kafka:9092
-      KAFKA_TOPIC: post_queue
+      KAFKA_TOPIC_ONE: post_queue
+      KAFKA_TOPIC_TWO: comment_queue
     depends_on:
       - kafka
       - zookeeper
+
 volumes:
   postgres_data:

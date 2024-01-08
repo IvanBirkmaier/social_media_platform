@@ -15,7 +15,7 @@ MICROSERVICE_2_API_URL = os.environ.get('MICROSERVICE_2_API_URL')
 
 consumer = Consumer({
     'bootstrap.servers': KAFKA_BOOTSTRAP_SERVERS,
-    'group.id': 'mygroup',
+    'group.id': 'post-group',
     'auto.offset.reset': 'earliest'
 })
 
@@ -37,7 +37,7 @@ def send_optimization_request(post_id):
         logging.error(f"Fehler bei der Bildoptimierung für Post ID {post_id}: {response.text}")
 
 if check_topic_exists(consumer, KAFKA_TOPIC):
-    logging.info("Kafka Topic gefunden. Starte Consumer...")
+    logging.info(f"Kafka Topic {KAFKA_TOPIC} gefunden. Starte Consumer...")
     consumer.subscribe([KAFKA_TOPIC])
 
     try:

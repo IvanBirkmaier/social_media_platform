@@ -1,9 +1,12 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 from .model import Account, Profile, Post, Comment
-from .producer import kafka_send_post_id
+from .producer import kafka_send_post_id, kafka_send_comment_id
 import bcrypt
 import base64
+from PIL import Image
+import io
+
 
 
 # Passwort in einen Hash machen
@@ -57,21 +60,31 @@ def check_account_login(db: Session, username: str, password: str):
 def convert_bytes_to_base64(image_bytes):
     return base64.b64encode(image_bytes).decode('utf-8')
 
+def validate_image_bytes(image_bytes):
+    try:
+        with Image.open(io.BytesIO(image_bytes)) as img:
+            # Optional: Weitere Überprüfungen hinzufügen (z.B. Bildgröße, Format)
+            pass
+    except IOError:
+        raise ValueError("Ungültiges Bildformat oder beschädigte Bilddaten")
+
+
 # Post zu erstellen
 def create_post(db: Session, account_id: int, description: str, base64_image: str):
     image_bytes = base64.b64decode(base64_image)
+
+    # Validierung der Bildbytes
+    validate_image_bytes(image_bytes)
+
     db_post = Post(account_id=account_id, description=description, image=image_bytes)
     db.add(db_post)
     db.commit()
     db.refresh(db_post)
-    # Konvertieren Sie das Bild in Base64, bevor Sie das Objekt zurückgeben
-    # db_post.image = convert_bytes_to_base64(db_post.image)
     db_post.base64_image = base64_image
-
-    # hinzufügen zu kafka
     kafka_send_post_id(db_post.id)
     
     return db_post
+
 
 
 # Erstellen eines Kommentars
@@ -80,6 +93,9 @@ def create_comment(db: Session, account_id: int, post_id: int, text: str):
     db.add(db_comment)
     db.commit()
     db.refresh(db_comment)
+    
+    # Senden der Kommentar-ID an Kafka
+    kafka_send_comment_id(db_comment.id)
     return db_comment
 
 # Hilfsfunktion, um Bytes in einen Base64-String zu konvertieren
