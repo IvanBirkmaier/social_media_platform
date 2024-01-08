@@ -5,7 +5,7 @@ import RegistrationParent from "./components/RegistrationParent/RegistrationPare
 import LoginParent from "./components/LoginParent/LoginParent";
 import RequestPassword from "./components/RequestPassword/RequestPassword";
 import RootLayout from "./components/_root/RootLayout";
-import { Home, AddPost } from "./components/_root/pages";
+import { Feed, AddPost, Home } from "./components/_root/pages";
 import { AuthProvider } from "./components/Auth/AuthContext";
 import "./index.css";
 
@@ -28,8 +28,9 @@ const App = () => {
           <Route path="/requestpassword" element={<RequestPassword />} />
           {/* private routes */}
           <Route element={<RootLayout />}>
-            <Route index element={<Home />} />
+            <Route index element={<Feed />} />
             <Route path="/addPost" element={<AddPost />} />
+            <Route path="/home" index element={<Home />} />
           </Route>
         </Routes>
       </AuthProvider>
