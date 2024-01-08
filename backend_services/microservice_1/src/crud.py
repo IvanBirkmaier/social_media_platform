@@ -159,7 +159,8 @@ def get_post_comments(db: Session, post_id: int):
             "account_id": comment.account_id,
             "text": comment.text,
             "created_at": comment.created_at,
-            "username": username
+            "username": username,
+            "classifier": comment.classifier
         }
         for comment, username in comments_with_username
     ]
