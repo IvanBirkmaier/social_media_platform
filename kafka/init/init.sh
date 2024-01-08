@@ -5,6 +5,8 @@
 KAFKA_BROKER_ADDRESS=${KAFKA_BROKER_ADDRESS:-"kafka:9092"}
 KAFKA_TOPIC_ONE=${KAFKA_TOPIC_ONE:-"post_queue"}
 KAFKA_TOPIC_TWO=${KAFKA_TOPIC_TWO:-"comment_queue"}
+KAFKA_TOPIC_THREE=${KAFKA_TOPIC_THREE:-"classified_comments_queue"}
+
 
 # Warten, bis Kafka verfügbar ist
 echo "Warten auf Kafka..."
@@ -24,5 +26,7 @@ create_kafka_topic() {
 # Erstellen von Kafka-Topics
 create_kafka_topic $KAFKA_TOPIC_ONE
 create_kafka_topic $KAFKA_TOPIC_TWO
+create_kafka_topic $KAFKA_TOPIC_THREE
 
-echo "Kafka Topics $KAFKA_TOPIC_ONE und $KAFKA_TOPIC_TWO erfolgreich erstellt."
+
+echo "Kafka Topics $KAFKA_TOPIC_ONE, $KAFKA_TOPIC_TWO und $KAFKA_TOPIC_THREE erfolgreich erstellt."

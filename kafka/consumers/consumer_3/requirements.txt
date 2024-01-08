@@ -48,27 +48,8 @@ email-validator>=1.1.3
 annotated-types>=0.4.0 
 typing-extensions>=4.6.1 
 
-Pillow==10.2.0
+confluent_kafka==2.3.0
 
-
-torch==2.1.2
-torchvision==0.16.2
-torchaudio==2.1.2
-transformers==4.36.2
-sentencepiece==0.1.99
-sacremoses==0.1.1
-emoji==0.6.0
-numpy==1.26.3
-filelock==3.13.1
-sympy==1.12
-networkx==3.2.1
-Jinja2==3.1.2
-fsspec==2023.12.2
-MarkupSafe==2.1.3
-huggingface-hub==0.20.2
-regex==2023.12.25
-tokenizers==0.15.0
-safetensors==0.4.1
-tqdm==4.66.1
-mpmath==1.3.0
-websockets
+charset-normalizer==3.3.2 
+requests==2.31.0 
+urllib3==2.1.0

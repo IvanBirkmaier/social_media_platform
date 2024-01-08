@@ -1,6 +1,6 @@
 import logging
 from .model import Post
-from .optimizer import compress_image_bytes
+from .optimizer import compress_image_bytes, scale_down
 from sqlalchemy.orm import Session
 
 # # Konfigurieren des Loggings
@@ -16,14 +16,20 @@ def optimize_and_update_image(db: Session, post_id: int):
             logging.warning(f"Post mit ID {post_id} nicht gefunden.")
             return False
 
-        if not post.image:
+        if not post.full_image:
             logging.info(f"Kein Bild zum Optimieren für Post ID {post_id} vorhanden.")
             return True
 
-        optimized_image_bytes = compress_image_bytes(post.image)
-        post.image = optimized_image_bytes
+        optimized_image_bytes = compress_image_bytes(post.full_image)
+        post.full_image = optimized_image_bytes
+        logging.info(f"DATENTYP ÄNDER: Bild für Post ID {post_id} erfolgreich optimiert.")
+
+        resized_image_bytes = scale_down()
+        post.reduced_image = resized_image_bytes
+        logging.info(f"BILD QUALITÄT REDUZIEREN: Bild für Post ID {post_id} erfolgreich reduziert.")
+
+
         db.commit()
-        logging.info(f"Bild für Post ID {post_id} erfolgreich optimiert.")
         return True
 
     except Exception as e:

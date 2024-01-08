@@ -19,3 +19,7 @@ def compress_image_bytes(image_bytes, format='JPEG', quality=85):
 
         # Komprimierte Bildbytes zurückgeben
         return output_stream.getvalue()
+
+
+def scale_down():
+    return 0
