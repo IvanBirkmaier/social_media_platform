@@ -9,7 +9,7 @@ logging.basicConfig(level=logging.INFO)
 # Laden der Umgebungsvariablen
 KAFKA_BOOTSTRAP_SERVERS = os.getenv('KAFKA_BOOTSTRAP_SERVERS', 'localhost:9092')
 KAFKA_TOPIC = os.getenv('KAFKA_TOPIC', 'classified_comments_queue')
-WEBSOCKET_CLIENT_URL = os.getenv('WEBSOCKET_CLIENT_URL', 'http://websocket-client:8000/trigger_update')
+WEBSOCKET_CLIENT_URL = os.getenv('WEBSOCKET_CLIENT_URL', 'http://websocket-client:8003/trigger_update')
 
 
 # Konfiguration des Consumers
@@ -32,7 +32,10 @@ def check_topic_exists(topic, timeout=60):
 
 # Funktion zum Senden von Klassifizierungsanfragen
 def send_classification_request(comment_id):
-    response = requests.post(f"{WEBSOCKET_CLIENT_URL}{comment_id}")
+    # Erstellen der JSON-Datenstruktur für die Anfrage
+    data = {"comment_id": comment_id}
+    # Senden der POST-Anfrage mit der JSON-Datenstruktur
+    response = requests.post(WEBSOCKET_CLIENT_URL, json=data)
     if response.status_code == 200:
         logging.info(f"Klassifizierung erfolgreich für Kommentar ID {comment_id}")
     else:
