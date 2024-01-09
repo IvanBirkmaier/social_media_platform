@@ -5,7 +5,28 @@ on:
     branches: [feature_sctions_herbert_3]
 
 jobs:
-  test:
+  test ms 1:
+#    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.9.18'
+    - name: Install Dependencies 1
+      run: 
+        cd backend/microservice_1 
+        pip install -r requirements.txt
+    - name: run test crud MS 1
+      run: |
+        cd backend_services/microservice_1/test
+        pytest unit_test_crud.py
+        pytest unit_test_api.py
+
+jobs:
+  test MS 1:
 #    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
 
@@ -17,18 +38,49 @@ jobs:
         python-version: '3.9.18'
     - name: Install Dependencies
       run: 
-        cd backend
+        cd backend/microservice_1 
         pip install -r requirements.txt
-    - name: Run Tests MS 1
+    - name: run test crud
       run: |
         cd backend_services/microservice_1/test
         pytest unit_test_crud.py
         pytest unit_test_api.py
-    - name: Run Tests MS 2
+
+        jobs:
+  test MS 2:
+#    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.9.18'
+    - name: Install Dependencies
+      run: 
+        cd backend/microservice_2
+        pip install -r requirements.txt
+    - name: run test crud
       run: |
         cd backend_services/microservice_2/test
         pytest unit_test_crud.py
-    - name: Run Tests MS 3
+
+  test MS 3:
+#    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.9.18'
+    - name: Install Dependencies
+      run: 
+        cd backend/microservice_3
+        pip install -r requirements.txt
+    - name: run test crud
       run: |
         cd backend_services/microservice_3/test
         pytest unit_test_crud.py
