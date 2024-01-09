@@ -4,8 +4,8 @@ current_dir = os.path.dirname(os.path.realpath(__file__))
 parent_dir = os.path.dirname(current_dir)
 sys.path.append(parent_dir)
 
-from services.src.crud import hash_password, check_password_hash, create_account, create_profile, check_username_existence, check_email_existence, read_profile
-from services.src.model import Account, Profile, Post, Comment
+from microservice_1.src.crud import hash_password, check_password_hash, create_account, create_profile, check_username_existence, check_email_existence, read_profile
+from microservice_1.src.model import Account, Profile, Post, Comment
 
 import pytest
 from unittest.mock import MagicMock
