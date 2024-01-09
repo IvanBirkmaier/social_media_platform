@@ -1,4 +1,4 @@
-name: Run Tests on push to feature_actions_herbert_3
+name: Run Tests on push feature_actions_herbert_3
 
 on:
   push:
