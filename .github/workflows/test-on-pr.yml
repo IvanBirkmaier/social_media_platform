@@ -3,7 +3,7 @@ name: Run Tests on PR Merge to Main
 on:
   push:
     types: [closed]
-    branches: [feature_actions_herbert_3]
+    branches: [feature_sctions_herbert_3]
 
 jobs:
   test:
