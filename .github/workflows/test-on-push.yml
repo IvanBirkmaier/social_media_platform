@@ -16,11 +16,11 @@ jobs:
         python-version: '3.9.18'
     - name: Install Dependencies for MS 1
       run: |
-        cd backend/microservice_1
+        cd backend_services/microservice_1
         pip install -r requirements.txt
     - name: Run Tests for MS 1
       run: |
-        cd backend/microservice_1/test
+        cd backend_services/microservice_1/test
         pytest unit_test_crud.py
         pytest unit_test_api.py
 
@@ -35,11 +35,11 @@ jobs:
         python-version: '3.9.18'
     - name: Install Dependencies for MS 2
       run: |
-        cd backend/microservice_2
+        cd backend_services/microservice_2
         pip install -r requirements.txt
     - name: Run Tests for MS 2
       run: |
-        cd backend/microservice_2/test
+        cd backend_services/microservice_2/test
         pytest unit_test_crud.py
 
   test_ms_3:
@@ -53,9 +53,9 @@ jobs:
         python-version: '3.9.18'
     - name: Install Dependencies for MS 3
       run: |
-        cd backend/microservice_3
+        cd backend_services/microservice_3
         pip install -r requirements.txt
     - name: Run Tests for MS 3
       run: |
-        cd backend/microservice_3/test
+        cd backend_services/microservice_3/test
         pytest unit_test_crud.py
