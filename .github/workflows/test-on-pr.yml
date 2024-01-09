@@ -2,11 +2,12 @@ name: Run Tests on push to feature_sctions_herbert_3
 
 on:
   push:
-    branches: [feature_actions_herbert]
+    types: [closed]
+    branches: [feature_sctions_herbert_3]
 
 jobs:
   test:
-    if: github.event.pull_request.merged == true
+#    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
 
     steps:
