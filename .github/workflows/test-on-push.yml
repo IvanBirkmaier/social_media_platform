@@ -37,6 +37,7 @@ jobs:
       run: |
         cd backend_services/microservice_2
         pip install -r requirements.txt
+        pip install pytest
     - name: Run Tests for MS 2
       run: |
         cd backend_services/microservice_2/test
