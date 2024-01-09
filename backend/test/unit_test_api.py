@@ -9,14 +9,16 @@ from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy.pool import StaticPool
-
+from sqlalchemy.ext.declarative import declarative_base
+    
 from services.src.model import Base
 from app import app, get_db
 
-SQLALCHEMY_DATABASE_URL = "sqlite://"
+DATABASE_URL = "sqlite://"
+#engine = create_engine(DATABASE_URL)
 
 engine = create_engine(
-    SQLALCHEMY_DATABASE_URL,
+    DATABASE_URL,
     connect_args={"check_same_thread": False},
     poolclass=StaticPool,
 )
@@ -131,9 +133,13 @@ def test_check_username_not_exists():
     assert response.status_code == 200
     assert response.json()["username_exists"] == False
 
-
 def create_account_with_username(db: Session, username: str):
     # Helper function to create an account with the given username
     # Use this function to set up the database state for testing
     # This function should be adapted based on your account creation logic
-    pass
+    data = {
+        "username": str,
+        "email": "test@example.com",
+        "password": "testpassword",
+    }
+    response = client.post("/account/", json=data)
