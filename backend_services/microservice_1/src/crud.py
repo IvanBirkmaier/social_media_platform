@@ -77,12 +77,13 @@ def create_post(db: Session, account_id: int, description: str, base64_image: st
 
     # Validierung der Bildbytes
     validate_image_bytes(image_bytes)
-    db_post = Post(account_id=account_id, description=description, image=image_bytes)
+    db_post = Post(account_id=account_id, description=description, full_image=image_bytes)
     db.add(db_post)
     db.commit()
     db.refresh(db_post)
-    db_post.base64_image = base64_image
+    # db_post.base64_image = base64_image
     kafka_send_post_id(db_post.id)
+    print(" 9### kafka send")
     return db_post
 
 
@@ -124,9 +125,24 @@ def get_account_posts(db: Session, account_id: int):
         "id": post.id,
         "account_id": post.account_id,
         "description": post.description,
-        "base64_image": convert_image_to_base64(post.image),
+        "base64_image": convert_image_to_base64(post.reduced_image),
         "username": username
     } for post, username in posts]
+
+
+def get_post_full_image_by_id(db: Session, post_id: int):
+    """
+    Holt das full_image eines Posts anhand seiner ID.
+
+    :param db: Session-Objekt für die Datenbankverbindung.
+    :param post_id: Die ID des Posts.
+    :return: Das full_image des Posts als Byte-Array oder None, falls der Post nicht gefunden wurde.
+    """
+    post = db.query(Post.full_image).filter(Post.id == post_id).first()
+    if post and post.full_image:
+        return convert_image_to_base64(post.full_image)
+    else:
+        return None
 
 
 
@@ -158,7 +174,7 @@ def get_random_posts_not_by_account(db: Session, account_id: int):
         "id": post.id,
         "account_id": post.account_id,
         "description": post.description,
-        "base64_image": convert_image_to_base64(post.image),
+        "base64_image": convert_image_to_base64(post.reduced_image),
         "username": username
     } for post, username  in posts]
 

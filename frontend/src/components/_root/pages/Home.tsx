@@ -49,6 +49,10 @@ const Home = () => {
 
   const formatBase64Image = (base64String: string) => {
     // Prüfen, ob der String bereits mit dem korrekten Präfix beginnt
+    if (!base64String) {
+      return "";
+    }
+
     if (base64String.startsWith("data:image/jpeg;base64,")) {
       return base64String;
     } else {

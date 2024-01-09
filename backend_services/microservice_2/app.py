@@ -22,3 +22,13 @@ def optimize_image(post_id: int, db: Session = Depends(get_db)):
         return {"message": "Bildoptimierung erfolgreich", "post_id": post_id}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+
+# # API-Endpunkt zur Optimierung eines Bildes
+# @app.post("/resize/{post_id}", status_code=status.HTTP_200_OK)
+# def resize_image(post_id: int, db: Session = Depends(get_db)):
+#     try:
+#         resize_and_save_image(db, post_id)
+#         return {"message": "Bildverkleinerung erfolgreich", "post_id": post_id}
+#     except Exception as e:
+#         raise HTTPException(status_code=500, detail=str(e))

@@ -31,7 +31,7 @@ const Registration: React.FC<
   const [emailError, setEmailError] = useState("");
 
   // Debounce-Funktion
-  const debounce = <F extends (...args: any[]) => void>(
+  const debounce = <F extends (...args: string[]) => void>(
     func: F,
     delay: number
   ) => {
@@ -44,9 +44,6 @@ const Registration: React.FC<
 
   const checkUsernameAvailability = useCallback(
     debounce((username: string) => {
-      
-      
-      
       fetch(`${backendUrl}/check-username/${username}`)
         .then((res) => res.json())
         .then((data) => {
@@ -182,8 +179,7 @@ const Registration: React.FC<
               </button>
             </div>
             <p className="text">
-              Sie haben bereits einen Account?{" "}
-              <Link to="/login">Zum Login</Link>
+              Sie haben bereits einen Account? <Link to="/">Zum Login</Link>
             </p>
           </form>
         </div>

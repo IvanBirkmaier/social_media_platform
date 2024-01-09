@@ -27,7 +27,7 @@ const RegistrationInformation: React.FC<
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
   const navigate = useNavigate(); // Änderung hier
   const handleSkip = () => {
-    navigate("/"); // Weiterleitung zur /home-Route
+    navigate("/feed"); // Weiterleitung zur /home-Route
   };
   const createProfile = async () => {
     try {
