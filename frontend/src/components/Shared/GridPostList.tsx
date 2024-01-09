@@ -31,10 +31,28 @@ const GridPostList = ({
   const [comment, setComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [commentsUpdateTrigger, setCommentsUpdateTrigger] = useState(0); // Neuer Zustand
+  const [fullImage, setFullImage] = useState<string | null>(null); // Zustand für das vollständige Bild
+
+  const fetchFullImage = async (postId: number) => {
+    try {
+      const response = await fetch(`${backendUrl}/posts/${postId}/image/`, {
+        method: "GET",
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setFullImage(data.full_image); // Setzen des vollen Bildes
+      } else {
+        throw new Error("Fehler beim Laden des vollen Bildes");
+      }
+    } catch (error) {
+      console.error("Fehler beim Laden des vollen Bildes", error);
+    }
+  };
 
   const handleImageClick = (image: string) => {
     console.log(id);
     setSelectedImage(image);
+    fetchFullImage(id);
   };
 
   const handleDelete = async () => {
@@ -49,6 +67,7 @@ const GridPostList = ({
         }
 
         removePost(id);
+        setFullImage(null);
         // Hier können Sie zusätzliche Logik hinzufügen, z.B. das Entfernen des Beitrags aus dem State
       } catch (error) {
         console.error("Fehler beim Löschen des Beitrags", error);
@@ -112,7 +131,6 @@ const GridPostList = ({
     setIsSubmitting(false);
   };
 
-
   return (
     <ul>
       <li className="relative min-w-80 h-80">
@@ -144,7 +162,7 @@ const GridPostList = ({
           {/* <div className="overlay-inner"> */}
           <div ref={overlayRef} className="post_details-card">
             <img
-              src={selectedImage}
+              src={fullImage || selectedImage} // fullImage wird verwendet, wenn es vorhanden ist
               loading="lazy"
               role="presentation"
               className="post_details-img" // h-full w-full object-cover object-center Verwende object-fit und object-position
@@ -190,15 +208,8 @@ const GridPostList = ({
                   value={comment}
                   onChange={handleCommentChange}
                 />
-                {/* <button
-                  className="submit_comment_button text-lime-300"
-                  onClick={submitComment}
-                  disabled={isSubmitting}
-                >
-                  Posten
-                </button> */}
                 <img
-                  src={post_svg} // Pfade entsprechend anpassen
+                  src={post_svg}
                   alt="Posten"
                   onClick={isSubmitting ? () => {} : submitComment}
                   style={{

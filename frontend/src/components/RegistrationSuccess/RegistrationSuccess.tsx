@@ -8,7 +8,7 @@ const RegistrationSuccess: React.FC = () => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      navigate("/");
+      navigate("/feed");
     }, 1500);
 
     return () => clearTimeout(timer);

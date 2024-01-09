@@ -36,7 +36,7 @@ const LoginForm: React.FC<{ onLoginSuccess: () => void }> = ({
         onLoginSuccess(); // Sie können hier auch eine Weiterleitung einfügen
         console.log(data);
         login({ id: data.id, username: data.username });
-        navigate("/"); // Weiterleitung zur Startseite nach dem Login
+        navigate("/feed"); // Weiterleitung zur Startseite nach dem Login
       } else {
         setErrorMessage(data.detail || "Anmeldung fehlgeschlagen.");
       }

@@ -72,3 +72,4 @@ safetensors==0.4.1
 tqdm==4.66.1
 mpmath==1.3.0
 websockets
+confluent-kafka==2.3.0

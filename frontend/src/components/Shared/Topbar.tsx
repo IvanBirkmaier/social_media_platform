@@ -14,7 +14,7 @@ const Topbar = () => {
 
   const handleLogout = () => {
     logout(); // Aufrufen der Logout-Funktion aus dem Authentifizierungskontext
-    navigate("/login"); // Weiterleitung zur Login-Seite
+    navigate("/"); // Weiterleitung zur Login-Seite
   };
 
   const openConfirmationModal = () => {
@@ -43,7 +43,7 @@ const Topbar = () => {
       // Account erfolgreich gelöscht
       console.log("Account erfolgreich gelöscht");
       logout(); // Benutzer ausloggen
-      navigate("/login"); // Weiterleitung zur Login-Seite
+      navigate("/"); // Weiterleitung zur Login-Seite
     } catch (error) {
       console.error("Fehler beim Löschen des Accounts:", error);
     }
@@ -67,7 +67,7 @@ const Topbar = () => {
           />
         </div>
 
-        <Link to="/" className="flex items-center justify-center">
+        <Link to="/feed" className="flex items-center justify-center">
           <img
             src={logo}
             alt="Logo"

@@ -6,8 +6,9 @@ from pydantic import BaseModel, EmailStr
 from src.model import Account, SessionLocal, Base, engine
 from dotenv import load_dotenv
 import os
+import base64
 from src.crud import (create_profile, create_account, check_account_login, create_post, delete_post,
-                               create_comment, get_account_posts, get_post_comments, delete_account,  
+                               create_comment, get_account_posts, get_post_comments, delete_account, get_post_full_image_by_id,
                                get_random_posts_not_by_account, check_username_existence, check_email_existence, get_account_id_by_username)
 
 load_dotenv() 
@@ -128,6 +129,22 @@ def create_comment_endpoint(comment_create: CommentCreate, db: Session = Depends
 def get_posts_by_user(account_id: int, db: Session = Depends(get_db)):
     posts = get_account_posts(db, account_id)
     return JSONResponse(content={"posts": posts}, status_code=status.HTTP_200_OK)
+
+
+@app.get("/posts/{post_id}/image/")
+def get_post_image(post_id: int, db: Session = Depends(get_db)):
+    """
+    Gibt das vollständige Bild eines Posts anhand seiner ID zurück.
+
+    :param post_id: Die ID des Posts.
+    :param db: Session-Objekt für die Datenbankverbindung.
+    :return: Das vollständige Bild des Posts.
+    """
+    full_image_base64 = get_post_full_image_by_id(db, post_id)
+    if full_image_base64  is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post nicht gefunden")
+
+    return JSONResponse(content={"full_image": full_image_base64 }, status_code=status.HTTP_200_OK)
 
 
 @app.get("/posts/{post_id}/comments/")

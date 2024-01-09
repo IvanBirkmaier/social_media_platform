@@ -47,7 +47,7 @@ const CommentList: React.FC<CommentListProps> = ({ postId, updateTrigger }) => {
     return 0;
   });
 
-  const createAsterisks = (text) => "*".repeat(text.length);
+  const createAsterisks = (text: string) => "*".repeat(text.length);
 
   return (
     <div className="comment-list-container">
