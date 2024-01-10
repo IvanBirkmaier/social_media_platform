@@ -2,7 +2,7 @@ name: Run Tests on push
 
 on:
   push:
-    branches: [feature_actions_herbert_5]
+    branches: [feature_action_herbert_5]
 
 jobs:
   test_ms_1:

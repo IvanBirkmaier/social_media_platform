@@ -2,7 +2,7 @@ name: Build and Push Docker Image
 
 on:
   push:
-    branches: [feature_actions_herbert_5]
+    branches: [feature_action_herbert_5]
     # or use 'pull_request' with 'types: [closed]' for merged PRs
     # pull_request:
     #   types: [closed]
