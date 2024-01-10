@@ -2,8 +2,8 @@ from confluent_kafka import Consumer, KafkaError, TopicPartition
 import requests
 from dotenv import load_dotenv
 import os
-import logging
 import time
+import logging
 
 logging.basicConfig(level=logging.INFO)
 

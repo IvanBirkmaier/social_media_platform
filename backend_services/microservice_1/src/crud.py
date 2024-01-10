@@ -8,6 +8,10 @@ from PIL import Image
 import io
 from mimetypes import guess_extension, guess_type
 from io import BytesIO
+import logging
+
+logging.basicConfig(level=logging.INFO)
+
 
 
 # Passwort in einen Hash machen
@@ -83,7 +87,9 @@ def create_post(db: Session, account_id: int, description: str, base64_image: st
     db.refresh(db_post)
     # db_post.base64_image = base64_image
     kafka_send_post_id(db_post.id)
+    logging.info(f"##KAFKA: POST ID {db_post.id} erfolgreich an Server gesendet...")
     return db_post.id
+
 
 
 # Erstellen eines Kommentars
@@ -95,6 +101,8 @@ def create_comment(db: Session, account_id: int, post_id: int, text: str):
     
     # Senden der Kommentar-ID an Kafka
     kafka_send_comment_id(db_comment.id)
+    logging.info(f"##KAFKA: COMMENT ID {db_comment.id} erfolgreich an Server gesendet...")
+
     return db_comment
 
 

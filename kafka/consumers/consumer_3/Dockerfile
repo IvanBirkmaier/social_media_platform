@@ -10,6 +10,8 @@ COPY requirements.txt /app/
 # Oder Ihre Kafka-Server-Adresse
 ENV KAFKA_BOOTSTRAP_SERVERS=localhost:9092  
 ENV KAFKA_TOPIC=comment_queue
+ENV WEBSOCKET_CLIENT_URL=http://0.0.0.0:8003/trigger_update
+
 
 
 # Installieren Sie Python-Abhängigkeiten

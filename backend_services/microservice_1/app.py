@@ -17,7 +17,9 @@ FRONTEND_URL = os.environ.get("FRONTEND_URL") # Für die Connection zum Frontend
 def create_tables():
     Base.metadata.create_all(bind=engine)
 
+
 create_tables()
+
 
 app = FastAPI()
 
