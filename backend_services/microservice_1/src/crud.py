@@ -84,7 +84,7 @@ def create_post(db: Session, account_id: int, description: str, base64_image: st
     # db_post.base64_image = base64_image
     kafka_send_post_id(db_post.id)
     print(" 9### kafka send")
-    return db_post
+    return {"post_id": db_post.id, "description": db_post.description}
 
 
 # Erstellen eines Kommentars
