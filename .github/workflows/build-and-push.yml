@@ -26,5 +26,5 @@ jobs:
       with:
         push: true
         tags: |
-          berhert/social_media_app_university_projekt:${{ github.run_number }}
-          berhert/social_media_app_university_projekt:latest
+          berhert/sweg_repo:${{ github.run_number }}
+          berhert/sweg_repo:latest
