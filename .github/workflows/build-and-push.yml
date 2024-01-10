@@ -21,9 +21,55 @@ jobs:
         username: berhert
         password: dckr_pat_GHWCFbk0Yja9yud3xmZvX6pC-E4
 
-    - name: Build and push Docker image
+    - name: Build and push Docker image 1
       uses: docker/build-push-action@v2
       with:
+        context: ./path-to-your-dockerfile
+        push: true
+        tags: |
+          berhert/sweg_repo:${{ github.run_number }}
+          berhert/sweg_repo:latest
+
+    - name: Build and push Docker image ms 1
+      uses: docker/build-push-action@v2
+      with:
+        context: ./backend_services/microservice_1
+        push: true
+        tags: |
+          berhert/sweg_repo:${{ github.run_number }}
+          berhert/sweg_repo:latest
+
+    - name: Build and push Docker image ms 2
+      uses: docker/build-push-action@v2
+      with:
+        context: ./backend_services/microservice_2
+        push: true
+        tags: |
+          berhert/sweg_repo:${{ github.run_number }}
+          berhert/sweg_repo:latest
+
+    - name: Build and push Docker image ms 3
+      uses: docker/build-push-action@v2
+      with:
+        context: ./backend_services/microservice_3
+        push: true
+        tags: |
+          berhert/sweg_repo:${{ github.run_number }}
+          berhert/sweg_repo:latest
+
+    - name: Build and push Docker image db
+      uses: docker/build-push-action@v2
+      with:
+        context: ./database
+        push: true
+        tags: |
+          berhert/sweg_repo:${{ github.run_number }}
+          berhert/sweg_repo:latest
+
+    - name: Build and push Docker image frontend
+      uses: docker/build-push-action@v2
+      with:
+        context: ./frontend
         push: true
         tags: |
           berhert/sweg_repo:${{ github.run_number }}
