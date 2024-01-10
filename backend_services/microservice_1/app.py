@@ -17,10 +17,9 @@ FRONTEND_URL = os.environ.get("FRONTEND_URL") # Für die Connection zum Frontend
 def create_tables():
     Base.metadata.create_all(bind=engine)
 
-    
 
-if __name__ == "__main__":
-    create_tables()
+create_tables()
+
 
 app = FastAPI()
 
@@ -119,9 +118,11 @@ def login(user_login: UserLogin, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail="Falscher Benutzername oder Passwort")
     return {"id": user.id, "username": user.username}
 
-@app.post("/posts/", response_model=PostCreate, status_code=status.HTTP_201_CREATED)
+@app.post("/posts/", status_code=status.HTTP_201_CREATED)
 def create_post_endpoint(post_create: PostCreate, db: Session = Depends(get_db)):
-    return create_post(db, post_create.account_id, post_create.description, post_create.base64_image)
+    post_id = create_post(db, post_create.account_id, post_create.description, post_create.base64_image)
+    return {"post_id": post_id}
+
 
 @app.post("/comments/", response_model=CommentCreate, status_code=status.HTTP_201_CREATED)
 def create_comment_endpoint(comment_create: CommentCreate, db: Session = Depends(get_db)):
@@ -178,3 +179,7 @@ def delete_post_endpoint(post_id: int, db: Session = Depends(get_db)):
         return JSONResponse(content={"detail": "Post successfully deleted"}, status_code=status.HTTP_204_NO_CONTENT)
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
+    
+
+if __name__ == "__main__":
+    create_tables()
