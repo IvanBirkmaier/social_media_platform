@@ -1,0 +1,31 @@
+name: Build and Push Containers
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKER_HUB_USERNAME }}
+        password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+    - name: Build and push Microservice One
+      uses: docker/build-push-action@v2
+      with:
+        context: ./backend_services/microservice_1
+        push: true
+        tags: yourusername/microservice1:latest
+
+    - name: Build and push Microservice Two
+      uses: docker/build-push-action@v2
+      with:
+        context: ./backend_services/microservice_2
+       

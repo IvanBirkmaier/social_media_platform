@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { backendUrl } from "@/utils/utils";
+import { backendUrl, websocketServerUrl } from "@/utils/utils";
 
 interface Comment {
   comment_id: number;
@@ -12,30 +12,58 @@ interface Comment {
 
 interface CommentListProps {
   postId: number;
-  updateTrigger: number;
 }
 
-const CommentList: React.FC<CommentListProps> = ({ postId, updateTrigger }) => {
+const CommentList: React.FC<CommentListProps> = ({ postId }) => {
   const [comments, setComments] = useState<Comment[]>([]);
+  const [ws, setWs] = useState<WebSocket | null>(null);
 
-  useEffect(() => {
-    const fetchComments = async () => {
-      try {
-        const response = await fetch(`${backendUrl}/posts/${postId}/comments/`);
-        if (response.ok) {
-          const data = await response.json();
-          console.log(data);
-          setComments(data);
-        } else {
-          throw new Error("Fehler beim Laden der Kommentare");
-        }
-      } catch (error) {
-        console.error("Fehler beim Abrufen der Kommentare von:", error);
+  // Funktion zum Abrufen von Kommentaren
+  const fetchComments = async () => {
+    try {
+      const response = await fetch(`${backendUrl}/posts/${postId}/comments/`);
+      if (response.ok) {
+        const data = await response.json();
+        setComments(data);
+      } else {
+        throw new Error("Fehler beim Laden der Kommentare");
       }
+    } catch (error) {
+      console.error("Fehler beim Abrufen der Kommentare von:", error);
+    }
+  };
+
+  // WebSocket-Verbindung aufbauen
+  useEffect(() => {
+    const websocket = new WebSocket(`${websocketServerUrl}`);
+    websocket.onopen = () => console.log("Connected to WS Server");
+    websocket.onmessage = (event) => {
+      // event.data enthält die vom Server gesendete Nachricht
+      console.log("Nachricht vom Server erhalten:", event.data);
+    
+      // Kommentare neu laden
+      fetchComments();
     };
 
+    websocket.onclose = () => console.log("Disconnected from WS Server");
+
+    setWs(websocket);
+
+    return () => {
+      websocket.close();
+    };
+  }, [postId]);
+
+  useEffect(() => {
+    if (ws) {
+      console.log("WebSocket-Status:", ws.readyState);
+    }
+  }, [ws]);
+
+  // Kommentare beim ersten Laden und bei Änderungen von postId abrufen
+  useEffect(() => {
     fetchComments();
-  }, [postId, updateTrigger]);
+  }, [postId]);
 
   const sortedComments = comments.slice().sort((a, b) => {
     if (a.classifier === "POS" && b.classifier !== "POS") {

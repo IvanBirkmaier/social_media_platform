@@ -9,6 +9,10 @@ import os
 
 app = FastAPI()
 
+API_HOST = os.getenv('API_HOST', '0.0.0.0')
+API_PORT = os.getenv('API_PORT', 8003)
+
+
 
 class UpdateRequest(BaseModel):
     comment_id: int
@@ -23,7 +27,7 @@ async def trigger_update(request: UpdateRequest):
 
 def run_fastapi():
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)  # Port 8000 für FastAPI
+    uvicorn.run(app, host=API_HOST, port=API_PORT)  
 
 def run_websocket_client():
     loop = asyncio.new_event_loop()

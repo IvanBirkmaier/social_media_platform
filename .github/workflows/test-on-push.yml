@@ -1,0 +1,62 @@
+name: Run Tests on push feature_actions_herbert_3
+
+on:
+  push:
+    branches: [feature_sctions_herbert_3]
+
+jobs:
+  test_ms_1:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python for MS 1
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.9.18'
+    - name: Install Dependencies for MS 1
+      run: |
+        cd backend_services/microservice_1
+        pip install -r requirements.txt
+    - name: Run Tests for MS 1
+      run: |
+        cd backend_services/microservice_1/test
+        pytest unit_test_crud.py
+        pytest unit_test_api.py
+
+  test_ms_2:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python for MS 2
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.9.18'
+    - name: Install Dependencies for MS 2
+      run: |
+        cd backend_services/microservice_2
+        pip install -r requirements.txt
+        pip install pytest
+    - name: Run Tests for MS 2
+      run: |
+        cd backend_services/microservice_2/test
+        pytest unit_test_crud.py
+
+  test_ms_3:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python for MS 3
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.9.18'
+    - name: Install Dependencies for MS 3
+      run: |
+        cd backend_services/microservice_3
+        pip install -r requirements.txt
+    - name: Run Tests for MS 3
+      run: |
+        cd backend_services/microservice_3/test
+        pytest unit_test_crud.py

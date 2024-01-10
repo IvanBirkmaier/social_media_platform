@@ -64,7 +64,7 @@ const AddPost = ({ fieldChange, mediaUrl }: AddPostProps) => {
           },
           body: JSON.stringify(postPayload),
         });
-
+        console.log(response);
         if (response.ok) {
           console.log("Post erfolgreich erstellt");
           // Zusätzliche Logik nach erfolgreichem Upload

@@ -6,3 +6,5 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
+export const websocketServerUrl = import.meta.env.WEBSOCKET_SERVER_URL;
