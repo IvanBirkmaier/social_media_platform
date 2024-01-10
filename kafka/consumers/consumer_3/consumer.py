@@ -9,7 +9,7 @@ logging.basicConfig(level=logging.INFO)
 # Laden der Umgebungsvariablen
 KAFKA_BOOTSTRAP_SERVERS = os.getenv('KAFKA_BOOTSTRAP_SERVERS', 'localhost:9092')
 KAFKA_TOPIC = os.getenv('KAFKA_TOPIC', 'classified_comments_queue')
-WEBSOCKET_CLIENT_URL = os.getenv('WEBSOCKET_CLIENT_URL', 'http://websocket-client:8003/trigger_update')
+WEBSOCKET_CLIENT_URL = os.getenv('WEBSOCKET_CLIENT_URL', 'http://websocket_client_1:8003/trigger_update')
 
 
 # Konfiguration des Consumers

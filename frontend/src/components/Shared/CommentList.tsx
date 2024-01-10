@@ -35,6 +35,7 @@ const CommentList: React.FC<CommentListProps> = ({ postId }) => {
 
   // WebSocket-Verbindung aufbauen
   useEffect(() => {
+    console.log(websocketServerUrl)
     const websocket = new WebSocket(`${websocketServerUrl}`);
     websocket.onopen = () => console.log("Connected to WS Server");
     websocket.onmessage = (event) => {

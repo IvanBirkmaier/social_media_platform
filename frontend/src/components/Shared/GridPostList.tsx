@@ -30,7 +30,6 @@ const GridPostList = ({
   const overlayRef = useRef<HTMLDivElement>(null);
   const [comment, setComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [commentsUpdateTrigger, setCommentsUpdateTrigger] = useState(0); // Neuer Zustand
   const [fullImage, setFullImage] = useState<string | null>(null); // Zustand für das vollständige Bild
 
   const fetchFullImage = async (postId: number) => {
@@ -121,7 +120,6 @@ const GridPostList = ({
         const data = await response.json();
         console.log(data);
         setComment(""); // Kommentarfeld zurücksetzen
-        setCommentsUpdateTrigger((prev) => prev + 1); // Aktualisieren des Triggers
       } else {
         throw new Error("Fehler beim Senden des Kommentars");
       }
@@ -220,7 +218,7 @@ const GridPostList = ({
                 />
               </div>
 
-              <CommentList postId={id} updateTrigger={commentsUpdateTrigger} />
+              <CommentList postId={id} />
             </div>
           </div>
         </div>
