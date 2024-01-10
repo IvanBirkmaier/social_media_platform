@@ -18,13 +18,13 @@ jobs:
     - name: Log in to Docker Hub
       uses: docker/login-action@v2
       with:
-        username: ${{ secrets.DOCKER_HUB_USERNAME }}
-        password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+        username: IvanBirkamier
+        password: dckr_pat_0XbRWB1EDWqF23JnG-Xhvd7ouIw
 
     - name: Build and push Docker image
       uses: docker/build-push-action@v2
       with:
         push: true
         tags: |
-          ${{ secrets.DOCKER_HUB_USERNAME }}/social_media_app_university_projekt:${{ github.run_number }}
-          ${{ secrets.DOCKER_HUB_USERNAME }}/social_media_app_university_projekt:latest
+          IvanBirkamier/social_media_app_university_projekt:${{ github.run_number }}
+          IvanBirkamier/social_media_app_university_projekt:latest
