@@ -32,12 +32,12 @@ def check_topic_exists(consumer, topic, timeout=30):
 def send_optimization_request(post_id):
     response = requests.post(f"{MICROSERVICE_2_API_URL}{post_id}")
     if response.status_code == 200:
-        logging.info(f"Bildoptimierung erfolgreich für Post ID {post_id}")
+        logging.info(f"### KAFKA CONSUMER FÜR TOPIC {KAFKA_TOPIC}: Bildoptimierung erfolgreich für Post ID {post_id}")
     else:
-        logging.error(f"Fehler bei der Bildoptimierung für Post ID {post_id}: {response.text}")
+        logging.error(f"### KAFKA CONSUMER FÜR TOPIC {KAFKA_TOPIC}: Fehler bei der Bildoptimierung für Post ID {post_id}: {response.text}")
 
 if check_topic_exists(consumer, KAFKA_TOPIC):
-    logging.info(f"Kafka Topic {KAFKA_TOPIC} gefunden. Starte Consumer...")
+    logging.info(f"### KAFKA CONSUMER FÜR TOPIC {KAFKA_TOPIC}: Kafka Topic {KAFKA_TOPIC} gefunden. Starte Consumer...")
     consumer.subscribe([KAFKA_TOPIC])
 
     try:
@@ -53,7 +53,7 @@ if check_topic_exists(consumer, KAFKA_TOPIC):
                     break
 
             post_id = msg.value().decode('utf-8')
-            logging.info(f"Empfange Post-ID {post_id} vom Kafka")
+            logging.info(f"### KAFKA CONSUMER FÜR TOPIC {KAFKA_TOPIC}: Empfange Post-ID {post_id} vom Kafka")
             send_optimization_request(post_id)
 
     except KeyboardInterrupt:
@@ -61,4 +61,4 @@ if check_topic_exists(consumer, KAFKA_TOPIC):
     finally:
         consumer.close()
 else:
-    logging.error(f"Kafka Topic {KAFKA_TOPIC} nicht gefunden.")
+    logging.error(f"### KAFKA CONSUMER FÜR TOPIC {KAFKA_TOPIC}: Kafka Topic {KAFKA_TOPIC} nicht gefunden.")

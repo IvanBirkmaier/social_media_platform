@@ -9,7 +9,7 @@ logging.basicConfig(level=logging.INFO)
 # Laden der Umgebungsvariablen
 KAFKA_BOOTSTRAP_SERVERS = os.getenv('KAFKA_BOOTSTRAP_SERVERS', 'localhost:9092')
 KAFKA_TOPIC = os.getenv('KAFKA_TOPIC', 'classified_comments_queue')
-WEBSOCKET_CLIENT_URL = os.getenv('WEBSOCKET_CLIENT_URL', 'http://websocket-client:8003/trigger_update')
+WEBSOCKET_CLIENT_URL = os.getenv('WEBSOCKET_CLIENT_URL', 'http://websocket_client_1:8003/trigger_update')
 
 
 # Konfiguration des Consumers
@@ -35,15 +35,17 @@ def send_classification_request(comment_id):
     # Erstellen der JSON-Datenstruktur für die Anfrage
     data = {"comment_id": comment_id}
     # Senden der POST-Anfrage mit der JSON-Datenstruktur
-    response = requests.post(WEBSOCKET_CLIENT_URL, json=data)
+    # alte version response = requests.post(WEBSOCKET_CLIENT_URL, json=data)
+    response = requests.post(WEBSOCKET_CLIENT_URL)
+    
     if response.status_code == 200:
-        logging.info(f"Klassifizierung erfolgreich für Kommentar ID {comment_id}")
+        logging.info(f"### KAFKA CONSUMER FÜR TOPIC {KAFKA_TOPIC}: Signal an Websocket Client API übertragen.")
     else:
-        logging.error(f"Fehler bei der Klassifizierung für Kommentar ID {comment_id}: {response.text}")
+        logging.error(f"### KAFKA CONSUMER FÜR TOPIC {KAFKA_TOPIC}: Fehler beim übertragen des Signals an Websocket Client API: {response.text}")
 
 # Warte, bis das Topic verfügbar ist
 if check_topic_exists(KAFKA_TOPIC):
-    logging.info(f"Kafka Topic {KAFKA_TOPIC} gefunden. Starte Consumer...")
+    logging.info(f"### KAFKA CONSUMER FÜR TOPIC {KAFKA_TOPIC}: Kafka Topic {KAFKA_TOPIC} gefunden. Starte Consumer...")
     consumer.subscribe([KAFKA_TOPIC])
 
     try:
@@ -63,4 +65,4 @@ if check_topic_exists(KAFKA_TOPIC):
     finally:
         consumer.close()
 else:
-    logging.error(f"Kafka Topic {KAFKA_TOPIC} nicht gefunden.")
+    logging.error(f"### KAFKA CONSUMER FÜR TOPIC {KAFKA_TOPIC}: Kafka Topic {KAFKA_TOPIC} nicht gefunden.")

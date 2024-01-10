@@ -14,9 +14,9 @@ producer = Producer({'bootstrap.servers': KAFKA_BOOTSTRAP_SERVERS})
 
 def delivery_report(err, msg):
     if err is not None:
-        logging.error(f'Nachrichtenübermittlung fehlgeschlagen: {err}')
+        logging.error(f'### KAFKA PRODUCER MICROSERVICE 1: Nachrichtenübermittlung fehlgeschlagen: {err}')
     else:
-        logging.info(f'Nachricht erfolgreich gesendet: {msg.topic()} [{msg.partition()}]')
+        logging.info(f'### KAFKA PRODUCER MICROSERVICE 1: Nachricht erfolgreich gesendet: {msg.topic()} [{msg.partition()}]')
 
 def kafka_send_post_id(post_id):
     producer.produce(KAFKA_TOPIC_ONE, key='post_id', value=str(post_id), callback=delivery_report)
