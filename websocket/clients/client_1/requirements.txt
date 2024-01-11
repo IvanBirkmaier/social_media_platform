@@ -1,0 +1,74 @@
+# Allgemeine Abhängigkeiten
+fastapi==0.104.1
+uvicorn==0.24.0.post1
+pydantic==2.5.2
+sqlalchemy==2.0.23
+python-dotenv==1.0.0
+pyyaml==6.0.1
+
+# ASGI-Server und -Tools
+starlette==0.27.0
+httptools==0.6.1
+websockets==12.0
+
+# Typing Extensions
+typing-extensions==4.8.0
+
+# Async Tools
+anyio==3.7.1
+async-timeout==4.0.3
+asyncpg==0.29.0
+greenlet==3.0.1
+
+# HTTP und Utilities
+click==8.1.7
+colorama==0.4.6
+h11==0.14.0
+idna==3.5
+sniffio==1.3.0
+watchfiles==0.21.0
+
+# Pip tools
+pip==23.3.1
+setuptools==68.0.0
+wheel==0.41.2
+
+# SQLAlchemy für ORM
+sqlalchemy==2.0.23
+
+# Datenbanktreiber, falls noch nicht hinzugefügt
+psycopg2-binary==2.9.3
+
+# Für das Passwortverschleicher
+bcrypt==4.1.1
+
+pydantic==2.5.2  
+pydantic-core==2.14.5
+email-validator>=1.1.3 
+annotated-types>=0.4.0 
+typing-extensions>=4.6.1 
+
+Pillow==10.2.0
+
+
+torch==2.1.2
+torchvision==0.16.2
+torchaudio==2.1.2
+transformers==4.36.2
+sentencepiece==0.1.99
+sacremoses==0.1.1
+emoji==0.6.0
+numpy==1.26.3
+filelock==3.13.1
+sympy==1.12
+networkx==3.2.1
+Jinja2==3.1.2
+fsspec==2023.12.2
+MarkupSafe==2.1.3
+huggingface-hub==0.20.2
+regex==2023.12.25
+tokenizers==0.15.0
+safetensors==0.4.1
+tqdm==4.66.1
+mpmath==1.3.0
+websockets

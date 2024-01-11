@@ -1,0 +1,321 @@
+openapi: 3.0.3
+info:
+  title: Social Media App API
+  description: API for a social media application.
+  version: "1.0.0"
+servers:
+  - url: http://localhost:8000
+paths:
+  /account/:
+    post:
+      tags:
+        - account
+      summary: Create a new user account
+      operationId: createUserAccount
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountCreate'
+      responses:
+        '201':
+          description: User account created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountResponse'
+        '400':
+          description: Username already registered
+
+  /profile/:
+    post:
+      tags:
+        - profile
+      summary: Create a new user profile
+      operationId: createUserProfile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProfileCreate'
+      responses:
+        '201':
+          description: User profile created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileCreate'
+
+  /check-username/{username}:
+    get:
+      tags:
+        - account
+      summary: Check if username exists
+      operationId: checkUsername
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Username existence status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  username_exists:
+                    type: boolean
+
+  /check-email/{email}:
+    get:
+      tags:
+        - account
+      summary: Check if email exists
+      operationId: checkEmail
+      parameters:
+        - name: email
+          in: path
+          required: true
+          schema:
+            type: string
+            format: email
+      responses:
+        '200':
+          description: Email existence status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  email_exists:
+                    type: boolean
+  /login/:
+    post:
+      tags:
+        - account
+      summary: User login
+      operationId: loginUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLogin'
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '400':
+          description: Incorrect username or password
+
+  /posts/:
+    post:
+      tags:
+        - post
+      summary: Create a new post
+      operationId: createPost
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostCreate'
+      responses:
+        '201':
+          description: Post created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostCreate'
+
+  /comments/:
+    post:
+      tags:
+        - comment
+      summary: Create a new comment
+      operationId: createComment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommentCreate'
+      responses:
+        '201':
+          description: Comment created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentCreate'
+
+  /account/{account_id}/posts/:
+    get:
+      tags:
+        - account
+      summary: Get posts by account
+      operationId: getPostsByAccount
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of posts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PostCreate'  # Assuming same schema as PostCreate for simplicity
+
+  /posts/{post_id}/comments/:
+    get:
+      tags:
+        - post
+      summary: Get comments for a post
+      operationId: getCommentsByPost
+      parameters:
+        - name: post_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of comments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CommentCreate'  # Assuming same schema as CommentCreate for simplicity
+
+  /posts/random/:
+    get:
+      tags:
+        - post
+      summary: Get random posts not created by a specific user
+      operationId: getRandomPosts
+      parameters:
+        - name: user_id
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of random posts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PostCreate'  # Assuming same schema as PostCreate for simplicity
+
+components:
+  schemas:
+    AccountCreate:
+      type: object
+      required:
+        - username
+        - email
+        - password
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+
+    AccountResponse:
+      type: object
+      required:
+        - id
+        - username
+        - email
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+
+    ProfileCreate:
+      type: object
+      required:
+        - account_id
+        - vorname
+        - nachname
+        - city
+        - plz
+        - street
+        - phone_number
+      properties:
+        account_id:
+          type: integer
+        vorname:
+          type: string
+        nachname:
+          type: string
+        city:
+          type: string
+        plz:
+          type: integer
+        street:
+          type: string
+        phone_number:
+          type: string
+    UserLogin:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+    PostCreate:
+      type: object
+      required:
+        - user_id
+        - description
+        - base64_image
+      properties:
+        user_id:
+          type: integer
+        description:
+          type: string
+        base64_image:
+          type: string
+    CommentCreate:
+      type: object
+      required:
+        - user_id
+        - post_id
+        - text
+      properties:
+        user_id:
+          type: integer
+        post_id:
+          type: integer
+        text:
+          type: string
+
