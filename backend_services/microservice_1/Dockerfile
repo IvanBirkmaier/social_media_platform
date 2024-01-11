@@ -19,6 +19,7 @@ COPY requirements.txt .
 RUN pip install --upgrade pip
 RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
+
 # Kopieren Sie den Quellcode in den Container
 COPY ./src /code/src
 COPY app.py /code/
