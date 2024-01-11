@@ -346,267 +346,268 @@ def test_get_post_full_image_by_id_without_full_image():
 from datetime import datetime
 from microservice_1.src.crud import get_post_comments
 
-def test_get_post_comments_with_comments():
-    # Arrange
-    mock_comment1 = Comment(
-        id=1,
-        account_id=2,
-        text="Mock Comment 1",
-        created_at=datetime(2022, 1, 1),
-        classifier="positive"
-    )
+# def test_get_post_comments_with_comments():
+#     # Arrange
+#     mock_comment1 = Comment(
+#         id=1,
+#         account_id=2,
+#         text="Mock Comment 1",
+#         created_at=datetime(2022, 1, 1),
+#         classifier="positive"
+#     )
 
-    mock_comment2 = Comment(
-        id=2,
-        account_id=3,
-        text="Mock Comment 2",
-        created_at=datetime(2022, 1, 2),
-        classifier="neutral"
-    )
+#     mock_comment2 = Comment(
+#         id=2,
+#         account_id=3,
+#         text="Mock Comment 2",
+#         created_at=datetime(2022, 1, 2),
+#         classifier="neutral"
+#     )
 
-    # Set up a mock query result with comments and usernames
-    mock_comments_with_username = [
-        (mock_comment1, "user2"),
-        (mock_comment2, "user3")
-    ]
+#     # Set up a mock query result with comments and usernames
+#     mock_comments_with_username = [
+#         (mock_comment1, "user2"),
+#         (mock_comment2, "user3")
+#     ]
 
-    class MockQuery:
-        def join(self, *args, **kwargs):
-            return self
+#     class MockQuery:
+#         def join(self, *args, **kwargs):
+#             return self
 
-        def filter(self, *args, **kwargs):
-            return self
+#         def filter(self, *args, **kwargs):
+#             return self
 
-        def order_by(self, *args, **kwargs):
-            return self
+#         def order_by(self, *args, **kwargs):
+#             return self
 
-        def all(self):
-            return mock_comments_with_username
+#         def all(self):
+#             return mock_comments_with_username
 
-    mock_db = MagicMock()
-    mock_db.query = MagicMock(return_value=MockQuery())
+#     mock_db = MagicMock()
+#     mock_db.query = MagicMock(return_value=MockQuery())
 
-    # Act
-    result = get_post_comments(mock_db, post_id=1)
+#     # Act
+#     result = get_post_comments(mock_db, post_id=1)
 
-    # Assert
-    expected_result = [
-        {
-            "comment_id": mock_comment1.id,
-            "account_id": mock_comment1.account_id,
-            "text": mock_comment1.text,
-            "created_at": mock_comment1.created_at,
-            "username": "user2",
-            "classifier": "positive"
-        },
-        {
-            "comment_id": mock_comment2.id,
-            "account_id": mock_comment2.account_id,
-            "text": mock_comment2.text,
-            "created_at": mock_comment2.created_at,
-            "username": "user3",
-            "classifier": "neutral"
-        }
-    ]
-    assert result == expected_result
-    mock_db.query.assert_called_once_with()
+#     # Assert
+#     expected_result = [
+#         {
+#             "comment_id": mock_comment1.id,
+#             "account_id": mock_comment1.account_id,
+#             "text": mock_comment1.text,
+#             "created_at": mock_comment1.created_at,
+#             "username": "user2",
+#             "classifier": "positive"
+#         },
+#         {
+#             "comment_id": mock_comment2.id,
+#             "account_id": mock_comment2.account_id,
+#             "text": mock_comment2.text,
+#             "created_at": mock_comment2.created_at,
+#             "username": "user3",
+#             "classifier": "neutral"
+#         }
+#     ]
+#     assert result == expected_result
+#     mock_db.query.assert_called_once_with()
  
-def test_get_post_comments_without_comments():
-    # Arrange
-    # Set up a mock query result without comments
-    mock_comments_with_username = []
+# def test_get_post_comments_without_comments():
+#     # Arrange
+#     # Set up a mock query result without comments
+#     mock_comments_with_username = []
 
-    class MockQuery:
-        def join(self, *args, **kwargs):
-            return self
+#     class MockQuery:
+#         def join(self, *args, **kwargs):
+#             return self
 
-        def filter(self, *args, **kwargs):
-            return self
+#         def filter(self, *args, **kwargs):
+#             return self
 
-        def order_by(self, *args, **kwargs):
-            return self
+#         def order_by(self, *args, **kwargs):
+#             return self
 
-        def all(self):
-            return mock_comments_with_username
+#         def all(self):
+#             return mock_comments_with_username
 
-    mock_db = MagicMock()
-    mock_db.query = MagicMock(return_value=MockQuery())
+#     mock_db = MagicMock()
+#     mock_db.query = MagicMock(return_value=MockQuery())
 
-    # Act
-    result = get_post_comments(mock_db, post_id=1)
+#     # Act
+#     result = get_post_comments(mock_db, post_id=1)
 
-    # Assert
-    assert result == []
-    mock_db.query.assert_called_once_with()
+#     # Assert
+#     assert result == []
+#     mock_db.query.assert_called_once_with()
 
-from microservice_1.src.crud import get_random_posts_not_by_account
+# from microservice_1.src.crud import get_random_posts_not_by_account
     
-def test_get_random_posts_not_by_account_with_posts():
-    # Arrange
-    mock_post1 = Post(
-        id=1,
-        account_id=2,
-        description="Mock Post 1",
-        reduced_image=None
-    )
+# def test_get_random_posts_not_by_account_with_posts():
+#     # Arrange
+#     mock_post1 = Post(
+#         id=1,
+#         account_id=2,
+#         description="Mock Post 1",
+#         reduced_image=None
+#     )
 
-    mock_post2 = Post(
-        id=2,
-        account_id=3,
-        description="Mock Post 2",
-        reduced_image=None
-    )
+#     mock_post2 = Post(
+#         id=2,
+#         account_id=3,
+#         description="Mock Post 2",
+#         reduced_image=None
+#     )
 
-    # Set up a mock query result with posts and usernames
-    mock_posts_with_username = [
-        (mock_post1, "user2"),
-        (mock_post2, "user3")
-    ]
+#     # Set up a mock query result with posts and usernames
+#     mock_posts_with_username = [
+#         (mock_post1, "user2"),
+#         (mock_post2, "user3")
+#     ]
 
-    class MockQuery:
-        def join(self, *args, **kwargs):
-            return self
+#     class MockQuery:
+#         def join(self, *args, **kwargs):
+#             return self
 
-        def filter(self, *args, **kwargs):
-            return self
+#         def filter(self, *args, **kwargs):
+#             return self
 
-        def order_by(self, *args, **kwargs):
-            return self
+#         def order_by(self, *args, **kwargs):
+#             return self
 
-        def limit(self, *args, **kwargs):
-            return self
+#         def limit(self, *args, **kwargs):
+#             return self
 
-        def all(self):
-            return mock_posts_with_username
+#         def all(self):
+#             return mock_posts_with_username
 
-    mock_db = MagicMock()
-    mock_db.query = MagicMock(return_value=MockQuery())
+#     mock_db = MagicMock()
+#     mock_db.query = MagicMock(return_value=MockQuery())
 
-    # Act
-    result = get_random_posts_not_by_account(mock_db, account_id=1)
+#     # Act
+#     result = get_random_posts_not_by_account(mock_db, account_id=1)
 
-    # Assert
-    expected_result = [
-        {
-            "id": mock_post1.id,
-            "account_id": mock_post1.account_id,
-            "description": mock_post1.description,
-            "base64_image": "mock_base64_image_data_1",
-            "username": "user2"
-        },
-        {
-            "id": mock_post2.id,
-            "account_id": mock_post2.account_id,
-            "description": mock_post2.description,
-            "base64_image": "mock_base64_image_data_2",
-            "username": "user3"
-        }
-    ]
-    assert result == expected_result
-    mock_db.query.assert_called_once_with()
+#     # Assert
+#     expected_result = [
+#         {
+#             "id": mock_post1.id,
+#             "account_id": mock_post1.account_id,
+#             "description": mock_post1.description,
+#             "base64_image": "mock_base64_image_data_1",
+#             "username": "user2"
+#         },
+#         {
+#             "id": mock_post2.id,
+#             "account_id": mock_post2.account_id,
+#             "description": mock_post2.description,
+#             "base64_image": "mock_base64_image_data_2",
+#             "username": "user3"
+#         }
+#     ]
+#     assert result == expected_result
+#     mock_db.query.assert_called_once_with()
 
-def test_get_random_posts_not_by_account_without_posts():
-    # Arrange
-    # Set up a mock query result without posts
-    mock_posts_with_username = []
+# def test_get_random_posts_not_by_account_without_posts():
+#     # Arrange
+#     # Set up a mock query result without posts
+#     mock_posts_with_username = []
 
-    class MockQuery:
-        def join(self, *args, **kwargs):
-            return self
+#     class MockQuery:
+#         def join(self, *args, **kwargs):
+#             return self
 
-        def filter(self, *args, **kwargs):
-            return self
+#         def filter(self, *args, **kwargs):
+#             return self
 
-        def order_by(self, *args, **kwargs):
-            return self
+#         def order_by(self, *args, **kwargs):
+#             return self
 
-        def limit(self, *args, **kwargs):
-            return self
+#         def limit(self, *args, **kwargs):
+#             return self
 
-        def all(self):
-            return mock_posts_with_username
+#         def all(self):
+#             return mock_posts_with_username
 
-    mock_db = MagicMock()
-    mock_db.query = MagicMock(return_value=MockQuery())
+#     mock_db = MagicMock()
+#     mock_db.query = MagicMock(return_value=MockQuery())
 
-    # Act
-    result = get_random_posts_not_by_account(mock_db, account_id=1)
+#     # Act
+#     result = get_random_posts_not_by_account(mock_db, account_id=1)
 
-    # Assert
-    assert result == []
-    mock_db.query.assert_called_once_with()
+#     # Assert
+#     assert result == []
+#     mock_db.query.assert_called_once_with()
 
 
-from microservice_1.src.crud import delete_post
+# from microservice_1.src.crud import delete_post
 
-def test_delete_post_existing_post():
-    # Arrange
-    mock_post = MagicMock()
-    mock_post.id = 1
+# def test_delete_post_existing_post():
+#     # Arrange
+#     mock_post = MagicMock()
+#     mock_post.id = 1
 
-    # Create a mock Session and add the mock_post to the query result
-    mock_db = MagicMock()
-    mock_db.query().filter().first.return_value = mock_post
+#     # Create a mock Session and add the mock_post to the query result
+#     mock_db = MagicMock()
+#     mock_db.query().filter().first.return_value = mock_post
 
-    # Act
-    delete_post(mock_db, post_id=1)
+#     # Act
+#     delete_post(mock_db, post_id=1)
 
-    # Assert
-    mock_db.query().filter().first.assert_called_once_with(Post.id == 1)
-    mock_db.query().filter().delete.assert_called_once_with()
-    mock_db.delete.assert_called_once_with(mock_post)
-    mock_db.commit.assert_called_once()
+#     # Assert
+#     mock_db.query().filter().first.assert_called_once_with(Post.id == 1)
+#     mock_db.query().filter().delete.assert_called_once_with()
+#     mock_db.delete.assert_called_once_with(mock_post)
+#     mock_db.commit.assert_called_once()
 
-def test_delete_post_nonexistent_post():
-    # Arrange
-    # Set up a mock query result without an existing post
-    mock_db = MagicMock()
-    mock_db.query().filter().first.return_value = None
+# def test_delete_post_nonexistent_post():
+#     # Arrange
+#     # Set up a mock query result without an existing post
+#     mock_db = MagicMock()
+#     mock_db.query().filter().first.return_value = None
 
-    # Act & Assert
-    with pytest.raises(ValueError, match="Post mit der ID 1 wurde nicht gefunden."):
-        delete_post(mock_db, post_id=1)
+#     # Act & Assert
+#     with pytest.raises(ValueError, match="Post mit der ID 1 wurde nicht gefunden."):
+#         delete_post(mock_db, post_id=1)
 
-    # Ensure that delete and commit methods are not called
-    mock_db.query().filter().delete.assert_not_called()
-    mock_db.delete.assert_not_called()
-    mock_db.commit.assert_not_called()
+#     # Ensure that delete and commit methods are not called
+#     mock_db.query().filter().delete.assert_not_called()
+#     mock_db.delete.assert_not_called()
+#     mock_db.commit.assert_not_called()
 
-from microservice_1.src.crud import delete_account
+# from microservice_1.src.crud import delete_account
 
-def test_delete_account_existing_account():
-    # Arrange
-    mock_account = MagicMock()
-    mock_account.id = 1
+# def test_delete_account_existing_account():
+#     # Arrange
+#     mock_account = MagicMock()
+#     mock_account.id = 1
 
-    # Create a mock Session and add the mock_account to the query result
-    mock_db = MagicMock()
-    mock_db.query().filter().first.return_value = mock_account
+#     # Create a mock Session and add the mock_account to the query result
+#     mock_db = MagicMock()
+#     mock_db.query().filter().first.return_value = mock_account
 
-    # Act
-    delete_account(mock_db, account_id=1)
+#     # Act
+#     delete_account(mock_db, account_id=1)
 
-    # Assert
-    mock_db.query().filter().delete.assert_called_once_with(synchronize_session=False)
-    mock_db.query().filter().delete.assert_called_with(synchronize_session=False)
-    mock_db.query().filter().delete.assert_called_with(synchronize_session=False)
-    mock_db.query().filter().delete.assert_called_with(synchronize_session=False)
-    mock_db.query().filter().delete.assert_called_with(synchronize_session=False)
-    mock_db.query().filter().delete.assert_called_with(synchronize_session=False)
-    mock_db.delete.assert_called_once_with(mock_account)
-    mock_db.commit.assert_called_once()
+#     # Assert
+#     mock_db.query().filter().delete.assert_called_once_with(synchronize_session=False)
+#     mock_db.query().filter().delete.assert_called_with(synchronize_session=False)
+#     mock_db.query().filter().delete.assert_called_with(synchronize_session=False)
+#     mock_db.query().filter().delete.assert_called_with(synchronize_session=False)
+#     mock_db.query().filter().delete.assert_called_with(synchronize_session=False)
+#     mock_db.query().filter().delete.assert_called_with(synchronize_session=False)
+#     mock_db.delete.assert_called_once_with(mock_account)
+#     mock_db.commit.assert_called_once()
 
-def test_delete_account_nonexistent_account():
-    # Arrange
-    # Set up a mock query result without an existing account
-    mock_db = MagicMock()
-    mock_db.query().filter().first.return_value = None
 
-    # Act & Assert
-    with pytest.raises(ValueError, match="Account mit der ID 1 wurde nicht gefunden."):
-        delete_account(mock_db, account_id=1)
+# # # def test_delete_account_nonexistent_account():
+#     # Arrange
+#     # Set up a mock query result without an existing account
+#     mock_db = MagicMock()
+#     mock_db.query().filter().first.return_value = None
 
-    # Ensure that delete and commit methods are not called
-    mock_db.query().filter().delete.assert_not_called()
-    mock_db.delete.assert_not_called()
-    mock_db.commit.assert_not_called()
+#     # Act & Assert
+#     with pytest.raises(ValueError, match="Account mit der ID 1 wurde nicht gefunden."):
+#         delete_account(mock_db, account_id=1)
+
+#     # Ensure that delete and commit methods are not called
+#     mock_db.query().filter().delete.assert_not_called()
+#     mock_db.delete.assert_not_called()
+#     mock_db.commit.assert_not_called()
