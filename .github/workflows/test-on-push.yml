@@ -1,8 +1,10 @@
 name: Run Tests on push 
 
 on:
-  push:
-    branches: [feature_action_herbert_5]
+  pull_request:
+    types: [closed]
+    branches:
+      - Develop
 
 jobs:
   test_ms_1:
