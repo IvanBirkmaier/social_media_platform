@@ -29,3 +29,8 @@ Herbert Grünsteidl / ai23m012: herbertgruen
 1. Start the app: `docker compose up -d`
 2. Access the application at localhost:3000.
 3. Verify all containers are operational, especially the microservices and consumers, using `docker ps`.
+
+
+# Enviroment Deployment-Diagramm
+
+![Diagramm](project_files/Setup.jpeg)
