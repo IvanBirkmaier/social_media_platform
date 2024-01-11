@@ -80,7 +80,7 @@ const AddPost = ({ fieldChange, mediaUrl }: AddPostProps) => {
         console.error("Fehler beim Hochladen des Posts:", error);
       }
     } else {
-      console.log("Kein Bild ausgewählt");
+      alert("Please select an image.");
     }
   };
 
