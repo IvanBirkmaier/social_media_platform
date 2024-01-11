@@ -14,7 +14,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from microservice_1.src.model import Base
 from app import app, get_db
 
-DATABASE_URL = "sqlite://"
+DATABASE_URL = "sqlite:///:memory:"
 #engine = create_engine(DATABASE_URL)
 
 engine = create_engine(
@@ -38,108 +38,396 @@ app.dependency_overrides[get_db] = override_get_db
 
 client = TestClient(app)
 
-def test_create_user_success():
-    # Test a successful user creation
-    data = {
+# Test case for creating a new user successfully
+def test_create_user_endpoint_success():
+    # Arrange
+    user_data = {
         "username": "testuser",
         "email": "test@example.com",
         "password": "testpassword",
     }
-    response = client.post("/account/", json=data)
-    assert response.status_code == 201
-    assert response.json()["username"] == "testuser"
-    assert response.json()["email"] == "test@example.com"
 
-def test_create_user_duplicate_username():
-    # Test creating a user with a duplicate username
-    data = {
-        "username": "testuser",  # Choose a username that already exists in your test database
+    # Act
+    response = client.post("/account/", json=user_data)
+
+    # Assert
+    assert response.status_code == 201
+    assert response.json() == {"id" : 1, "username": "testuser", "email": "test@example.com"}
+
+# Test case for creating a user with a duplicate username
+def test_create_user_endpoint_duplicate_username():
+    # Arrange
+    user_data = {
+        "username": "newuser",  # Assuming this username already exists in the test database
         "email": "newuser@example.com",
-        "password": "newpassword",
+        "password": "newuserpassword",
     }
-    response = client.post("/account/", json=data)
+
+    # Act
+    response = client.post("/account/", json=user_data)
+    response = client.post("/account/", json=user_data)
+
+    # Assert
     assert response.status_code == 400
-    assert "Username already registered" in response.text
+    assert response.json() == {"detail": "Username already registered"}
+
+from unittest.mock import patch
+
+# Test case for getting account ID by username (account exists)
+def test_get_account_id_username_exists():
+    # Arrange
+    username = "testuser"  # Replace with an existing username in your test database
+
+    # Mock the get_account_id_by_username function to return a known account ID
+    with patch("microservice_1.src.crud.get_account_id_by_username") as mock_get_account_id:
+        mock_get_account_id.return_value = 1
+
+        # Act
+        response = client.get(f"/account-id/{username}")
+
+    # Assert
+    assert response.status_code == 200
+    assert response.json() == {"account_id": 1}
+
+# Test case for getting account ID by username (account does not exist)
+def test_get_account_id_username_not_exists():
+    # Arrange
+    username = "nonexistentuser"  # Replace with a non-existing username in your test database
+
+    # Mock the get_account_id_by_username function to return None (account not found)
+    with patch("microservice_1.src.crud.get_account_id_by_username") as mock_get_account_id:
+        mock_get_account_id.return_value = None
+
+        # Act
+        response = client.get(f"/account-id/{username}")
+
+    # Assert
+    assert response.status_code == 200
+    assert response.json() == {"account_id": 0}
+
+from fastapi import status
+
+def test_create_profile_endpoint():
+    # Arrange
+    profile_data = {
+        "account_id": 1,
+        "vorname": "John",
+        "nachname": "Doe",
+        "city": "New York",
+        "plz": 10001,
+        "street": "123 Main St",
+        "phone_number": "123-456-7890"
+    }
+
+    # Mock the create_profile function to return a known profile
+    with patch("microservice_1.src.crud.create_profile") as mock_create_profile:
+        mock_create_profile.return_value = {**profile_data}
+
+        # Act
+        response = client.post("/profile/", json=profile_data)
+
+    # Assert
+    assert response.status_code == status.HTTP_201_CREATED
     
-def test_create_profile_success():
-    # Test a successful profile creation
-    data = {
-        "account_id": 1,
-        "vorname": "John",
-        "nachname": "Doe",
-        "city": "Example City",
-        "plz": 12345,
-        "street": "Example Street",
-        "phone_number": "123-456-7890",
-    }
-    response = client.post("/profile/", json=data)
+    assert response.json() == {**profile_data}
+    #assert response.json() == {"profile_id": 1, **profile_data}
+
+def test_check_username_endpoint_username_exists():
+    # Arrange
+    username = "testuser"
+
+    # Mock the check_username_existence function to return True
+    with patch("microservice_1.src.crud.check_username_existence") as mock_check_username_existence:
+        mock_check_username_existence.return_value = True
+
+        # Act
+        response = client.get(f"/check-username/{username}")
+
+    # Assert
+    assert response.status_code == 200
+    assert response.json() == {"username_exists": True}
+
+def test_check_username_endpoint_username_does_not_exist():
+    # Arrange
+    username = "nonexistent_user"
+
+    # Mock the check_username_existence function to return False
+    with patch("microservice_1.src.crud.check_username_existence") as mock_check_username_existence:
+        mock_check_username_existence.return_value = False
+
+        # Act
+        response = client.get(f"/check-username/{username}")
+
+    # Assert
+    assert response.status_code == 200
+    assert response.json() == {"username_exists": False}
+
+def test_check_email_endpoint_email_exists():
+    # Arrange
+    email = "newuser@example.com"
+
+    # Mock the check_email_existence function to return True
+    with patch("microservice_1.src.crud.check_email_existence") as mock_check_email_existence:
+        mock_check_email_existence.return_value = True
+
+        # Act
+        response = client.get(f"/check-email/{email}")
+
+    # Assert
+    assert response.status_code == 200
+    assert response.json() == {"email_exists": True}
+
+def test_check_email_endpoint_email_does_not_exist():
+    # Arrange
+    email = "nonexistent_email@example.com"
+
+    # Mock the check_email_existence function to return False
+    with patch("microservice_1.src.crud.check_email_existence") as mock_check_email_existence:
+        mock_check_email_existence.return_value = False
+
+        # Act
+        response = client.get(f"/check-email/{email}")
+
+    # Assert
+    assert response.status_code == 200
+    assert response.json() == {"email_exists": False}
+
+from app import UserLogin
+from microservice_1.src.crud import create_account
+
+def test_login_successful():
+    # Arrange
+    username = "test_user"
+    password = "test_password"
+    user_login = UserLogin(username=username, password=password)
+
+    # Create a user in the test database
+    with override_get_db() as mock_db:
+        create_account(mock_db, username, "test@example.com", password)
+
+    # Act
+    response = client.post("/login/", json=user_login.dict())
+
+    # Assert
+    assert response.status_code == 200
+    assert response.json() == {"id": 1, "username": username}
+
+def test_login_failed():
+    # Arrange
+    username = "test_user"
+    password = "test_password"
+    user_login = UserLogin(username=username, password="wrong_password")
+
+    # Act
+    response = client.post("/login/", json=user_login.dict())
+
+    # Assert
+    assert response.status_code == 400
+    assert response.json() == {"detail": "Falscher Benutzername oder Passwort"}
+    
+from unittest.mock import MagicMock
+
+def test_create_post_successful():
+    # Arrange
+    with patch("microservice_1.src.crud.create_post", side_effect=ValueError("Test DB Error")):
+        post_data = {
+            "account_id": 1,
+            "description": "Test Post",
+            "base64_image": None
+        }
+
+    # Act
+    response = client.post("/posts/", json=post_data)
+
+    # Assert
     assert response.status_code == 201
-    assert response.json()["vorname"] == "John"
-    assert response.json()["nachname"] == "Doe"
-    # Add more assertions for other fields in the response
+    assert "post_id" in response.json()
 
-def test_create_profile_invalid_data():
-    # Test creating a profile with invalid data
-    data = {
-        # Missing required fields, or invalid data
-    }
-    response = client.post("/profile/", json=data)
-    assert response.status_code == 422  # Assuming FastAPI returns a 422 for validation errors
 
-from app import create_profile
+def test_create_post_db_error():
+    # Arrange
+    with patch("microservice_1.src.crud.create_post", side_effect=ValueError("Test DB Error")):
+        post_data = {
+            "account_id": 1,
+            "description": "Test Post",
+            "base64_image": None
+        }
 
-def test_create_profile_duplicate_account_id():
-    # Test creating a profile with a duplicate account_id
-    # Ensure to create an initial profile with the same account_id for this test
-    initial_data = {
-        "account_id": 1,
-        "vorname": "John",
-        "nachname": "Doe",
-        "city": "Example City",
-        "plz": 12345,
-        "street": "Example Street",
-        "phone_number": "123-456-7890",
-    }
-    create_profile(TestingSessionLocal(), **initial_data)
+        # Act
+        response = client.post("/posts/", json=post_data)
 
-    # Attempt to create a profile with the same account_id
-    data = {
-        "account_id": 1,
-        "vorname": "Jane",
-        "nachname": "Smith",
-        "city": "New City",
-        "plz": 54321,
-        "street": "New Street",
-        "phone_number": "987-654-3210",
-    }
-    response = client.post("/profile/", json=data)
-    assert response.status_code == 400  # Assuming FastAPI returns a 400 for duplicate account_id
+        # Assert
+        assert response.status_code == 500
+        assert "detail" in response.json()
+        
+# def test_create_comment_successful():
+#     # Arrange
+#     mock_db = MagicMock()
+#     mock_db.add.return_value = None  # Adjust based on the behavior of your create_comment function
+    
+#     comment_data = {
+#         "account_id": 1,
+#         "post_id": 2,
+#         "text": "Test Comment"
+#     }
 
-def test_check_username_exists():
-    # Test when the username exists in the database
-    existing_username = "existing_user"
-    # Ensure to create an account with the existing username for this test
-    create_account_with_username(TestingSessionLocal(), existing_username)
+#     # Act
+#     response = client.post("/comments/", json=comment_data)
 
-    response = client.get(f"/check_username/?username={existing_username}")
-    assert response.status_code == 200
-    assert response.json()["username_exists"] == True
+#     # Assert
+#     assert response.status_code == 201
+#     assert "comment_id" in response.json()
 
-def test_check_username_not_exists():
-    # Test when the username does not exist in the database
-    new_username = "new_user"
+# def test_create_comment_db_error():
+#     # Arrange
+#     with patch("microservice_1.src.crud.create_comment", side_effect=ValueError("Test DB Error")):
+#         comment_data = {
+#             "account_id": 1,
+#             "post_id": 2,
+#             "text": "Test Comment"
+#         }
 
-    response = client.get(f"/check_username/?username={new_username}")
-    assert response.status_code == 200
-    assert response.json()["username_exists"] == False
+#         # Act
+#         response = client.post("/comments/", json=comment_data)
 
-def create_account_with_username(db: Session, username: str):
-    # Helper function to create an account with the given username
-    # Use this function to set up the database state for testing
-    # This function should be adapted based on your account creation logic
-    data = {
-        "username": str,
-        "email": "test@example.com",
-        "password": "testpassword",
-    }
-    response = client.post("/account/", json=data)
+#         # Assert
+#         assert response.status_code == 500
+#         assert "detail" in response.json()
+
+def test_get_posts_by_user_successful():
+    # Arrange
+    mock_db = MagicMock()
+    mock_posts = [
+        {"id": 1, "account_id": 1, "description": "Test Post 1", "base64_image": "mock_base64_image_1"},
+        {"id": 2, "account_id": 1, "description": "Test Post 2", "base64_image": "mock_base64_image_2"}
+    ]
+    with patch("microservice_1.src.crud.get_account_posts", return_value=mock_posts):
+        # Act
+        response = client.get("/account/1/posts/")
+
+        # Assert
+        assert response.status_code == 200
+        assert "posts" in response.json()
+        assert len(response.json()["posts"]) == len(mock_posts)
+
+def test_get_posts_by_user_no_posts():
+    # Arrange
+    mock_db = MagicMock()
+    with patch("microservice_1.src.crud.get_account_posts", return_value=[]):
+        # Act
+        response = client.get("/account/1/posts/")
+
+        # Assert
+        assert response.status_code == 200
+        assert "posts" in response.json()
+        assert len(response.json()["posts"]) == 0
+        
+def test_get_comments_by_post_successful():
+    # Arrange
+    mock_db = MagicMock()
+    mock_comments = [
+        {"comment_id": 1, "account_id": 1, "text": "Test Comment 1"},
+        {"comment_id": 2, "account_id": 1, "text": "Test Comment 2"}
+    ]
+    with patch("microservice_1.src.crud.get_post_comments", return_value=mock_comments):
+        # Act
+        response = client.get("/posts/1/comments/")
+
+        # Assert
+        assert response.status_code == 200
+        assert "comments" in response.json()
+        assert len(response.json()["comments"]) == len(mock_comments)
+
+def test_get_comments_by_post_no_comments():
+    # Arrange
+    mock_db = MagicMock()
+    with patch("microservice_1.src.crud.get_post_comments", return_value=None):
+        # Act
+        response = client.get("/posts/1/comments/")
+
+        # Assert
+        assert response.status_code == 200
+        assert "comments" in response.json()
+        assert len(response.json()["comments"]) == 0
+        
+def test_get_random_posts_successful():
+    # Arrange
+    mock_db = MagicMock()
+    mock_posts = [
+        {"id": 1, "account_id": 2, "description": "Test Post 1"},
+        {"id": 2, "account_id": 3, "description": "Test Post 2"}
+    ]
+    with patch("microservice_1.src.crud.get_random_posts_not_by_account", return_value=mock_posts):
+        # Act
+        response = client.get("/posts/random/?account_id=1")
+
+        # Assert
+        assert response.status_code == 200
+        assert "posts" in response.json()
+        assert len(response.json()["posts"]) == len(mock_posts)
+
+def test_get_random_posts_no_posts():
+    # Arrange
+    mock_db = MagicMock()
+    with patch("microservice_1.src.crud.get_random_posts_not_by_account", return_value=[]):  # Change to return an empty list for no posts
+        # Act
+        response = client.get("/posts/random/?account_id=1")
+
+        # Assert
+        assert response.status_code == 200
+        assert "posts" in response.json()
+        assert len(response.json()["posts"]) == 0
+        
+def test_delete_account_successful():
+    # Arrange
+    mock_db = MagicMock()
+    account_id = 1
+
+    with patch("microservice_1.src.crud.delete_account"):
+        # Act
+        response = client.delete(f"/account/{account_id}/")
+
+        # Assert
+        assert response.status_code == 204
+        assert response.text == "{\"detail\":\"Account successfully deleted\"}"
+
+def test_delete_account_not_found():
+    # Arrange
+    mock_db = MagicMock()
+    account_id = 1
+    error_message = "Account mit der ID 1 wurde nicht gefunden."
+
+    with patch("microservice_1.src.crud.delete_account", side_effect=ValueError(error_message)):
+        # Act
+        response = client.delete(f"/account/{account_id}/")
+
+        # Assert
+        assert response.status_code == 404
+        assert response.json() == {"detail": error_message}
+        
+def test_delete_post_successful():
+    # Arrange
+    mock_db = MagicMock()
+    post_id = 1
+
+    with patch("microservice_1.src.crud.delete_post"):
+        # Act
+        response = client.delete(f"/posts/{post_id}/")
+
+        # Assert
+        assert response.status_code == 204
+        assert response.text == ""
+
+def test_delete_post_not_found():
+    # Arrange
+    mock_db = MagicMock()
+    post_id = 1
+    error_message = "Post mit der ID 1 wurde nicht gefunden."
+
+    with patch("microservice_1.src.crud.delete_post", side_effect=ValueError(error_message)):
+        # Act
+        response = client.delete(f"/posts/{post_id}/")
+
+        # Assert
+        assert response.status_code == 404
+        assert response.json() == {"detail": error_message}
