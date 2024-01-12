@@ -30,6 +30,7 @@ Herbert Grünsteidl / ai23m012: herbertgruen
 2. Access the application at localhost:3000.
 3. Verify all containers are operational, especially the microservices and consumers, using `docker ps`.
 
+
 # Enviroment Deployment-Diagramm
 
 ![Diagramm](project_files/Setup.jpeg)
