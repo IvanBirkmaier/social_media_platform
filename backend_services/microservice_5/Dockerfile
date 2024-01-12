@@ -7,12 +7,7 @@ WORKDIR /code
 # Setzen Sie Umgebungsvariablen
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
-ENV DATABASE_URL=postgresql://user:password@host.docker.internal:5432/meine_db
-ENV FRONTEND_URL=http://localhost:3000
-ENV KAFKA_BOOTSTRAP_SERVERS=localhost:9092
-ENV KAFKA_TOPIC_ONE=post_queue
-ENV KAFKA_TOPIC_TWO=comment_queue
-
+ENV DATABASE_URL=postgresql://user:password@localhost:5432/meine_db
 
 # Installieren Sie die Abhängigkeiten
 COPY requirements.txt .
@@ -24,11 +19,8 @@ RUN pip install --no-cache-dir --upgrade -r requirements.txt
 COPY ./src /code/src
 COPY app.py /code/
 
-# Führen Sie die Initialisierung der Datenbank durch (falls notwendig)
-# RUN python /code/services/src/model.py
-
 # Legen Sie den Befehl fest, um die Anwendung auszuführen
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8001"]
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8005"]
 
 # Legen Sie den Port fest, auf dem die Anwendung laufen soll
-EXPOSE 8001
+EXPOSE 8005

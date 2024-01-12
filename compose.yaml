@@ -23,7 +23,7 @@ services:
       KAFKA_TOPIC_ONE: post_queue
       KAFKA_TOPIC_TWO: comment_queue
     ports:
-      - "8000:8000"
+      - "8001:8001"
     depends_on:
       - db
 
@@ -33,7 +33,7 @@ services:
     environment:
       DATABASE_URL: postgresql://user:password@db:5432/meine_db
     ports:
-      - "8001:8001"
+      - "8006:8006"
     depends_on:
       - db
       - microservice_one
@@ -47,7 +47,7 @@ services:
       KAFKA_TOPIC: classified_comments_queue
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092
     ports:
-      - "8002:8002"
+      - "8007:8007"
     depends_on:
       - db
       - microservice_one
@@ -57,7 +57,7 @@ services:
     build:
       context: ./frontend
       args:
-        VITE_BACKEND_URL: http://microservice_one:8000
+        VITE_BACKEND_URL: http://microservice_one:8001
         VITE_WEBSOCKET_SERVER_URL: ws://websocket_server:8765
     ports:
       - "3000:80"
@@ -137,9 +137,9 @@ services:
       WEBSOCKET_SERVER_HOST: websocket_server
       WEBSOCKET_PORT: 8765
       API_HOST: 0.0.0.0
-      API_PORT: 8003
+      API_PORT: 8007
     ports:
-      - "8003:8003"
+      - "8007:8007"
     depends_on:
       - websocket_server
 

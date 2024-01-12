@@ -1,63 +1,79 @@
-import logging
-from .model import Post
-from .optimizer import compress_image_bytes, resize_image
 from sqlalchemy.orm import Session
-from PIL import Image
-import io
+from .model import Account, Profile, Post, Comment
+import bcrypt
+import logging
 
-# # Konfigurieren des Loggings
-# logging.basicConfig(level=logging.INFO)
 
-logging.basicConfig()
-logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
+logging.basicConfig(level=logging.INFO)
 
-def optimize_and_update_image(db: Session, post_id: int, target_width: int = 640, target_height: int = 480):
-    try:
-        post = db.query(Post).filter(Post.id == post_id).first()
-        if not post:
-            logging.warning(f"Post mit ID {post_id} nicht gefunden.")
-            return False
 
-        if not post.full_image:
-            logging.info(f"Kein Bild zum Optimieren für Post ID {post_id} vorhanden.")
-            return True
 
-        optimized_image_bytes = compress_image_bytes(post.full_image)
-        post.full_image = optimized_image_bytes
-        logging.info(f"DATENTYP ÄNDER: Bild für Post ID {post_id} erfolgreich optimiert.")
+# Passwort in einen Hash machen
+def hash_password(password):
+    return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
-        # resized_image_bytes = scale_down()
-        resized_image_bytes = resize_image(optimized_image_bytes, target_width, target_height)
-        post.reduced_image = resized_image_bytes
-        logging.info(f"BILD QUALITÄT REDUZIEREN: Bild für Post ID {post_id} erfolgreich reduziert.")
+# Passwort mit dem Hash vergleichen
+def check_password_hash(password, hash):
+    return bcrypt.checkpw(password.encode('utf-8'), hash.encode('utf-8'))
 
-        db.commit()
-        print("Post erfolgreich aktualisiert mit dem verkleinerten Bild")
-        return True
+# Erstellen eines Accounts (Registrierung)
+def create_account(db: Session, username: str, email: str, password: str):
+    hashed_password = hash_password(password)
+    account = Account(username=username, email=email, password_hash=hashed_password)
+    db.add(account)
+    db.commit()
+    db.refresh(account)
+    return account
 
-    except Exception as e:
-        logging.error(f"Fehler bei der Bildoptimierung für Post ID {post_id}: {e}", exc_info=True)
-        return False
-    
+# Überprüfen, ob der Benutzername bereits vergeben ist
+def check_username_existence(db: Session, username: str):
+    return db.query(Account).filter(Account.username == username).first() is not None
 
-# def resize_and_save_image(db: Session, post_id: int, target_width: int = 640, target_height: int = 480):
-#     try:
-#         post = db.query(Post).filter(Post.id == post_id).first()
-#         if not post:
-#             logging.warning(f"Post mit ID {post_id} nicht gefunden.")
-#             return False
+# Überprüfen, ob die E-Mail bereits vergeben ist
+def check_email_existence(db: Session, email: str):
+    return db.query(Account).filter(Account.email == email).first() is not None
 
-#         if not post.full_image:
-#             logging.info(f"Kein Bild zum Verkleinern für Post ID {post_id} vorhanden.")
-#             return True
+# User Login
+def check_account_login(db: Session, username: str, password: str):
+    account = db.query(Account).filter(Account.username == username).first()
+    if account and check_password_hash(password, account.password_hash):
+        return account
+    return None
 
-#         resized_image_bytes = 
-#         post.reduced_image = resized_image_bytes
-#         logging.info(f"BILD VERKLEINERN: Bild für Post ID {post_id} auf {target_width}x{target_height} erfolgreich verkleinert.")
+# Funktion, um die Account-ID anhand des Benutzernamens zu finden
+def get_account_id_by_username(db: Session, username: str):
+    account = db.query(Account).filter(Account.username == username).first()
+    if account:
+        return account.id
+    else:
+        return None
 
-#         db.commit()
-#         return True
+# Löscht einen Account und alle damit verbundenen Profile, Posts und Kommentare
+def delete_account(db: Session, account_id: int):
+    with db.begin():
+        # Suche den Account in der Datenbank über seine ID
+        db_account = db.query(Account).filter(Account.id == account_id).first()
 
-#     except Exception as e:
-#         logging.error(f"Fehler bei der Bildverkleinerung für Post ID {post_id}: {e}", exc_info=True)
-#         return False
+        if db_account is None:
+            raise ValueError(f"Account mit der ID {account_id} wurde nicht gefunden.")
+
+        # Lösche alle Kommentare, die vom Account erstellt wurden
+        db.query(Comment).filter(Comment.account_id == account_id).delete(synchronize_session=False)
+
+        # Lösche alle Kommentare von Posts des Accounts 
+        db.query(Comment).filter(Comment.post_id.in_(
+            db.query(Post.id).filter(Post.account_id == account_id)
+        )).delete(synchronize_session=False)
+
+        # Lösche alle Posts des Accounts
+        db.query(Post).filter(Post.account_id == account_id).delete(synchronize_session=False)
+
+        # Lösche das Profil, das zum Account gehört
+        db.query(Profile).filter(Profile.account_id == account_id).delete(synchronize_session=False)
+
+        # Lösche den Account
+        db.delete(db_account)
+
+
+
+

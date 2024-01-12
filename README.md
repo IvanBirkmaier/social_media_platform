@@ -30,6 +30,11 @@ Herbert Grünsteidl / ai23m012: herbertgruen
 2. Access the application at localhost:3000.
 3. Verify all containers are operational, especially the microservices and consumers, using `docker ps`.
 
+# Link to the Trello board for the projekt. 
+
+You need to have permission for the [Trello board](https://trello.com/b/H6So0pAj/social-media-app).
+
+
 # Enviroment Deployment-Diagramm
 
 ![Diagramm](project_files/Setup.jpeg)
