@@ -2,6 +2,8 @@ import React, { useState, useCallback } from "react";
 import "./Registration.raw.scss";
 import Header from "../Header/Header";
 import { Link } from "react-router-dom";
+import { url_microservice_one } from "@/utils/utils";
+
 
 interface UserData {
   userEmail: string;
@@ -23,7 +25,6 @@ interface RegistrationProps {
 const Registration: React.FC<
   RegistrationProps & { onCreateAccountSuccess: (accountId: number) => void }
 > = ({ onContinue, userData, updateUserData, onCreateAccountSuccess }) => {
-  const backendUrl = import.meta.env.VITE_BACKEND_URL;
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
@@ -44,7 +45,7 @@ const Registration: React.FC<
 
   const checkUsernameAvailability = useCallback(
     debounce((username: string) => {
-      fetch(`${backendUrl}/check-username/${username}`)
+      fetch(`${url_microservice_one}/check-username/${username}`)
         .then((res) => res.json())
         .then((data) => {
           setUsernameError(
@@ -57,7 +58,7 @@ const Registration: React.FC<
 
   const checkEmailAvailability = useCallback(
     debounce((email: string) => {
-      fetch(`${backendUrl}/check-email/${email}`)
+      fetch(`${url_microservice_one}/check-email/${email}`)
         .then((res) => res.json())
         .then((data) => {
           setEmailError(
@@ -68,7 +69,7 @@ const Registration: React.FC<
     []
   );
   const createAccount = async (userData: UserData, password: string) => {
-    const response = await fetch(`${backendUrl}/account/`, {
+    const response = await fetch(`${url_microservice_one}/account/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

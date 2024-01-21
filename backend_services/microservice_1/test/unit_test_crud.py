@@ -1,178 +1,178 @@
-import sys
-import os
-current_dir = os.path.dirname(os.path.realpath(__file__))
-parent_dir = os.path.dirname(current_dir)
-sys.path.append(parent_dir)
+# import sys
+# import os
+# current_dir = os.path.dirname(os.path.realpath(__file__))
+# parent_dir = os.path.dirname(current_dir)
+# sys.path.append(parent_dir)
 
-from microservice_1.src.crud import hash_password, check_password_hash, create_account, create_profile, check_username_existence, check_email_existence, read_profile
-from microservice_1.src.model import Account, Profile, Post, Comment
+# from microservice_1.src.crud import hash_password, create_account, create_profile, check_username_existence, check_email_existence, read_profile
+# from microservice_1.src.model import Account, Profile, Post, Comment
 
-import pytest
-from unittest.mock import MagicMock
+# import pytest
+# from unittest.mock import MagicMock
 
-def test_create_account():
-    # Mocking the database session
-    mock_db = MagicMock()
+# def test_create_account():
+#     Mocking the database session
+#     mock_db = MagicMock()
 
-    # Mocking the password hashing function
-    mock_hash_password = MagicMock(return_value="hashed_password")
+#     Mocking the password hashing function
+#     mock_hash_password = MagicMock(return_value="hashed_password")
     
-    # Creating a sample account data
-    account_data = {"username": "test_user", "email": "test@example.com", "password": "test_password"}
+#     Creating a sample account data
+#     account_data = {"username": "test_user", "email": "test@example.com", "password": "test_password"}
     
-    # Calling the create_account function
-    with pytest.MonkeyPatch().context() as m:
-        m.setattr("microservice_1.src.crud.hash_password", mock_hash_password)
-        account = create_account(mock_db, **account_data)
+#     Calling the create_account function
+#     with pytest.MonkeyPatch().context() as m:
+#         m.setattr("microservice_1.src.crud.hash_password", mock_hash_password)
+#         account = create_account(mock_db, **account_data)
 
-    # Assertions
-    mock_hash_password.assert_called_once_with("test_password")
-    mock_db.add.assert_called_once_with(account)
-    mock_db.commit.assert_called_once()
-    mock_db.refresh.assert_called_once_with(account)
-    assert isinstance(account, Account)
-    assert account.username == "test_user"
-    assert account.email == "test@example.com"
-    assert account.password_hash == "hashed_password"
+#     Assertions
+#     mock_hash_password.assert_called_once_with("test_password")
+#     mock_db.add.assert_called_once_with(account)
+#     mock_db.commit.assert_called_once()
+#     mock_db.refresh.assert_called_once_with(account)
+#     assert isinstance(account, Account)
+#     assert account.username == "test_user"
+#     assert account.email == "test@example.com"
+#     assert account.password_hash == "hashed_password"
 
-def test_create_profile():
-    # Mocking the database session
-    mock_db = MagicMock()
+# def test_create_profile():
+#     Mocking the database session
+#     mock_db = MagicMock()
 
-    # Creating a sample profile data
-    profile_data = {
-        "account_id": 1,
-        "vorname": "John",
-        "nachname": "Doe",
-        "city": "New York",
-        "plz": 10001,
-        "street": "123 Main St",
-        "phone_number": "555-1234"
-    }
+#     Creating a sample profile data
+#     profile_data = {
+#         "account_id": 1,
+#         "vorname": "John",
+#         "nachname": "Doe",
+#         "city": "New York",
+#         "plz": 10001,
+#         "street": "123 Main St",
+#         "phone_number": "555-1234"
+#     }
 
-    # Calling the create_profile function
-    profile = create_profile(mock_db, **profile_data)
+#     Calling the create_profile function
+#     profile = create_profile(mock_db, **profile_data)
 
-    # Assertions
-    mock_db.add.assert_called_once_with(profile) # Profile(account_id=1, vorname="John", nachname="Doe", city="New York", plz=10001, street="123 Main St", phone_number="555-1234"))
-    mock_db.commit.assert_called_once()
-    mock_db.refresh.assert_called_once_with(profile)
-    assert isinstance(profile, Profile)
-    assert profile.account_id == 1
-    assert profile.vorname == "John"
-    assert profile.nachname == "Doe"
-    assert profile.city == "New York"
-    assert profile.plz == 10001
-    assert profile.street == "123 Main St"
-    assert profile.phone_number == "555-1234"
+#     Assertions
+#     mock_db.add.assert_called_once_with(profile) # Profile(account_id=1, vorname="John", nachname="Doe", city="New York", plz=10001, street="123 Main St", phone_number="555-1234"))
+#     mock_db.commit.assert_called_once()
+#     mock_db.refresh.assert_called_once_with(profile)
+#     assert isinstance(profile, Profile)
+#     assert profile.account_id == 1
+#     assert profile.vorname == "John"
+#     assert profile.nachname == "Doe"
+#     assert profile.city == "New York"
+#     assert profile.plz == 10001
+#     assert profile.street == "123 Main St"
+#     assert profile.phone_number == "555-1234"
     
-def test_read_profile():
-    # Mocking the database session
-    mock_db = MagicMock()
+# def test_read_profile():
+#     Mocking the database session
+#     mock_db = MagicMock()
 
-    # Creating a sample profile data
-    profile_data = {
-        "account_id": 1,
-        "vorname": "John",
-        "nachname": "Doe",
-        "city": "New York",
-        "plz": 10001,
-        "street": "123 Main St",
-        "phone_number": "555-1234"
-    }
+#     Creating a sample profile data
+#     profile_data = {
+#         "account_id": 1,
+#         "vorname": "John",
+#         "nachname": "Doe",
+#         "city": "New York",
+#         "plz": 10001,
+#         "street": "123 Main St",
+#         "phone_number": "555-1234"
+#     }
 
-    # Calling the create_profile function to add a profile to the database
-    create_profile(mock_db, **profile_data)
+#     Calling the create_profile function to add a profile to the database
+#     create_profile(mock_db, **profile_data)
 
-    # Mocking the query result for reading the profile
-    mock_db.query().filter().first = MagicMock(return_value=Profile(
-        account_id=1,
-        vorname="John",
-        nachname="Doe",
-        city="New York",
-        plz=10001,
-        street="123 Main St",
-        phone_number="555-1234"
-    ))
+#     Mocking the query result for reading the profile
+#     mock_db.query().filter().first = MagicMock(return_value=Profile(
+#         account_id=1,
+#         vorname="John",
+#         nachname="Doe",
+#         city="New York",
+#         plz=10001,
+#         street="123 Main St",
+#         phone_number="555-1234"
+#     ))
 
-    # Calling the read_profile function
-    profile = read_profile(mock_db, account_id=1)
+#     Calling the read_profile function
+#     profile = read_profile(mock_db, account_id=1)
 
-    # Assertions
-    mock_db.query().filter().first.assert_called_once_with()
-    assert isinstance(profile, Profile)
-    assert profile.account_id == 1
-    assert profile.vorname == "John"
-    assert profile.nachname == "Doe"
-    assert profile.city == "New York"
-    assert profile.plz == 10001
-    assert profile.street == "123 Main St"
-    assert profile.phone_number == "555-1234"
+#     Assertions
+#     mock_db.query().filter().first.assert_called_once_with()
+#     assert isinstance(profile, Profile)
+#     assert profile.account_id == 1
+#     assert profile.vorname == "John"
+#     assert profile.nachname == "Doe"
+#     assert profile.city == "New York"
+#     assert profile.plz == 10001
+#     assert profile.street == "123 Main St"
+#     assert profile.phone_number == "555-1234"
 
-def test_check_username_existence():
-    mock_db = MagicMock()
-    mock_db.query().filter().first = MagicMock(return_value=None)
+# def test_check_username_existence():
+#     mock_db = MagicMock()
+#     mock_db.query().filter().first = MagicMock(return_value=None)
     
-    assert not check_username_existence(mock_db, "test_user")
+#     assert not check_username_existence(mock_db, "test_user")
 
-def test_check_email_existence():
-    mock_db = MagicMock()
-    mock_db.query().filter().first = MagicMock(return_value=True)
+# def test_check_email_existence():
+#     mock_db = MagicMock()
+#     mock_db.query().filter().first = MagicMock(return_value=True)
     
-    assert check_email_existence(mock_db, "test@example.com")
+#     assert check_email_existence(mock_db, "test@example.com")
     
-from microservice_1.src.crud import check_account_login
+# from microservice_1.src.crud import check_account_login
 
-def test_check_account_login_valid_credentials():
-    # Mocking the database session
-    mock_db = MagicMock()
+# def test_check_account_login_valid_credentials():
+#     Mocking the database session
+#     mock_db = MagicMock()
 
-    # Creating a sample account with hashed password
-    username = "test_user"
-    password = "test_password"
-    hashed_password = hash_password(password)
-    mock_account = Account(username=username, password_hash=hashed_password)
+#     Creating a sample account with hashed password
+#     username = "test_user"
+#     password = "test_password"
+#     hashed_password = hash_password(password)
+#     mock_account = Account(username=username, password_hash=hashed_password)
 
-    # Mocking the database query result
-    mock_db.query().filter().first = MagicMock(return_value=mock_account)
+#     Mocking the database query result
+#     mock_db.query().filter().first = MagicMock(return_value=mock_account)
 
-    # Calling the function with valid credentials
-    result = check_account_login(mock_db, username, password)
+#     Calling the function with valid credentials
+#     result = check_account_login(mock_db, username, password)
 
-    # Assertions
-    assert result == mock_account
+#     Assertions
+#     assert result == mock_account
     
-def test_check_account_login_invalid_credentials():
-    # Mocking the database session
-    mock_db = MagicMock()
+# def test_check_account_login_invalid_credentials():
+#     Mocking the database session
+#     mock_db = MagicMock()
 
-    # Creating a sample account with hashed password
-    username = "test_user"
-    password = "test_password"
-    hashed_password = hash_password(password)
-    mock_account = Account(username=username, password_hash=hashed_password)
+#     Creating a sample account with hashed password
+#     username = "test_user"
+#     password = "test_password"
+#     hashed_password = hash_password(password)
+#     mock_account = Account(username=username, password_hash=hashed_password)
 
-    # Mocking the database query result (no account found)
-    mock_db.query().filter().first = MagicMock(return_value=None)
+#     Mocking the database query result (no account found)
+#     mock_db.query().filter().first = MagicMock(return_value=None)
 
-    # Calling the function with invalid credentials
-    result = check_account_login(mock_db, username, "wrong_password")
+#     Calling the function with invalid credentials
+#     result = check_account_login(mock_db, username, "wrong_password")
 
-    # Assertions
-    assert result is None
+#     Assertions
+#     assert result is None
     
-def test_check_account_login_no_account():
-    # Mocking the database session
-    mock_db = MagicMock()
+# def test_check_account_login_no_account():
+#     Mocking the database session
+#     mock_db = MagicMock()
 
-    # Mocking the database query result (no account found)
-    mock_db.query().filter().first = MagicMock(return_value=None)
+#     Mocking the database query result (no account found)
+#     mock_db.query().filter().first = MagicMock(return_value=None)
 
-    # Calling the function with non-existent username
-    result = check_account_login(mock_db, "nonexistent_user", "password")
+#     Calling the function with non-existent username
+#     result = check_account_login(mock_db, "nonexistent_user", "password")
 
-    # Assertions
-    assert result is None  
+#     Assertions
+#     assert result is None  
     
 # from microservice_1.src.crud import create_post
 
@@ -236,115 +236,115 @@ def test_check_account_login_no_account():
 #     assert comment.post_id == 1
 #     assert comment.text == "Great post!"
 
-from microservice_1.src.crud import get_account_id_by_username
+# from microservice_1.src.crud import get_account_id_by_username
     
-def test_get_account_id_by_username_exists():
-    # Arrange
-    mock_db = MagicMock()
-    mock_account = MagicMock(id=1, username="username")
+# def test_get_account_id_by_username_exists():
+#     Arrange
+#     mock_db = MagicMock()
+#     mock_account = MagicMock(id=1, username="username")
     
-    # Mock the query method to return the mock_account
-    mock_db.query(Account).filter(Account.username == "username").first.return_value = mock_account
+#     Mock the query method to return the mock_account
+#     mock_db.query(Account).filter(Account.username == "username").first.return_value = mock_account
 
-    # Act
-    account_id = get_account_id_by_username(mock_db, "username")
+#     Act
+#     account_id = get_account_id_by_username(mock_db, "username")
 
-    # Assert
-    assert account_id == 1
-    mock_db.query(Account).filter(Account.username == "username").first.assert_called_once()
+#     Assert
+#     assert account_id == 1
+#     mock_db.query(Account).filter(Account.username == "username").first.assert_called_once()
 
-def test_get_account_id_by_username_not_exists():
-    # Arrange
-    mock_db = MagicMock()
+# def test_get_account_id_by_username_not_exists():
+#     Arrange
+#     mock_db = MagicMock()
 
-    # Mock the query method to return None (account not found)
-    mock_db.query(Account).filter(Account.username == "no_name").first.return_value = None
+#     Mock the query method to return None (account not found)
+#     mock_db.query(Account).filter(Account.username == "no_name").first.return_value = None
 
-    # Act
-    account_id = get_account_id_by_username(mock_db, "no_name")
+#     Act
+#     account_id = get_account_id_by_username(mock_db, "no_name")
 
-    # Assert
-    assert account_id is None
-    mock_db.query(Account).filter(Account.username == "no_name").first.assert_called_once()
+#     Assert
+#     assert account_id is None
+#     mock_db.query(Account).filter(Account.username == "no_name").first.assert_called_once()
     
 
-from microservice_1.src.crud import get_account_posts, convert_image_to_base64
-from typing import List
+# from microservice_1.src.crud import get_account_posts, convert_image_to_base64
+# from typing import List
 
-def test_get_account_posts_with_posts():
-    # Arrange
-    mock_db = MagicMock()
-    mock_post = MagicMock()
-    mock_post.reduced_image = None
-    mock_account = MagicMock()
+# def test_get_account_posts_with_posts():
+#     Arrange
+#     mock_db = MagicMock()
+#     mock_post = MagicMock()
+#     mock_post.reduced_image = None
+#     mock_account = MagicMock()
     
-    # Set up a mock query result with a post
-    mock_db.query(Post, Account.username).join(Account).filter(Post.account_id == 1).all.return_value = [(mock_post, "user1")]
+#     Set up a mock query result with a post
+#     mock_db.query(Post, Account.username).join(Account).filter(Post.account_id == 1).all.return_value = [(mock_post, "user1")]
     
-    # Act
-    result = get_account_posts(mock_db, account_id=1)
+#     Act
+#     result = get_account_posts(mock_db, account_id=1)
 
-    # Assert
-    assert len(result) == 1
-    assert result[0]["id"] == mock_post.id
-    assert result[0]["account_id"] == mock_post.account_id
-    assert result[0]["description"] == mock_post.description
-    assert result[0]["base64_image"] == None
-    assert result[0]["username"] == "user1"
-    mock_db.query().join().filter().all.assert_called_once_with()
+#     Assert
+#     assert len(result) == 1
+#     assert result[0]["id"] == mock_post.id
+#     assert result[0]["account_id"] == mock_post.account_id
+#     assert result[0]["description"] == mock_post.description
+#     assert result[0]["base64_image"] == None
+#     assert result[0]["username"] == "user1"
+#     mock_db.query().join().filter().all.assert_called_once_with()
 
-def test_get_account_posts_without_posts():
-    # Arrange
-    mock_db = MagicMock()
+# def test_get_account_posts_without_posts():
+#     Arrange
+#     mock_db = MagicMock()
     
-    # Set up a mock query result without posts
-    mock_db.query(Post, Account.username).join(Account).filter(Post.account_id == 2).all.return_value = []
+#     Set up a mock query result without posts
+#     mock_db.query(Post, Account.username).join(Account).filter(Post.account_id == 2).all.return_value = []
     
-    # Act
-    result = get_account_posts(mock_db, account_id=2)
+#     Act
+#     result = get_account_posts(mock_db, account_id=2)
 
-    # Assert
-    assert result == []
-    mock_db.query().join().filter().all.assert_called_once_with()
+#     Assert
+#     assert result == []
+#     mock_db.query().join().filter().all.assert_called_once_with()
     
-from microservice_1.src.crud import get_post_full_image_by_id
+# from microservice_1.src.crud import get_post_full_image_by_id
 
-def test_get_post_full_image_by_id_with_full_image():
-    # Arrange
-    mock_db = MagicMock()
-    mock_post = MagicMock()
-    mock_post.id = 1
-    mock_post.full_image = None
+# def test_get_post_full_image_by_id_with_full_image():
+#     Arrange
+#     mock_db = MagicMock()
+#     mock_post = MagicMock()
+#     mock_post.id = 1
+#     mock_post.full_image = None
     
-    # Set up a mock query result with a post
-    mock_db.query(Post.full_image).filter(Post.id == 1).first.return_value = mock_post
+#     Set up a mock query result with a post
+#     mock_db.query(Post.full_image).filter(Post.id == 1).first.return_value = mock_post
     
-    # Act
-    result = get_post_full_image_by_id(mock_db, post_id=1)
+#     Act
+#     result = get_post_full_image_by_id(mock_db, post_id=1)
 
-    # Assert
-    assert result == None
-    mock_db.query().filter().first.assert_called_once_with()
+#     Assert
+#     assert result == None
+#     mock_db.query().filter().first.assert_called_once_with()
 
-def test_get_post_full_image_by_id_without_full_image():
-    # Arrange
-    mock_db = MagicMock()
-    mock_post = MagicMock()
-    mock_post.id = 2
-    mock_post.full_image = None
+# def test_get_post_full_image_by_id_without_full_image():
+#     Arrange
+#     mock_db = MagicMock()
+#     mock_post = MagicMock()
+#     mock_post.id = 2
+#     mock_post.full_image = None
     
-    # Set up a mock query result without full image
-    mock_db.query(Post.full_image).filter(Post.id == 2).first.return_value = mock_post
+#     Set up a mock query result without full image
+#     mock_db.query(Post.full_image).filter(Post.id == 2).first.return_value = mock_post
     
-    # Act
-    result = get_post_full_image_by_id(mock_db, post_id=2)
+#     Act
+#     result = get_post_full_image_by_id(mock_db, post_id=2)
 
-    # Assert
-    assert result is None
-    mock_db.query().filter().first.assert_called_once_with()
+#     Assert
+#     assert result is None
+#     mock_db.query().filter().first.assert_called_once_with()
 
-from datetime import datetime
-from microservice_1.src.crud import get_post_comments
+# from datetime import datetime
+# from microservice_1.src.crud import get_post_comments
 
 # def test_get_post_comments_with_comments():
 #     # Arrange

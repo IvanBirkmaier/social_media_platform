@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../ui/button";
 import { useAuth } from "../Auth/AuthContext";
 import deleteIcon from "assets/icons/delete.svg";
-import { backendUrl } from "@/utils/utils";
+import { url_microservice_one } from "@/utils/utils";
 
 const Topbar = () => {
   const navigate = useNavigate();
@@ -28,7 +28,7 @@ const Topbar = () => {
   const deleteAccount = async () => {
     try {
       const accountId = user?.id;
-      const response = await fetch(`${backendUrl}/account/${accountId}/`, {
+      const response = await fetch(`${url_microservice_one}/account/${accountId}/`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",

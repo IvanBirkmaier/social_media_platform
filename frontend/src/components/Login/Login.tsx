@@ -3,11 +3,12 @@ import "./Login.raw.scss";
 import Header from "../Header/Header";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../Auth/AuthContext";
+import { url_microservice_one } from "@/utils/utils";
+
 
 const LoginForm: React.FC<{ onLoginSuccess: () => void }> = ({
   onLoginSuccess,
 }) => {
-  const backendUrl = import.meta.env.VITE_BACKEND_URL;
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -23,7 +24,7 @@ const LoginForm: React.FC<{ onLoginSuccess: () => void }> = ({
     }
 
     try {
-      const response = await fetch(`${backendUrl}/login/`, {
+      const response = await fetch(`${url_microservice_one}/login/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

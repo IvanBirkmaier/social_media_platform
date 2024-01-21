@@ -1,19 +1,10 @@
-from fastapi import FastAPI, Depends, status
+from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
-from pydantic import BaseModel
+from src.crud import optimize_and_update_image
 from src.model import SessionLocal
-from src.crud import (create_profile)
 
 app = FastAPI()
-
-class ProfileCreate(BaseModel):
-    account_id: int
-    vorname: str
-    nachname: str
-    city: str
-    plz: int
-    street: str
-    phone_number: str
 
 # Datenbank-Session Dependency
 def get_db():
@@ -23,9 +14,21 @@ def get_db():
     finally:
         db.close()
 
-# API-Endpunkt zum Erstellen eines Profils
-@app.post("/profile/", response_model=ProfileCreate, status_code=status.HTTP_201_CREATED)
-def create_profile_endpoint(profile_data: ProfileCreate, db: Session = Depends(get_db)):
-    # Sie können hier zusätzliche Validierungen oder Geschäftslogiken hinzufügen
-    profile = create_profile(db, **profile_data.dict())
-    return profile
+# API-Endpunkt zur Optimierung eines Bildes
+@app.post("/optimize/{post_id}", status_code=status.HTTP_200_OK)
+def optimize_image(post_id: int, db: Session = Depends(get_db)):
+    try:
+        optimize_and_update_image(db, post_id)
+        return {"message": "Bildoptimierung erfolgreich", "post_id": post_id}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+
+# # API-Endpunkt zur Optimierung eines Bildes
+# @app.post("/resize/{post_id}", status_code=status.HTTP_200_OK)
+# def resize_image(post_id: int, db: Session = Depends(get_db)):
+#     try:
+#         resize_and_save_image(db, post_id)
+#         return {"message": "Bildverkleinerung erfolgreich", "post_id": post_id}
+#     except Exception as e:
+#         raise HTTPException(status_code=500, detail=str(e))

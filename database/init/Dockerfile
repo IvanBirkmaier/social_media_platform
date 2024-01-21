@@ -12,7 +12,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Festlegen der Umgebungsvariablen
-ENV DATABASE_URL=postgresql://user:password@host.docker.internal:5432/meine_db
+# ENV DATABASE_URL=postgresql://user:password@host.docker.internal:5432/meine_db
+ENV DATABASE_URL=postgresql://user:password@localhost:5432/meine_db
       
 
 

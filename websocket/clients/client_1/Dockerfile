@@ -18,13 +18,12 @@ COPY app.py /app/
 # COPY .env .
 
 # Exponieren des Ports, auf dem der FastAPI-Server läuft
-EXPOSE 8011
+EXPOSE 8021
 
 # Setzen von Umgebungsvariablen
 ENV WEBSOCKET_SERVER_HOST=0.0.0.0
 ENV WEBSOCKET_PORT=8765
-ENV API_HOST=0.0.0.0
-ENV API_PORT=8007
+
 
 # Starten der Anwendung
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8011"]
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8021"]

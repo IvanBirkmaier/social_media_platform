@@ -7,7 +7,9 @@ WORKDIR /code
 # Setzen Sie Umgebungsvariablen
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
+# ENV DATABASE_URL=postgresql://user:password@host.docker.internal:5432/meine_db
 ENV DATABASE_URL=postgresql://user:password@localhost:5432/meine_db
+ENV FRONTEND_URL=http://localhost:3000
 
 # Installieren Sie die Abhängigkeiten
 COPY requirements.txt .
