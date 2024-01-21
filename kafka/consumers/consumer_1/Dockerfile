@@ -11,7 +11,7 @@ COPY requirements.txt /app/
 ENV KAFKA_BOOTSTRAP_SERVERS=localhost:9092  
 ENV KAFKA_TOPIC=post_queue
 # URL des Microservice 2
-ENV MICROSERVICE_2_API_URL=http://localhost:8001/optimize/  
+ENV MICROSERVICE_5_API_URL=http://localhost:8005/optimize/  
 
 
 # Installieren Sie Python-Abhängigkeiten

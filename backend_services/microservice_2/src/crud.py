@@ -1,63 +1,102 @@
-import logging
-from .model import Post
-from .optimizer import compress_image_bytes, resize_image
 from sqlalchemy.orm import Session
+from sqlalchemy import func
+from .model import Account, Post, Comment
+from .producer import kafka_send_post_id
+import base64
 from PIL import Image
 import io
+from mimetypes import guess_type
+from io import BytesIO
+import logging
 
-# # Konfigurieren des Loggings
-# logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.INFO)
 
-logging.basicConfig()
-logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
 
-def optimize_and_update_image(db: Session, post_id: int, target_width: int = 640, target_height: int = 480):
+def validate_image_bytes(image_bytes):
     try:
-        post = db.query(Post).filter(Post.id == post_id).first()
-        if not post:
-            logging.warning(f"Post mit ID {post_id} nicht gefunden.")
-            return False
+        with Image.open(io.BytesIO(image_bytes)) as img:
+            # Optional: Weitere Überprüfungen hinzufügen (z.B. Bildgröße, Format)
+            pass
+    except IOError:
+        raise ValueError("Ungültiges Bildformat oder beschädigte Bilddaten")
 
-        if not post.full_image:
-            logging.info(f"Kein Bild zum Optimieren für Post ID {post_id} vorhanden.")
-            return True
 
-        optimized_image_bytes = compress_image_bytes(post.full_image)
-        post.full_image = optimized_image_bytes
-        logging.info(f"DATENTYP ÄNDER: Bild für Post ID {post_id} erfolgreich optimiert.")
+# Post zu erstellen
+def create_post(db: Session, account_id: int, description: str, base64_image: str):
+    # Dekodierung des Base64-Strings in Bytes
+    if "," in base64_image:
+        base64_image = base64_image.split(',')[1]
+    image_bytes = base64.b64decode(base64_image)
 
-        # resized_image_bytes = scale_down()
-        resized_image_bytes = resize_image(optimized_image_bytes, target_width, target_height)
-        post.reduced_image = resized_image_bytes
-        logging.info(f"BILD QUALITÄT REDUZIEREN: Bild für Post ID {post_id} erfolgreich reduziert.")
+    # Validierung der Bildbytes
+    validate_image_bytes(image_bytes)
+    db_post = Post(account_id=account_id, description=description, full_image=image_bytes)
+    db.add(db_post)
+    db.commit()
+    db.refresh(db_post)
+    # db_post.base64_image = base64_image
+    kafka_send_post_id(db_post.id)
+    logging.info(f"##KAFKA: POST ID {db_post.id} erfolgreich an Server gesendet...")
+    return db_post.id
 
-        db.commit()
-        print("Post erfolgreich aktualisiert mit dem verkleinerten Bild")
-        return True
+def convert_image_to_base64(image_bytes):
+    if image_bytes:
+        image_stream = BytesIO(image_bytes)
+        image_format = Image.open(image_stream).format.lower()
+        mime_type, _ = guess_type(f".{image_format}")
+        base64_encoded = base64.b64encode(image_bytes).decode('utf-8')
+        return f"data:{mime_type};base64,{base64_encoded}"
+    return None
 
-    except Exception as e:
-        logging.error(f"Fehler bei der Bildoptimierung für Post ID {post_id}: {e}", exc_info=True)
-        return False
-    
+# CRUD-Methode zum Abrufen der Posts eines Benutzers
+def get_account_posts(db: Session, account_id: int):
+    posts = db.query(Post, Account.username).join(Account).filter(Post.account_id == account_id).all()
+    return [{
+        "id": post.id,
+        "account_id": post.account_id,
+        "description": post.description,
+        "base64_image": convert_image_to_base64(post.reduced_image),
+        "username": username
+    } for post, username in posts]
 
-# def resize_and_save_image(db: Session, post_id: int, target_width: int = 640, target_height: int = 480):
-#     try:
-#         post = db.query(Post).filter(Post.id == post_id).first()
-#         if not post:
-#             logging.warning(f"Post mit ID {post_id} nicht gefunden.")
-#             return False
+# Vollsized image
+def get_post_full_image_by_id(db: Session, post_id: int):
+    """
+    Holt das full_image eines Posts anhand seiner ID.
 
-#         if not post.full_image:
-#             logging.info(f"Kein Bild zum Verkleinern für Post ID {post_id} vorhanden.")
-#             return True
+    :param db: Session-Objekt für die Datenbankverbindung.
+    :param post_id: Die ID des Posts.
+    :return: Das full_image des Posts als Byte-Array oder None, falls der Post nicht gefunden wurde.
+    """
+    post = db.query(Post.full_image).filter(Post.id == post_id).first()
+    if post and post.full_image:
+        return convert_image_to_base64(post.full_image)
+    else:
+        return None
 
-#         resized_image_bytes = 
-#         post.reduced_image = resized_image_bytes
-#         logging.info(f"BILD VERKLEINERN: Bild für Post ID {post_id} auf {target_width}x{target_height} erfolgreich verkleinert.")
+# Auslesen von 9 zufälligen Post die nicht dem User gehören (Für ein Feed)
+def get_random_posts_not_by_account(db: Session, account_id: int):
+    posts = db.query(Post, Account.username).join(Account, Post.account_id == Account.id).filter(Post.account_id != account_id).order_by(func.random()).limit(9).all()
+    return [{
+        "id": post.id,
+        "account_id": post.account_id,
+        "description": post.description,
+        "base64_image": convert_image_to_base64(post.reduced_image),
+        "username": username
+    } for post, username  in posts]
 
-#         db.commit()
-#         return True
+# Löscht einen Post und alle dazugehörigen Kommentare
+def delete_post(db: Session, post_id: int):
+    # Suche den Post in der Datenbank über seine ID
+    db_post = db.query(Post).filter(Post.id == post_id).first()
 
-#     except Exception as e:
-#         logging.error(f"Fehler bei der Bildverkleinerung für Post ID {post_id}: {e}", exc_info=True)
-#         return False
+    # Überprüfe, ob der Post existiert
+    if db_post is None:
+        raise ValueError("Post mit der ID {} wurde nicht gefunden.".format(post_id))
+
+    # Lösche zuerst alle Kommentare, die zu diesem Post gehören
+    db.query(Comment).filter(Comment.post_id == post_id).delete()
+
+    # Lösche den Post aus der Datenbank
+    db.delete(db_post)
+    db.commit()

@@ -2,6 +2,8 @@ import React from "react";
 import "./RegistrationInformation.raw.scss";
 import Header from "../Header/Header";
 import { useNavigate } from "react-router-dom"; // Änderung hier
+import { url_microservice_four } from "@/utils/utils";
+
 
 interface UserData {
   userEmail: string;
@@ -24,14 +26,13 @@ interface RegistrationInformationProps {
 const RegistrationInformation: React.FC<
   RegistrationInformationProps & { accountId: number }
 > = ({ userData, updateUserData, onSubmitSuccess, accountId }) => {
-  const backendUrl = import.meta.env.VITE_BACKEND_URL;
   const navigate = useNavigate(); // Änderung hier
   const handleSkip = () => {
     navigate("/feed"); // Weiterleitung zur /home-Route
   };
   const createProfile = async () => {
     try {
-      const response = await fetch(`${backendUrl}/profile/`, {
+      const response = await fetch(`${url_microservice_four}/profile/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

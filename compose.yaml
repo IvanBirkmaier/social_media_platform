@@ -1,6 +1,9 @@
 version: '3.8'
 
 services:
+###############################################
+# Datenbank Setup
+###############################################
   db:
     build: 
       context: ./database
@@ -13,57 +16,130 @@ services:
     ports:
       - "5432:5432"
 
+  db_init:
+    build: 
+      context: ./database/init
+    environment:
+      DATABASE_URL: postgresql://user:password@db:5432/meine_db
+    depends_on:
+      - db
+  
+###############################################
+# Microservices
+###############################################
+  
+  # Authentfication Service
   microservice_one:
     build: 
       context: ./backend_services/microservice_1
     environment:
       DATABASE_URL: postgresql://user:password@db:5432/meine_db
       FRONTEND_URL: http://localhost:3000
-      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-      KAFKA_TOPIC_ONE: post_queue
-      KAFKA_TOPIC_TWO: comment_queue
     ports:
-      - "8000:8000"
+      - "8001:8001"
     depends_on:
       - db
+      - db_init
 
+  # Post Service
   microservice_two:
     build:
       context: ./backend_services/microservice_2
     environment:
       DATABASE_URL: postgresql://user:password@db:5432/meine_db
-    ports:
-      - "8001:8001"
-    depends_on:
-      - db
-      - microservice_one
-      - kafka
-
-  microservice_three:
-    build:
-      context: ./backend_services/microservice_3
-    environment:
-      DATABASE_URL: postgresql://user:password@db:5432/meine_db
-      KAFKA_TOPIC: classified_comments_queue
+      FRONTEND_URL: http://localhost:3000
+      KAFKA_TOPIC: post_queue
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092
     ports:
       - "8002:8002"
     depends_on:
       - db
+      - db_init
+      - kafka
+
+
+  # Comment Service
+  microservice_three:
+    build:
+      context: ./backend_services/microservice_3
+    environment:
+      DATABASE_URL: postgresql://user:password@db:5432/meine_db
+      FRONTEND_URL: http://localhost:3000
+      KAFKA_TOPIC: comment_queue
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    ports:
+      - "8003:8003"
+    depends_on:
+      - db
+      - db_init
+      - kafka
+
+  # Profil Service
+  microservice_four:
+    build:
+      context: ./backend_services/microservice_4
+    environment:
+      DATABASE_URL: postgresql://user:password@db:5432/meine_db
+      FRONTEND_URL: http://localhost:3000
+    ports:
+      - "8004:8004"
+    depends_on:
+      - db
+      - db_init
+
+  # Images optimizer
+  microservice_five:
+    build:
+      context: ./backend_services/microservice_5
+    environment:
+      DATABASE_URL: postgresql://user:password@db:5432/meine_db
+    ports:
+      - "8005:8005"
+    depends_on:
+      - db
+      - db_init
       - microservice_one
       - kafka
 
+  microservice_six:
+    build:
+      context: ./backend_services/microservice_6
+    environment:
+      DATABASE_URL: postgresql://user:password@db:5432/meine_db
+      KAFKA_TOPIC: classified_comments_queue
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    ports:
+      - "8007:8007"
+    depends_on:
+      - db
+      - db_init
+      - microservice_one
+      - microservice_two
+      - kafka
+
+###############################################
+# Frontend
+###############################################
   frontend:
     build:
       context: ./frontend
       args:
-        VITE_BACKEND_URL: http://microservice_one:8000
+        VITE_URL_MICROSERVICE_ONE: http://microservice_one:8001
+        VITE_URL_MICROSERVICE_TWO: http://microservice_two:8002
+        VITE_URL_MICROSERVICE_THREE: http://microservice_three:8003
+        VITE_URL_MICROSERVICE_FOUR: http://microservice_four:8004
         VITE_WEBSOCKET_SERVER_URL: ws://websocket_server:8765
     ports:
       - "3000:80"
     depends_on:
       - microservice_one
+      - microservice_two
+      - microservice_three
+      - microservice_four
 
+###############################################
+# Kafka Server
+###############################################
   zookeeper:
     image: 'bitnami/zookeeper:latest'
     ports:
@@ -82,43 +158,6 @@ services:
     depends_on:
       - zookeeper
   
-  consumer_one:
-    build:
-      context: ./kafka/consumers/consumer_1
-    environment:
-      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-      KAFKA_TOPIC: post_queue
-      MICROSERVICE_2_API_URL: http://microservice_two:8001/optimize/
-    depends_on:
-      - kafka
-      - microservice_two
-      - kafka-init
-
-  consumer_two:
-    build:
-      context: ./kafka/consumers/consumer_2
-    environment:
-      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-      KAFKA_TOPIC: comment_queue
-      MICROSERVICE_3_API_URL: http://microservice_three:8002/classify/
-    depends_on:
-      - kafka
-      - microservice_three
-      - kafka-init
-  
-
-  consumer_three:
-    build:
-      context: ./kafka/consumers/consumer_3
-    environment:
-      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-      KAFKA_TOPIC: classified_comments_queue
-      WEBSOCKET_CLIENT_URL: http://websocket_client_1:8003/trigger_update
-    depends_on:
-      - kafka
-      - websocket_client_1
-      - kafka-init
-  
   kafka-init:
     build: ./kafka/init
     environment:
@@ -129,20 +168,50 @@ services:
     depends_on:
       - kafka
       - zookeeper
-  
-  websocket_client_1:
-    build:
-      context: ./websocket/clients/client_1
-    environment:
-      WEBSOCKET_SERVER_HOST: websocket_server
-      WEBSOCKET_PORT: 8765
-      API_HOST: 0.0.0.0
-      API_PORT: 8003
-    ports:
-      - "8003:8003"
-    depends_on:
-      - websocket_server
+ 
 
+###############################################
+# Kafka Consumer
+###############################################
+  consumer_one:
+    build:
+      context: ./kafka/consumers/consumer_1
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      KAFKA_TOPIC: post_queue
+      MICROSERVICE_5_API_URL: http://microservice_five:8005/optimize/
+    depends_on:
+      - kafka
+      - microservice_five
+      - kafka-init
+
+  consumer_two:
+    build:
+      context: ./kafka/consumers/consumer_2
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      KAFKA_TOPIC: comment_queue
+      MICROSERVICE_3_API_URL: http://microservice_six:8006/classify/
+    depends_on:
+      - kafka
+      - microservice_six
+      - kafka-init
+  
+  consumer_three:
+    build:
+      context: ./kafka/consumers/consumer_3
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      KAFKA_TOPIC: classified_comments_queue
+      WEBSOCKET_CLIENT_URL: http://websocket_client_1:8021/trigger_update
+    depends_on:
+      - kafka
+      - websocket_client_1
+      - kafka-init
+       
+###############################################
+# Websocket Server
+###############################################
   websocket_server:
     build:
       context: ./websocket/server
@@ -151,6 +220,20 @@ services:
       WEBSOCKET_SERVER_PORT: 8765
     ports:
       - "8765:8765"
+
+###############################################
+# Websocket Clients
+###############################################
+  websocket_client_1:
+    build:
+      context: ./websocket/clients/client_1
+    environment:
+      WEBSOCKET_SERVER_HOST: websocket_server
+      WEBSOCKET_PORT: 8765
+    ports:
+      - "8021:8021"
+    depends_on:
+      - websocket_server
 
 volumes:
   postgres_data:

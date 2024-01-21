@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import abstractUser from "assets/icons/abstractUser.svg";
 import { useAuth } from "../Auth/AuthContext";
-import { backendUrl } from "@/utils/utils";
+import { url_microservice_two, url_microservice_three } from "@/utils/utils";
 import CommentList from "./CommentList";
 import post_svg from "assets/icons/arrow_right.svg";
 import deleteIcon from "assets/icons/delete.svg";
@@ -34,7 +34,7 @@ const GridPostList = ({
 
   const fetchFullImage = async (postId: number) => {
     try {
-      const response = await fetch(`${backendUrl}/posts/${postId}/image/`, {
+      const response = await fetch(`${url_microservice_two}/posts/${postId}/image/`, {
         method: "GET",
       });
       if (response.ok) {
@@ -57,7 +57,7 @@ const GridPostList = ({
   const handleDelete = async () => {
     if (window.confirm("Are you sure you want to delete this post?")) {
       try {
-        const response = await fetch(`${backendUrl}/posts/${id}/`, {
+        const response = await fetch(`${url_microservice_two}/posts/${id}/`, {
           method: "DELETE",
         });
 
@@ -104,7 +104,7 @@ const GridPostList = ({
 
     setIsSubmitting(true);
     try {
-      const response = await fetch(`${backendUrl}/comments/`, {
+      const response = await fetch(`${url_microservice_three}/comments/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

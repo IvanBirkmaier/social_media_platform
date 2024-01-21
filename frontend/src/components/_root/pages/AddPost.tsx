@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { useCallback, useState } from "react";
 import { FileWithPath, useDropzone } from "react-dropzone";
 import { useAuth } from "@/components/Auth/AuthContext";
-import { backendUrl } from "@/utils/utils";
+import { url_microservice_two } from "@/utils/utils";
 import fileUploadIcon from "assets/icons/file-upload.svg";
 
 type AddPostProps = {
@@ -57,7 +57,7 @@ const AddPost = ({ fieldChange, mediaUrl }: AddPostProps) => {
         };
 
         // Ersetze 'http://localhost:8000' mit der URL deines FastAPI-Servers
-        const response = await fetch(`${backendUrl}/posts/`, {
+        const response = await fetch(`${url_microservice_two}/posts/`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
