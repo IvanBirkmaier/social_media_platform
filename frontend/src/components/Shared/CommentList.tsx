@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { backendUrl, websocketServerUrl } from "@/utils/utils";
+import { websocketServerUrl, url_microservice_three } from "@/utils/utils";
 
 interface Comment {
   comment_id: number;
@@ -21,7 +21,7 @@ const CommentList: React.FC<CommentListProps> = ({ postId }) => {
   // Funktion zum Abrufen von Kommentaren
   const fetchComments = async () => {
     try {
-      const response = await fetch(`${backendUrl}/posts/${postId}/comments/`);
+      const response = await fetch(`${url_microservice_three}/posts/${postId}/comments/`);
       if (response.ok) {
         const data = await response.json();
         setComments(data);

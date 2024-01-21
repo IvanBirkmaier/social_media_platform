@@ -1,5 +1,4 @@
 from fastapi import FastAPI, HTTPException, BackgroundTasks
-from pydantic import BaseModel
 from src.websocket_client import send_update_to_server
 import logging
 

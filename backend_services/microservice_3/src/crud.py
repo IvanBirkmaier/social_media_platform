@@ -1,53 +1,46 @@
-import logging
-from .model import Comment
-from .classifier import classifier
 from sqlalchemy.orm import Session
+from .model import Account, Comment
 from .producer import kafka_send_comment_id
-from dotenv import load_dotenv
-import os
+import logging
+
+logging.basicConfig(level=logging.INFO)
+
+
+# Erstellen eines Kommentars
+def create_comment(db: Session, account_id: int, post_id: int, text: str):
+    db_comment = Comment(account_id=account_id, post_id=post_id, text=text)
+    db.add(db_comment)
+    db.commit()
+    db.refresh(db_comment)
+    
+    # Senden der Kommentar-ID an Kafka
+    kafka_send_comment_id(db_comment.id)
+    logging.info(f"##KAFKA: COMMENT ID {db_comment.id} erfolgreich an Server gesendet...")
+
+    return db_comment
+
+def get_post_comments(db: Session, post_id: int):
+    comments_with_username = (
+        db.query(Comment, Account.username)
+        .join(Account, Comment.account_id == Account.id)
+        .filter(Comment.post_id == post_id)
+        .order_by(Comment.created_at.desc())
+        .all()
+    )
+
+    return [
+        {
+            "comment_id": comment.id,
+            "account_id": comment.account_id,
+            "text": comment.text,
+            "created_at": comment.created_at,
+            "username": username,
+            "classifier": comment.classifier
+        }
+        for comment, username in comments_with_username
+    ]
 
 
 
 
-load_dotenv() 
-KAFKA_TOPIC = os.environ.get('KAFKA_TOPIC')
 
-# Konfigurieren des Loggings
-# logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
-
-logging.basicConfig()
-logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
-
-# Rest Ihres Codes...
-
-
-def classify_comments(db: Session, comment_id: int):
-    try:
-        # Kommentar nach ID auslesen
-        comment = db.query(Comment).filter(Comment.id == comment_id).first()
-        # Überprüfen, ob der Kommentar gefunden wurde
-        if not comment:
-            logger.warning(f"Kommentar mit ID {comment_id} nicht gefunden.")
-            return False
-        # Überprüfen, ob der Kommentar Text enthält
-        if not comment.text:
-            logger.info(f"Kein Text zum Klassifizieren für Kommentar ID {comment_id} vorhanden.")
-            return True
-
-        # Klassifizieren des Textes
-        classified_text = classifier(comment.text)
-
-        comment.classifier = classified_text
-        db.commit()
-        logger.info(f"ERGEBNISS:\nKommentar: {comment.text}\nID:{comment_id}\nKlasse: {classified_text}")
-        logger.info(f"OPTIMIZER: Text für Kommentar ID {comment_id} erfolgreich klassifiziert.")
-        kafka_send_comment_id(comment_id)
-        logger.info(f"KAFKA: Kommentar ID {comment_id} erfolgreich an Kafka-Queue: {KAFKA_TOPIC} gesendet.")
-
-        return True
-
-    except Exception as e:
-        logger.error(f"Fehler beim Klassifizieren des Kommentars ID {comment_id}: {e}", exc_info=True)
-        return False

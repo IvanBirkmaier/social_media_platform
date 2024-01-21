@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import Loader from "@/components/Shared/Loader";
 import GridPostList from "@/components/Shared/GridPostList";
 import { useAuth } from "@/components/Auth/AuthContext";
-import { backendUrl } from "@/utils/utils";
+import { url_microservice_two } from "@/utils/utils";
 
 interface Post {
   id: number;
@@ -13,7 +13,7 @@ interface Post {
 
 const fetchAccountPosts = async (accountId: number) => {
   try {
-    const response = await fetch(`${backendUrl}/account/${accountId}/posts`);
+    const response = await fetch(`${url_microservice_two}/posts/home/${accountId}`);
     if (!response.ok) {
       throw new Error("Network response was not ok");
     }

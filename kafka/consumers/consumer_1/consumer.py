@@ -11,7 +11,7 @@ logging.basicConfig(level=logging.INFO)
 load_dotenv() 
 KAFKA_BOOTSTRAP_SERVERS = os.environ.get('KAFKA_BOOTSTRAP_SERVERS')
 KAFKA_TOPIC = os.environ.get('KAFKA_TOPIC')
-MICROSERVICE_2_API_URL = os.environ.get('MICROSERVICE_2_API_URL')
+MICROSERVICE_5_API_URL = os.environ.get('MICROSERVICE_5_API_URL')
 
 consumer = Consumer({
     'bootstrap.servers': KAFKA_BOOTSTRAP_SERVERS,
@@ -30,7 +30,7 @@ def check_topic_exists(consumer, topic, timeout=30):
     return False
 
 def send_optimization_request(post_id):
-    response = requests.post(f"{MICROSERVICE_2_API_URL}{post_id}")
+    response = requests.post(f"{MICROSERVICE_5_API_URL}{post_id}")
     if response.status_code == 200:
         logging.info(f"### KAFKA CONSUMER FÜR TOPIC {KAFKA_TOPIC}: Bildoptimierung erfolgreich für Post ID {post_id}")
     else:

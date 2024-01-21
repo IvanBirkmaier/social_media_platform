@@ -3,7 +3,7 @@ import Loader from "@/components/Shared/Loader";
 import GridPostList from "@/components/Shared/GridPostList";
 import searchLogo from "assets/icons/search.svg";
 import { useAuth } from "@/components/Auth/AuthContext";
-import { backendUrl } from "@/utils/utils";
+import { url_microservice_one, url_microservice_two } from "@/utils/utils";
 
 interface Post {
   id: number;
@@ -16,7 +16,7 @@ interface Post {
 const fetchRandomPosts = async (accountId: number) => {
   try {
     const response = await fetch(
-      `${backendUrl}/posts/random/?account_id=${accountId}`
+      `${url_microservice_two}/posts/random/?account_id=${accountId}`
     );
     if (!response.ok) {
       throw new Error("Network response was not ok");
@@ -31,7 +31,7 @@ const fetchRandomPosts = async (accountId: number) => {
 
 const fetchAccountPosts = async (accountId: number) => {
   try {
-    const response = await fetch(`${backendUrl}/account/${accountId}/posts`);
+    const response = await fetch(`${url_microservice_two}/posts/home/${accountId}`);
     if (!response.ok) {
       throw new Error("Network response was not ok");
     }
@@ -44,7 +44,7 @@ const fetchAccountPosts = async (accountId: number) => {
 
 const fetchAccountIdByUsername = async (username: string) => {
   try {
-    const response = await fetch(`${backendUrl}/account-id/${username}`);
+    const response = await fetch(`${url_microservice_one}/account-id/${username}`);
     if (!response.ok) {
       throw new Error("Network response was not ok");
     }
