@@ -37,4 +37,4 @@ You need to have permission for the [Trello board](https://trello.com/b/H6So0pAj
 
 # Enviroment Deployment-Diagramm
 
-![Diagramm](project_files/Setup.jpeg)
+![Diagramm](project_files/images_diagrams/Setup.jpeg)
