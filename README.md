@@ -32,9 +32,19 @@ Herbert Grünsteidl / ai23m012: herbertgruen
 
 # Link to the Trello board for the projekt. 
 
-You need to have permission for the [Trello board](https://trello.com/b/H6So0pAj/social-media-app).
+You need to have permission for the [Trello board.](https://trello.com/b/H6So0pAj/social-media-app).
 
 
-# Enviroment Deployment-Diagramm
+# IST Zustand Deployment-Diagramm (22.01.2024)
 
-![Diagramm](project_files/images_diagrams/Setup.jpeg)
+Der link zum unten angegebenen [Diagram.](https://lucid.app/lucidchart/adeb32c8-df79-44c0-a2e5-dcb09d808dad/edit?viewport_loc=-4662%2C-62%2C14900%2C7344%2C0_0&invitationId=inv_77436cbc-8a21-4b28-8a97-b7b691c24c55)
+
+![Diagramm](project_files/images_diagrams/Infrastructur_22_01_24.jpeg)
+
+# SOLL Zustand Deployment-Diagramm (22.01.2024)
+
+Der link zum unten angegebenen [Diagram.](https://lucid.app/lucidchart/adeb32c8-df79-44c0-a2e5-dcb09d808dad/edit?viewport_loc=-4662%2C-62%2C14900%2C7344%2C0_0&invitationId=inv_77436cbc-8a21-4b28-8a97-b7b691c24c55)
+
+![Diagramm](project_files/images_diagrams/Planed_Infrastructur_22_01_24.jpeg)
+
+# SOLL Zustand Deployment-Diagramm (22.01.2024)
