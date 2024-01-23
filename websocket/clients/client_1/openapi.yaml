@@ -1,0 +1,29 @@
+openapi: 3.0.0
+info:
+  title: Websockewt Client API
+  version: 1.0.0
+paths:
+  /trigger_update:
+    post:
+      summary: Triggers an update
+      description: This endpoint starts a background task to send an update to the server.
+      operationId: triggerUpdate
+      responses:
+        '200':
+          description: Successfully sent the update request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '400':
+          description: Bad Request - No Comment ID provided
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
