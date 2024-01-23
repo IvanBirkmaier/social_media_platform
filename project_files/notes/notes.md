@@ -19,6 +19,7 @@ Geiler Beitrag über die [Kafka](https://blog.devgenius.io/a-practical-guide-to-
 5. gRPC für interne Kommunikation
 6. CORS optimierung von Datenbank auslesen und einschreiben
 7. Saga Pattern Für verteilte Transaktionen
+8. HAProxy [Video](https://www.youtube.com/watch?v=vA01M2d1Ifw). 
 
 
 ## HAProxy für Loadbalancing/Ingress Controller (HTTP/HTTPS-Trafic)
