@@ -1,0 +1,48 @@
+openapi: 3.0.0
+info:
+  title: Sample API
+  version: 1.0.0
+paths:
+  /profile/:
+    post:
+      summary: Create a profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProfileCreate'
+      responses:
+        '201':
+          description: Profile created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileCreate'
+components:
+  schemas:
+    ProfileCreate:
+      type: object
+      properties:
+        account_id:
+          type: integer
+        vorname:
+          type: string
+        nachname:
+          type: string
+        city:
+          type: string
+        plz:
+          type: integer
+        street:
+          type: string
+        phone_number:
+          type: string
+      required:
+        - account_id
+        - vorname
+        - nachname
+        - city
+        - plz
+        - street
+        - phone_number
