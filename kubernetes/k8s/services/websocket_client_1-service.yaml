@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe convert -f compose.yaml
+    kompose.version: 1.32.0 (765fde254)
+  labels:
+    io.kompose.service: websocket-client-1
+  name: websocket_client_1
+spec:
+  ports:
+    - name: "8021"
+      port: 8021
+      targetPort: 8021
+  selector:
+    io.kompose.service: websocket-client-1
