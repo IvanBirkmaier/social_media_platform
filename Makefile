@@ -6,7 +6,7 @@
 ####
 .PHONY: help
 help: ## This help.
-    @awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_0-9]+:.*?## / {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
+	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_0-9]+:.*?## / {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
 .DEFAULT_GOAL := help
 
@@ -17,8 +17,13 @@ help: ## This help.
 ####
 .PHONY: create_k3d_cluster
 create_k3d_cluster: ## baut das k3d Cluster.
+    # Setzt ein Workdir für Persitant Speicherplatz 
 	mkdir -p "${PWD}"/kubernetes/k3dvol 
+    # Erstellt das Cluster. Setzt die Registry damit Lokale images depployed werden können, setzt die Persitans und setzt für Agent 0 ein Portforwarding, damit man vom der Localen Machine auf die NodeIP (nicht ClusterIP) des Agendent 0 zugreifen kann, auf dem dann immer das Frontend läuft (siee frontend-deployment.yaml).
 	k3d cluster create social-media-cluster -v "${PWD}"/kubernetes/registry/registries.yaml:/etc/rancher/k3s/registries.yaml -v "${PWD}"/kubernetes/k3dvol:/tmp/k3dvol --agents 2 -p "8082:30080@agent:0"
+    # Setzt dem Agend 0 ein Label, dass verwendet werden kannum dem Frontend-Deployment zu sagen, auf welchem Node es zu laufen hat. Immer Agend/Node 0 wegen dem Port-Forwarding.
+	kubectl label nodes k3d-social-media-cluster-agent-0 node=agent0
+
 
 .PHONY: delete_k3d_cluster
 delete_k3d_cluster: ## delete das k3d Cluster.

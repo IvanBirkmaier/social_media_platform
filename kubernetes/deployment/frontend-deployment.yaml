@@ -20,4 +20,7 @@ spec:
           ports:
             - containerPort: 80
               protocol: TCP
+      # Node-Affinität bzgl. des Portforwarding des Nodes für den Zugriff auf das Frontend von außen (Siehe Makefile = create_k3d_cluster)
+      nodeSelector:
+        node: agent0
       restartPolicy: Always
