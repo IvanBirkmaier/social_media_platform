@@ -183,3 +183,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Kubernetes Persistans
+/kubernetes/k3dvol 
