@@ -211,3 +211,83 @@ kubectl apply -f dein-service-und-deployment-manifest.yaml
 ```
 
 Stelle sicher, dass du die Abhängigkeiten und Netzwerkkonfigurationen in den Manifesten richtig konfiguriert hast, um die Kommunikation zwischen den Services sicherzustellen.
+
+
+
+
+Die `kubectl` Befehle interagieren mit dem Kubernetes-Cluster, das aktuell in deinem `kubectl` Kontext konfiguriert ist. Wenn du nur ein Cluster hast und dies mit `kubectl` oder einem anderen Tool wie `k3d` oder `minikube` erstellt hast, dann ist es üblich, dass der `kubectl` Kontext automatisch auf dieses Cluster gesetzt wird.
+
+### Cluster-Kontext
+
+Um zu überprüfen, mit welchem Cluster `kubectl` derzeit interagiert, kannst du den folgenden Befehl ausführen:
+
+```sh
+kubectl config current-context
+```
+
+Der ausgegebene Kontextname gibt dir Aufschluss darüber, welcher Cluster aktuell verwendet wird. Du kannst auch alle verfügbaren Kontexte auflisten und bei Bedarf zwischen ihnen wechseln:
+
+```sh
+kubectl config get-contexts
+kubectl config use-context <context-name>
+```
+
+### Verwendung von Nodes (--agents)
+
+In einem Kubernetes-Cluster werden Pods auf Worker Nodes (auch Agents genannt) ausgeführt. Der Control Plane Node (Server in k3d) führt die Cluster-Orchestrierung aus, aber die Anwendungscontainer laufen auf den Worker Nodes. Wenn dein Cluster keine Worker Nodes hat (Agents), dann werden nur die System-Pods auf dem Control Plane Node ausgeführt und deine Anwendungspods bleiben im `Pending`-Status, weil es keine Ressourcen gibt, auf denen sie laufen können.
+
+Du brauchst mindestens einen Worker Node, damit deine Anwendungen laufen können. Das Hinzufügen von Agenten zu deinem Cluster sollte deine Anwendung betriebsfähig machen, vorausgesetzt, es gibt keine anderen Konfigurationsprobleme.
+
+### Was `-n default` macht
+
+Der Schalter `-n default` in deinen `kubectl` Befehlen gibt an, dass die Operation im `default` Namespace des Kubernetes-Clusters durchgeführt werden soll. Namespaces sind eine Methode, um Ressourcen innerhalb eines Clusters zu organisieren. Wenn du keinen Namespace angibst, verwendet `kubectl` standardmäßig den `default` Namespace.
+
+Wenn du Ressourcen in einem anderen Namespace erstellen oder verwalten möchtest, musst du diesen Namespace in deinen Befehlen mit `-n <namespace-name>` angeben oder du musst den Namespace in deinen YAML-Definitionsdateien festlegen.
+
+Zusammenfassend bedeutet dies, dass deine `kubectl apply` Befehle die Ressourcen (Pods, Services usw.) in dem Cluster erstellen, das derzeit in deinem `kubectl` Kontext konfiguriert ist, und dies im angegebenen Namespace, in diesem Fall `default`.
+
+
+
+In einem Kubernetes-Cluster werden die Pods auf den Worker Nodes (auch als Agents oder Minions bekannt) ausgeführt. Die Control Plane (oder Master Node) verwaltet den Cluster und seine Ressourcen, aber die eigentliche Ausführung der Container-Anwendungen geschieht auf den Worker Nodes.
+
+In deinem aktuellen Cluster, basierend auf der Ausgabe von `k3d cluster list`, hast du:
+
+- **1 Server (Control Plane)**: Verantwortlich für das Management des Clusters.
+- **0 Agents (Worker Nodes)**: Hier sollten deine Anwendungen (Pods) laufen.
+- **1 Loadbalancer**: Verwaltet den Zugriff auf deine Services von außen.
+
+Da du keine Worker Nodes (Agents) hast, können einige Pods nicht gestartet werden, weil es keinen Platz gibt, auf dem sie laufen könnten. Der `Pending` Status eines Pods weist darauf hin, dass der Scheduler des Kubernetes-Clusters aufgrund fehlender Ressourcen (in diesem Fall fehlender Worker Nodes) keinen geeigneten Platz für den Pod finden kann.
+
+Für deine Anwendung zu funktionieren, brauchst du mindestens eine Worker Node. Das ist notwendig, um deine Anwendungspods zu hosten. Normalerweise erstellt man einen Cluster mit mindestens einer Worker Node, oft aber auch mit mehreren, um Hochverfügbarkeit und Lastverteilung zu ermöglichen.
+
+In deinem Fall solltest du also Worker Nodes zu deinem Cluster hinzufügen. Du kannst dies tun, indem du deinen Cluster mit der `--agents`-Option neu erstellst oder, wenn dein Cluster bereits läuft, weitere Nodes mit `k3d node create` hinzufügst.
+
+### Beispiel, um einen Cluster mit Worker Nodes zu erstellen:
+
+```sh
+k3d cluster create social-media-cluster --agents 2 ...
+```
+
+### Beispiel, um Worker Nodes zu einem bestehenden Cluster hinzuzufügen:
+
+```sh
+k3d node create worker1 --role agent --cluster social-media-cluster
+k3d node create worker2 --role agent --cluster social-media-cluster
+```
+
+Wenn du diese Worker Nodes hinzufügst, sollte dein `Pending` Pod geplant und auf einer der Worker Nodes ausgeführt werden, vorausgesetzt, es gibt keine anderen Konfigurationsprobleme oder Ressourcenbeschränkungen.
+
+
+Ja, genau. In einem Kubernetes-Cluster trifft der Scheduler die Entscheidung, auf welchem Node ein Pod platziert wird. Der Scheduler berücksichtigt dabei verschiedene Faktoren wie Ressourcenanforderungen des Pods, Ressourcenverfügbarkeit auf den Nodes, Taints und Tolerations, Affinitäts- und Anti-Affinitätseinstellungen und andere Einschränkungen.
+
+Hier eine Zusammenfassung des Vorgangs:
+
+1. **Pod Creation**: Wenn du einen Pod über `kubectl apply` mit einer Deployment-Konfiguration erstellst, wird der Pod von Kubernetes erstellt und in den Zustand `Pending` versetzt, bis ein Node für seine Ausführung ausgewählt wird.
+
+2. **Scheduling**: Der Kubernetes Scheduler wählt einen Node aus, der die Anforderungen des Pods erfüllt und genügend Ressourcen (CPU, Speicher) zur Verfügung hat, und weist den Pod diesem Node zu.
+
+3. **Pod Placement**: Nachdem ein Node ausgewählt wurde, werden die Container des Pods auf diesem Node gestartet. Der Kubelet-Prozess auf dem Node ist für das Starten, Stoppen und Überwachen der Container zuständig.
+
+Bei k3d, einer leichtgewichtigen Version von Kubernetes, die k3s (eine kompakte Version von Kubernetes) in Docker-Containern ausführt, ist der Prozess grundsätzlich derselbe. Wenn du keine spezifischen Nodes (Agents) erstellst, werden die Pods auf dem Control Plane Node (Server) platziert, sofern es die Ressourcen erlauben und keine anderen Einschränkungen bestehen.
+
+Falls du zusätzliche Agents erstellst, haben die Pods mehr potenzielle Nodes zur Auswahl, und der Scheduler wird die Workload entsprechend den Ressourcen und der Konfiguration auf diese verteilen. Wenn du spezifische Scheduling-Anforderungen hast, kannst du diese in deinen Pod-Spezifikationen mit NodeSelector, Affinity und AntiAffinity oder Taints und Tolerations festlegen.

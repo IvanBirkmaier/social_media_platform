@@ -19,6 +19,5 @@ spec:
           name: frontend
           ports:
             - containerPort: 80
-              hostPort: 3000
               protocol: TCP
       restartPolicy: Always
