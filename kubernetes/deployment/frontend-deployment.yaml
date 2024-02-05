@@ -15,18 +15,13 @@ spec:
         app: frontend
     spec:
       containers:
-        - env:
-            - name: VITE_URL_MICROSERVICE_ONE
-              # Durch das Portfowarding im Makefile (beim erstellen des Clusters) kann der MS 1 von außerhalb des Clusters über diese IP erreicht werden.
-              value: http://localhost:8083
-              #value: http://microservice-one-service:8001
-
-          image: registry:5000/social-media-platform_frontend:latest
-          name: frontend
-          ports:
-            - containerPort: 80
-              protocol: TCP
-      # Node-Affinität bzgl. des Portforwarding des Nodes für den Zugriff auf das Frontend von außen (Siehe Makefile = create_k3d_cluster)
-      nodeSelector:
-        node: agent0
-      restartPolicy: Always
+      - name: frontend
+        env:
+        - name: VITE_URL_MICROSERVICE_ONE
+          # Durch das Portfowarding im Makefile (beim erstellen des Clusters) kann der MS 1 von außerhalb des Clusters über diese IP erreicht werden.
+          value: http://localhost:8083
+          #value: http://microservice-one-service:8001          
+        image: registry:5000/social-media-platform_frontend:latest
+        ports:
+        - containerPort: 80
+          protocol: TCP

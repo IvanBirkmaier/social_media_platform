@@ -123,7 +123,7 @@ services:
   frontend:
     build:
       context: ./frontend
-      args:
+    environment:
         VITE_URL_MICROSERVICE_ONE: http://microservice_one:8001
         VITE_URL_MICROSERVICE_TWO: http://microservice_two:8002
         VITE_URL_MICROSERVICE_THREE: http://microservice_three:8003
