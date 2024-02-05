@@ -15,7 +15,13 @@ spec:
         app: frontend
     spec:
       containers:
-        - image: registry:5000/social-media-platform_frontend:latest
+        - env:
+            - name: VITE_URL_MICROSERVICE_ONE
+              # Durch das Portfowarding im Makefile (beim erstellen des Clusters) kann der MS 1 von außerhalb des Clusters über diese IP erreicht werden.
+              value: http://localhost:8083
+              #value: http://microservice-one-service:8001
+
+          image: registry:5000/social-media-platform_frontend:latest
           name: frontend
           ports:
             - containerPort: 80

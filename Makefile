@@ -20,8 +20,8 @@ create_k3d_cluster: ## baut das k3d Cluster.
     # Setzt ein Workdir für Persitant Speicherplatz 
 	mkdir -p "${PWD}"/kubernetes/k3dvol 
     # Erstellt das Cluster. Setzt die Registry damit Lokale images depployed werden können, setzt die Persitans und setzt für Agent 0 ein Portforwarding, damit man vom der Localen Machine auf die NodeIP (nicht ClusterIP) des Agendent 0 zugreifen kann, auf dem dann immer das Frontend läuft (siee frontend-deployment.yaml).
-	k3d cluster create social-media-cluster -v "${PWD}"/kubernetes/registry/registries.yaml:/etc/rancher/k3s/registries.yaml -v "${PWD}"/kubernetes/k3dvol:/tmp/k3dvol --agents 2 -p "8082:30080@agent:0"
-    # Setzt dem Agend 0 ein Label, dass verwendet werden kannum dem Frontend-Deployment zu sagen, auf welchem Node es zu laufen hat. Immer Agend/Node 0 wegen dem Port-Forwarding.
+	k3d cluster create social-media-cluster -v "${PWD}"/kubernetes/registry/registries.yaml:/etc/rancher/k3s/registries.yaml -v "${PWD}"/kubernetes/k3dvol:/tmp/k3dvol --agents 2 -p "8082:30080@agent:0" -p "8083:30081@agent:0"
+    # Setzt dem Agend 0 ein Label, dass verwendet werden kann um dem Persitant zu sagen, auf welchem Node es zu laufen hat. Immer Agend/Node 0 wegen dem Port-Forwarding.
 	kubectl label nodes k3d-social-media-cluster-agent-0 node=agent0
 
 
@@ -33,13 +33,38 @@ delete_k3d_cluster: ## delete das k3d Cluster.
 
 .PHONY: start_cluster
 start_cluster: tag_push_images_to_registry ## startet die Anwendung.
+    # Deployments hinzufügen
+	kubectl apply -f kubernetes/deployment/db-deployment.yaml -n default
+	kubectl apply -f kubernetes/deployment/microservice-one-deployment.yaml -n default
 	kubectl apply -f kubernetes/deployment/frontend-deployment.yaml -n default
+    # Services hinzufügen
+	kubectl apply -f kubernetes/services/db-service.yaml -n default
+	kubectl apply -f kubernetes/services/microservice_one-service.yaml -n default
 	kubectl apply -f kubernetes/services/frontend-service.yaml -n default
+    # Persistent hinzufügen
+	kubectl apply -f kubernetes/persistens/postgres-data-persistentvolume.yaml -n default
+	kubectl apply -f kubernetes/persistens/postgres-data-persistentvolumeclaim.yaml -n default
+    # Jobs hinzufügen
+	kubectl apply -f kubernetes/jobs/db-init.yaml -n default
+
+
 
 .PHONY: stop_cluster
 stop_cluster: 
+    # Deployments löschen
+	kubectl delete -f kubernetes/deployment/db-deployment.yaml -n default
+	kubectl delete -f kubernetes/deployment/microservice-one-deployment.yaml -n default
 	kubectl delete -f kubernetes/deployment/frontend-deployment.yaml -n default
+    # Services löschen
+	kubectl delete -f kubernetes/services/db-service.yaml -n default
+	kubectl delete -f kubernetes/services/microservice_one-service.yaml -n default
 	kubectl delete -f kubernetes/services/frontend-service.yaml -n default
+    # Persistent Claims löschen
+	kubectl delete -f kubernetes/persistens/postgres-data-persistentvolumeclaim.yaml -n default
+    # Persistent löschen
+	kubectl delete -f kubernetes/persistens/postgres-data-persistentvolume.yaml -n default
+    # Jobs löschen
+	kubectl delete -f kubernetes/jobs/db-init.yaml -n default
 
 .PHONY: start_docker_registry
 start_docker_registry: ## startet eine Docker Registry, welche im k3d Netzwerk sichtbar ist.
@@ -49,6 +74,12 @@ start_docker_registry: ## startet eine Docker Registry, welche im k3d Netzwerk s
 tag_push_images_to_registry: ## uploaded die Docker-Images zur Registry.
 	docker tag social-media-platform_frontend:latest localhost:5000/social-media-platform_frontend:latest
 	docker push localhost:5000/social-media-platform_frontend:latest
+	docker tag social-media-platform_db:latest localhost:5000/social-media-platform_db:latest
+	docker push localhost:5000/social-media-platform_db:latest
+	docker tag social-media-platform_microservice_one:latest localhost:5000/social-media-platform_microservice_one:latest
+	docker push localhost:5000/social-media-platform_microservice_one:latest
+	docker tag social-media-platform_db_init:latest localhost:5000/social-media-platform_db_init:latest
+	docker push localhost:5000/social-media-platform_db_init:latest
 
 
 ####

@@ -9,6 +9,8 @@ spec:
     app: microservice-one
   ports:
     - name: "8001"
-      port: 8001
+      port: 3001
       targetPort: 8001
+      nodePort: 30081
+  type: NodePort
 

@@ -1,0 +1,17 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: db-init-job
+spec:
+  template:
+    spec:
+      containers:
+      - env:
+          - name: DATABASE_URL
+          # database-service ist funktioniert wegen dem DNS was im Cluster bereitgestellt wird
+            value: "postgresql://user:password@database-service:5432/meine_db"
+        name: db-init
+        image: registry:5000/social-media-platform_db_init:latest
+        command: ["python", "./init.py"]
+      restartPolicy: Never
+  backoffLimit: 4
