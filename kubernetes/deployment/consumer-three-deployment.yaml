@@ -25,5 +25,5 @@ spec:
             - name: KAFKA_TOPIC
               value: classified_comments_queue
             - name: WEBSOCKET_CLIENT_URL
-              value: http://websocket_client_1-service:8021/trigger_update
+              value: http://websocket-client-1-service:8021/trigger_update
       restartPolicy: Always

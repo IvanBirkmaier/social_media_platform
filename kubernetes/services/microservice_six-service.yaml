@@ -3,7 +3,7 @@ kind: Service
 metadata:
   labels:
     app: microservice-six
-  name: microservice_six
+  name: microservice-six-service
 spec:
   selector:
     app: microservice-six

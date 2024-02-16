@@ -23,5 +23,5 @@ spec:
             - name: KAFKA_TOPIC
               value: post_queue
             - name: MICROSERVICE_5_API_URL
-              value: http://microservice_five-service:8005/optimize/
+              value: http://microservice-five-service:8005/optimize/
       restartPolicy: Always

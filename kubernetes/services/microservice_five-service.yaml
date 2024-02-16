@@ -3,7 +3,7 @@ kind: Service
 metadata:
   labels:
     app: microservice-five
-  name: microservice_five-service
+  name: microservice-five-service
 spec:
   selector:
     app: microservice-five

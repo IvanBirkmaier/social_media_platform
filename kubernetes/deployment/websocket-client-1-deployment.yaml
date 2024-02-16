@@ -22,7 +22,7 @@ spec:
               protocol: TCP
           env:
             - name: WEBSOCKET_PORT
-              value: 8765
+              value: "8765"
             - name: WEBSOCKET_SERVER_HOST
               value: websocket-server-service
       restartPolicy: Always

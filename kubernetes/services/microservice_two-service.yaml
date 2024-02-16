@@ -3,7 +3,7 @@ kind: Service
 metadata:
   labels:
     app: microservice-two
-  name: microservice_two-service
+  name: microservice-two-service
 spec:
   selector:
     app: microservice-two

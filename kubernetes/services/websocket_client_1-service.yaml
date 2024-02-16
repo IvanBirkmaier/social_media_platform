@@ -3,7 +3,7 @@ kind: Service
 metadata:
   labels:
     app: websocket-client-1
-  name: websocket_client_1-service
+  name: websocket-client-1-service
 spec:
   selector:
     app: websocket-client-1
