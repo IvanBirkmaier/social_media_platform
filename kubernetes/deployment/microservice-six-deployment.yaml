@@ -1,38 +1,31 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  annotations:
-    kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe convert -f compose.yaml
-    kompose.version: 1.32.0 (765fde254)
   labels:
-    io.kompose.service: microservice-six
-  name: microservice-six
+    app: microservice-six
+  name: microservice-six-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      io.kompose.service: microservice-six
+      app: microservice-six
   template:
     metadata:
-      annotations:
-        kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe convert -f compose.yaml
-        kompose.version: 1.32.0 (765fde254)
       labels:
-        io.kompose.network/social-media-platform-default: "true"
-        io.kompose.service: microservice-six
+        app: microservice-six
     spec:
       containers:
-        - env:
-            - name: DATABASE_URL
-              value: postgresql://user:password@db:5432/meine_db
-            - name: KAFKA_BOOTSTRAP_SERVERS
-              value: kafka:9092
-            - name: KAFKA_TOPIC
-              value: classified_comments_queue
-          image: microservice-six
-          name: microservice-six
+        - name: microservice-six
+          image: registry:5000/social-media-platform_microservice_six:latest
           ports:
             - containerPort: 8007
               hostPort: 8007
               protocol: TCP
+          env:
+            - name: DATABASE_URL
+              value: "postgresql://user:password@database-service:5432/meine_db"
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              value: kafka-service:9092
+            - name: KAFKA_TOPIC
+              value: classified_comments_queue
       restartPolicy: Always

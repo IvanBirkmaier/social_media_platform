@@ -1,36 +1,28 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  annotations:
-    kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe convert -f compose.yaml
-    kompose.version: 1.32.0 (765fde254)
   labels:
-    io.kompose.service: websocket-client-1
-  name: websocket-client-1
+    app: websocket-client-1
+  name: websocket-client-1-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      io.kompose.service: websocket-client-1
+      app: websocket-client-1
   template:
     metadata:
-      annotations:
-        kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe convert -f compose.yaml
-        kompose.version: 1.32.0 (765fde254)
       labels:
-        io.kompose.network/social-media-platform-default: "true"
-        io.kompose.service: websocket-client-1
+        app: websocket-client-1
     spec:
       containers:
-        - env:
-            - name: WEBSOCKET_PORT
-              value: "8765"
-            - name: WEBSOCKET_SERVER_HOST
-              value: websocket_server
-          image: websocket-client-1
-          name: websocket-client-1
+        - name: websocket-client-1
+          image: registry:5000/social-media-platform_websocket_client_1:latest
           ports:
             - containerPort: 8021
-              hostPort: 8021
               protocol: TCP
+          env:
+            - name: WEBSOCKET_PORT
+              value: 8765
+            - name: WEBSOCKET_SERVER_HOST
+              value: websocket-server-service
       restartPolicy: Always

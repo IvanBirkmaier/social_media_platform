@@ -20,8 +20,18 @@ spec:
         - name: VITE_URL_MICROSERVICE_ONE
           # Durch das Portfowarding im Makefile (beim erstellen des Clusters) kann der MS 1 von außerhalb des Clusters über diese IP erreicht werden.
           value: http://localhost:8083
-          #value: http://microservice-one-service:8001          
+          #value: http://microservice-one-service:8001
+        - name: VITE_URL_MICROSERVICE_TWO
+          value: http://localhost:8085
+        - name: VITE_URL_MICROSERVICE_THREE
+          value: http://localhost:8086
+        - name: VITE_URL_MICROSERVICE_FOUR
+          value: http://localhost:8087
+        - name: VITE_WEBSOCKET_SERVER_URL
+          value: ws://localhost:8084
         image: registry:5000/social-media-platform_frontend:latest
         ports:
         - containerPort: 80
           protocol: TCP
+
+

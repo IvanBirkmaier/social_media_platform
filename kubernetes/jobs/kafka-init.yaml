@@ -1,0 +1,22 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: kafka-init-job
+spec:
+  template:
+    spec:
+      containers:
+        - name: kafka-init
+          image: registry:5000/social-media-platform_kafka-init:latest
+          env:
+            - name: KAFKA_BROKER_ADDRESS
+              value: kafka-server-service:9092
+            - name: KAFKA_TOPIC_ONE
+              value: post_queue
+            - name: KAFKA_TOPIC_THREE
+              value: classified_comments_queue
+            - name: KAFKA_TOPIC_TWO
+              value: comment_queue
+          command: ["/init.sh"]
+      restartPolicy: Never
+  backoffLimit: 4

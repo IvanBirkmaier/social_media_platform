@@ -123,12 +123,12 @@ services:
   frontend:
     build:
       context: ./frontend
-    environment:
-        VITE_URL_MICROSERVICE_ONE: http://microservice_one:8001
-        VITE_URL_MICROSERVICE_TWO: http://microservice_two:8002
-        VITE_URL_MICROSERVICE_THREE: http://microservice_three:8003
-        VITE_URL_MICROSERVICE_FOUR: http://microservice_four:8004
-        VITE_WEBSOCKET_SERVER_URL: ws://websocket_server:8765
+      args:
+          VITE_URL_MICROSERVICE_ONE: http://microservice_one:8001
+          VITE_URL_MICROSERVICE_TWO: http://microservice_two:8002
+          VITE_URL_MICROSERVICE_THREE: http://microservice_three:8003
+          VITE_URL_MICROSERVICE_FOUR: http://microservice_four:8004
+          VITE_WEBSOCKET_SERVER_URL: ws://websocket_server:8765
     ports:
       - "3000:80"
     depends_on:

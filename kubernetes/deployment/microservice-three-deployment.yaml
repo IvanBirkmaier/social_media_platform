@@ -1,40 +1,32 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  annotations:
-    kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe convert -f compose.yaml
-    kompose.version: 1.32.0 (765fde254)
   labels:
-    io.kompose.service: microservice-three
-  name: microservice-three
+    app: microservice-three
+  name: microservice-three-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      io.kompose.service: microservice-three
+      app: microservice-three
   template:
     metadata:
-      annotations:
-        kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe convert -f compose.yaml
-        kompose.version: 1.32.0 (765fde254)
       labels:
-        io.kompose.network/social-media-platform-default: "true"
-        io.kompose.service: microservice-three
+        app: microservice-three
     spec:
       containers:
-        - env:
-            - name: DATABASE_URL
-              value: postgresql://user:password@db:5432/meine_db
-            - name: FRONTEND_URL
-              value: http://localhost:3000
-            - name: KAFKA_BOOTSTRAP_SERVERS
-              value: kafka:9092
-            - name: KAFKA_TOPIC
-              value: comment_queue
-          image: microservice-three
-          name: microservice-three
+        - name: microservice-three
+          image: registry:5000/social-media-platform_microservice_three:latest
           ports:
             - containerPort: 8003
-              hostPort: 8003
               protocol: TCP
+          env:
+            - name: DATABASE_URL
+              value: "postgresql://user:password@database-service:5432/meine_db"
+            - name: FRONTEND_URL
+              value: "http://localhost:8082"
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              value: kafka-service:9092
+            - name: KAFKA_TOPIC
+              value: comment_queue
       restartPolicy: Always
