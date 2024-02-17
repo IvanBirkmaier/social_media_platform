@@ -57,6 +57,8 @@ start_cluster: tag_push_images_to_registry ## startet die Anwendung.
 	kubectl apply -f kubernetes/services/microservice_two-service.yaml -n default
 	kubectl apply -f kubernetes/services/microservice_three-service.yaml -n default
 	kubectl apply -f kubernetes/services/microservice_four-service.yaml -n default
+	kubectl apply -f kubernetes/services/microservice_five-service.yaml -n default
+	kubectl apply -f kubernetes/services/microservice_six-service.yaml -n default
 
     # Persistent hinzufügen
 	kubectl apply -f kubernetes/persistens/postgres-data-persistentvolume.yaml -n default
@@ -97,6 +99,8 @@ stop_cluster:
 	kubectl delete -f kubernetes/services/microservice_two-service.yaml -n default
 	kubectl delete -f kubernetes/services/microservice_three-service.yaml -n default
 	kubectl delete -f kubernetes/services/microservice_four-service.yaml -n default
+	kubectl delete -f kubernetes/services/microservice_five-service.yaml -n default
+	kubectl delete -f kubernetes/services/microservice_six-service.yaml -n default
 
     # Persistent Claims löschen
 	kubectl delete -f kubernetes/persistens/postgres-data-persistentvolumeclaim.yaml -n default

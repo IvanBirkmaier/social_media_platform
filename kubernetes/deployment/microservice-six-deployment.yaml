@@ -25,7 +25,7 @@ spec:
             - name: DATABASE_URL
               value: "postgresql://user:password@database-service:5432/meine_db"
             - name: KAFKA_BOOTSTRAP_SERVERS
-              value: kafka-service:9092
+              value: kafka-server-service:9092
             - name: KAFKA_TOPIC
               value: classified_comments_queue
       restartPolicy: Always

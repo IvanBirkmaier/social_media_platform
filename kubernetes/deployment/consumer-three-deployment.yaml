@@ -21,7 +21,7 @@ spec:
           image: registry:5000/social-media-platform_consumer_three:latest
           env:
             - name: KAFKA_BOOTSTRAP_SERVERS
-              value: kafka-service:9092
+              value: kafka-server-service:9092
             - name: KAFKA_TOPIC
               value: classified_comments_queue
             - name: WEBSOCKET_CLIENT_URL

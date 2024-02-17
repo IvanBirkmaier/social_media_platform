@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   labels:
     app: kafka-consumer-one
-  name: consumer-one
+  name: kafka-consumer-one
 spec:
   replicas: 1
   selector:
@@ -19,7 +19,7 @@ spec:
           image: registry:5000/social-media-platform_consumer_one:latest
           env:
             - name: KAFKA_BOOTSTRAP_SERVERS
-              value: kafka-service:9092
+              value: kafka-server-service:9092
             - name: KAFKA_TOPIC
               value: post_queue
             - name: MICROSERVICE_5_API_URL

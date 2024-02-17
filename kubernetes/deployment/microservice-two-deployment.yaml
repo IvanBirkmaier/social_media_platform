@@ -26,7 +26,7 @@ spec:
             - name: FRONTEND_URL
               value: "http://localhost:8082"
             - name: KAFKA_BOOTSTRAP_SERVERS
-              value: kafka-service:9092
+              value: kafka-server-service:9092
             - name: KAFKA_TOPIC
               value: post_queue
 

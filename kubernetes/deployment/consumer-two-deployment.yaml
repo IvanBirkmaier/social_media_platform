@@ -19,7 +19,7 @@ spec:
           image: registry:5000/social-media-platform_consumer_two:latest
           env:
             - name: KAFKA_BOOTSTRAP_SERVERS
-              value: kafka-service:9092
+              value: kafka-server-service:9092
             - name: KAFKA_TOPIC
               value: comment_queue
             - name: MICROSERVICE_3_API_URL
