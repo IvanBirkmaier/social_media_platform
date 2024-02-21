@@ -25,5 +25,4 @@ spec:
           value: "postgresql://user:password@database-service:5432/meine_db"
         - name: FRONTEND_URL
           value: "http://localhost:8082"
-        # value: "http://frontend-service:3000"
       restartPolicy: Always

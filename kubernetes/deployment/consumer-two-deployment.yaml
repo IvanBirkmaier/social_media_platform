@@ -23,5 +23,5 @@ spec:
             - name: KAFKA_TOPIC
               value: comment_queue
             - name: MICROSERVICE_3_API_URL
-              value: http://microservice-six-service:8006/classify/
+              value: http://microservice-six-service:8007/classify/
       restartPolicy: Always

@@ -1,7 +1,6 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  annotations:
   labels:
     app: kafka-consumer-three
   name: kafka-consumer-three
@@ -12,7 +11,6 @@ spec:
       app: kafka-consumer-three
   template:
     metadata:
-      annotations:
       labels:
         app: kafka-consumer-three
     spec:
