@@ -3,18 +3,18 @@ from .model import Account, Profile, Post, Comment
 import bcrypt
 import logging
 
-
 logging.basicConfig(level=logging.INFO)
-
 
 
 # Passwort in einen Hash machen
 def hash_password(password):
     return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
+
 # Passwort mit dem Hash vergleichen
 def check_password_hash(password, hash):
     return bcrypt.checkpw(password.encode('utf-8'), hash.encode('utf-8'))
+
 
 # Erstellen eines Accounts (Registrierung)
 def create_account(db: Session, username: str, email: str, password: str):
@@ -25,13 +25,16 @@ def create_account(db: Session, username: str, email: str, password: str):
     db.refresh(account)
     return account
 
+
 # Überprüfen, ob der Benutzername bereits vergeben ist
 def check_username_existence(db: Session, username: str):
     return db.query(Account).filter(Account.username == username).first() is not None
 
+
 # Überprüfen, ob die E-Mail bereits vergeben ist
 def check_email_existence(db: Session, email: str):
     return db.query(Account).filter(Account.email == email).first() is not None
+
 
 # User Login
 def check_account_login(db: Session, username: str, password: str):
@@ -40,6 +43,7 @@ def check_account_login(db: Session, username: str, password: str):
         return account
     return None
 
+
 # Funktion, um die Account-ID anhand des Benutzernamens zu finden
 def get_account_id_by_username(db: Session, username: str):
     account = db.query(Account).filter(Account.username == username).first()
@@ -47,6 +51,7 @@ def get_account_id_by_username(db: Session, username: str):
         return account.id
     else:
         return None
+
 
 # Löscht einen Account und alle damit verbundenen Profile, Posts und Kommentare
 def delete_account(db: Session, account_id: int):
@@ -73,7 +78,3 @@ def delete_account(db: Session, account_id: int):
 
         # Lösche den Account
         db.delete(db_account)
-
-
-
-
