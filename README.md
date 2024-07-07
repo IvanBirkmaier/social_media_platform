@@ -1,60 +1,34 @@
-# Social-media-platform
+# Social Media Platform
 
-This is the social media platform called BeFake. Users can generally create posts with photos and a description. These posts can then be commented on. Posts from other users are displayed randomly in the feed and your own posts are displayed in the Home. You can search for other users' posts in the feed using the search bar.
+This is the social media platform called BeFake. Users can create posts with photos and descriptions. These posts can then be commented on. Posts from other users are displayed randomly in the feed, and your own posts are displayed on the Home page. You can search for other users' posts in the feed using the search bar.
 
-# Contributors (Name / Nummer : Github User)
-
-Ivan Birkmaier / ai23m049 : IvanBirkmaier, Renaturepeople  
-Leonard Hübner / ai23m040: Ruco26  
-Patrick Steiner / ai23m055: Patrick  
-Herbert Grünsteidl / ai23m012: herbertgruen
-
-# Infrastructure:
-
+# Infrastructure & Technologies
 **Database**: PostgreSQL  
 **API**: FastAPI is used for communication between the backend and frontend (React).  
 **Messaging**: Kafka serves as a messenger in the backend to enable asynchronous microservices.  
 **Websocket**: Employed for real-time asynchronous communication between backend and frontend. For instance, comments are loaded only after the classification process during comment creation.  
 **Containerization**: Docker ensures the application runs independently of the operating system.  
+**Orchestration**: Kubernetes (K3d), Kafka  
 **Programming Languages**: Python and TypeScript
 
-# Microservices:
+# Microservices
+1. **CRUD Operations**: A microservice dedicated to Create, Read, Update, and Delete operations.
+2. **Image Resizing**: Handles the downsizing of images.
+3. **Comment Classification**: Utilizes GPT-2 to classify comments as Positive (POS), Neutral (NEU), or Negative (NEG).
 
-1. CRUD Operations: A microservice dedicated to Create, Read, Update, and Delete operations.
-2. Image Resizing: Handles the downsizing of images.
-3. Comment Classification: Utilizes GPT-2 to classify comments as Positive (POS), Neutral (NEU), or Negative (NEG).
-
-# Running the Application:
-
+# Running the Application
 1. Start the app: `docker compose up -d`
-2. Access the application at localhost:3000.
+2. Access the application at [localhost:3000](http://localhost:3000).
 3. Verify all containers are operational, especially the microservices and consumers, using `docker ps`.
 
-# Link to the Trello board for the projekt. 
+# Current State Deployment Diagram without Kubernetes (22.01.2024)
+![Diagram](project_files/images_diagrams/Infrastructur_22_01_24.jpeg)
 
-You need to have permission for the [Trello board.](https://trello.com/b/H6So0pAj/social-media-app).
+# Current State Deployment Diagram with Kubernetes (22.01.2024)
+![Diagram](project_files/images_diagrams/Infrastructur_22_01_24_with_kubernetes.jpeg)
 
+# Future State Deployment Diagram without Kubernetes (22.01.2024)
+![Diagram](project_files/images_diagrams/Planed_Infrastructur_22_01_24.jpeg)
 
-# IST Zustand Deployment-Diagramm ohne Kubernetes (22.01.2024)
-
-Der link zum unten angegebenen [Diagram.](https://lucid.app/lucidchart/adeb32c8-df79-44c0-a2e5-dcb09d808dad/edit?viewport_loc=-4662%2C-62%2C14900%2C7344%2C0_0&invitationId=inv_77436cbc-8a21-4b28-8a97-b7b691c24c55)
-
-![Diagramm](project_files/images_diagrams/Infrastructur_22_01_24.jpeg)
-
-# IST Zustand Deployment-Diagramm mit Kubernetes (22.01.2024)
-
-Der link zum unten angegebenen [Diagram.](https://lucid.app/lucidchart/adeb32c8-df79-44c0-a2e5-dcb09d808dad/edit?viewport_loc=-4662%2C-62%2C14900%2C7344%2C0_0&invitationId=inv_77436cbc-8a21-4b28-8a97-b7b691c24c55)
-
-![Diagramm](project_files/images_diagrams/Infrastructur_22_01_24_with_kubernetes.jpeg)
-
-# SOLL Zustand Deployment-Diagramm ohne Kubernetes (22.01.2024)
-
-Der link zum unten angegebenen [Diagram.](https://lucid.app/lucidchart/adeb32c8-df79-44c0-a2e5-dcb09d808dad/edit?viewport_loc=-4662%2C-62%2C14900%2C7344%2C0_0&invitationId=inv_77436cbc-8a21-4b28-8a97-b7b691c24c55)
-
-![Diagramm](project_files/images_diagrams/Planed_Infrastructur_22_01_24.jpeg)
-
-# SOLL Zustand Deployment-Diagramm ohne Kubernetes (22.01.2024)
-
-Der link zum unten angegebenen [Diagram.](https://lucid.app/lucidchart/adeb32c8-df79-44c0-a2e5-dcb09d808dad/edit?viewport_loc=-4662%2C-62%2C14900%2C7344%2C0_0&invitationId=inv_77436cbc-8a21-4b28-8a97-b7b691c24c55)
-
-![Diagramm](project_files/images_diagrams/Planed_Infrastructur_22_01_24_with_kubernetes.jpeg)
+# Future State Deployment Diagram with Kubernetes (22.01.2024)
+![Diagram](project_files/images_diagrams/Planed_Infrastructur_22_01_24_with_kubernetes.jpeg)
