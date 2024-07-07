@@ -1,0 +1,42 @@
+openapi: 3.0.0
+info:
+  title: Comment Classification API
+  version: 1.0.0
+paths:
+  /classify/{comment_id}:
+    post:
+      summary: Classify a Comment
+      description: API endpoint to classify a comment based on its ID.
+      parameters:
+        - in: path
+          name: comment_id
+          required: true
+          schema:
+            type: integer
+          description: Unique identifier of the comment.
+      responses:
+        '200':
+          description: Klassifizierung konnte erfolgreich umgesetzt werden.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Klassifizierung konnte erfolgreich umgesetzt werden
+                  post_id:
+                    type: integer
+                    example: 123
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    example: Database connection error
+components:
+  schemas: {}

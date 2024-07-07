@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: microservice-three
+  name: microservice-three-service
+spec:
+  selector:
+    app: microservice-three
+  ports:
+    - name: "8003"
+      port: 8003
+      targetPort: 8003
+      nodePort: 30084
+  type: NodePort
+ 

@@ -1,0 +1,43 @@
+openapi: 3.0.0
+info:
+  title: Image Optimization API
+  version: 1.0.0
+paths:
+  /optimize/{post_id}:
+    post:
+      summary: Optimize an image
+      description: API endpoint for optimizing an image based on a post ID.
+      parameters:
+        - name: post_id
+          in: path
+          required: true
+          description: The ID of the post.
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Image optimization successful.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Bildoptimierung erfolgreich"
+                  post_id:
+                    type: integer
+                    example: 123
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    example: "Internal error message"
+components:
+  schemas: {}

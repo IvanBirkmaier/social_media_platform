@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: microservice-one
+  name: microservice-one-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: microservice-one
+  template:
+    metadata:
+      labels:
+        app: microservice-one
+    spec:
+      containers:
+      - name: microservice-one
+        image: registry:5000/social-media-platform_microservice_one:latest
+        ports:
+        - containerPort: 8001
+          protocol: TCP
+        env:
+        - name: DATABASE_URL
+          value: "postgresql://user:password@database-service:5432/meine_db"
+        - name: FRONTEND_URL
+          value: "http://localhost:8082"
+      restartPolicy: Always

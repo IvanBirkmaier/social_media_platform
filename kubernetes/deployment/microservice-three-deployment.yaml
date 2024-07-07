@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: microservice-three
+  name: microservice-three-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: microservice-three
+  template:
+    metadata:
+      labels:
+        app: microservice-three
+    spec:
+      containers:
+        - name: microservice-three
+          image: registry:5000/social-media-platform_microservice_three:latest
+          ports:
+            - containerPort: 8003
+              protocol: TCP
+          env:
+            - name: DATABASE_URL
+              value: "postgresql://user:password@database-service:5432/meine_db"
+            - name: FRONTEND_URL
+              value: "http://localhost:8082"
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              value: kafka-server-service:9092
+            - name: KAFKA_TOPIC
+              value: comment_queue
+      restartPolicy: Always

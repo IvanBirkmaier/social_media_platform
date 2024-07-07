@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: websocket-server
+  name: websocket-server-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: websocket-server
+  template:
+    metadata:
+      labels:
+        app: websocket-server
+    spec:
+      containers:
+        - name: websocket-server
+          image: registry:5000/social-media-platform_websocket_server:latest
+          ports:
+            - containerPort: 8765
+              protocol: TCP
+          env:
+            - name: WEBSOCKET_SERVER_HOST
+              value: "0.0.0.0"
+            - name: WEBSOCKET_SERVER_PORT
+              value: "8765"
+      restartPolicy: Always

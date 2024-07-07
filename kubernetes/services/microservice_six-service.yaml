@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: microservice-six
+  name: microservice-six-service
+spec:
+  selector:
+    app: microservice-six
+  ports:
+    - name: "8007"
+      port: 8007
+      targetPort: 8007
+  type: ClusterIP
+

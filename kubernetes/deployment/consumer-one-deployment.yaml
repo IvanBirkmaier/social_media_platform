@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: kafka-consumer-one
+  name: kafka-consumer-one
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka-consumer-one
+  template:
+    metadata:
+      labels:
+        app: kafka-consumer-one
+    spec:
+      containers:
+        - name: kafka-consumer-one
+          image: registry:5000/social-media-platform_consumer_one:latest
+          env:
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              value: kafka-server-service:9092
+            - name: KAFKA_TOPIC
+              value: post_queue
+            - name: MICROSERVICE_5_API_URL
+              value: http://microservice-five-service:8005/optimize/
+      restartPolicy: Always

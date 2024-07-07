@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: kafka-consumer-three
+  name: kafka-consumer-three
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka-consumer-three
+  template:
+    metadata:
+      labels:
+        app: kafka-consumer-three
+    spec:
+      containers:
+        - name: kafka-consumer-three
+          image: registry:5000/social-media-platform_consumer_three:latest
+          env:
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              value: kafka-server-service:9092
+            - name: KAFKA_TOPIC
+              value: classified_comments_queue
+            - name: WEBSOCKET_CLIENT_URL
+              value: http://websocket-client-1-service:8021/trigger_update
+      restartPolicy: Always

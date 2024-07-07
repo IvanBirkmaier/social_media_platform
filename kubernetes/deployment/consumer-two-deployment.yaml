@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: kafka-consumer-two
+  name: kafka-consumer-two
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka-consumer-two
+  template:
+    metadata:
+      labels:
+        app: kafka-consumer-two
+    spec:
+      containers:
+        - name: kafka-consumer-two
+          image: registry:5000/social-media-platform_consumer_two:latest
+          env:
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              value: kafka-server-service:9092
+            - name: KAFKA_TOPIC
+              value: comment_queue
+            - name: MICROSERVICE_3_API_URL
+              value: http://microservice-six-service:8007/classify/
+      restartPolicy: Always
